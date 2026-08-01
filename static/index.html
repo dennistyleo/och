@@ -12,25 +12,35 @@
 <link rel="stylesheet" href="css/sovereign-header-fixes.css?v=4">
 <style>
   /* ==========================================================================
-     OCH LANDING PAGE — White Clinical Luxury Theme & Sovereign Header
+     OCH LANDING PAGE — White Background + Luxury Palette
+     - White Background  : #FFFFFF / #F8FAFC
+     - Metallic Gold     : #D4AF37 / #B8860B
+     - Metallic Silver   : #CBD5E1 / #64748B
+     - Neon Green        : #00C853
+     - Tiffany Blue      : #0abab5
+     - Hermès Orange     : #FF7900
      ========================================================================== */
   :root {
-    --bg-main:       #FFFFFF;
-    --bg-subtle:     #F8FAFC;
-    --bg-card:       #FFFFFF;
-    --bg-panel:      #F1F5F9;
+    --bg-main:         #FFFFFF;
+    --bg-subtle:       #F8FAFC;
+    --bg-card:         #FFFFFF;
+    --bg-panel:        #F1F5F9;
     
-    --border-silver: #E2E8F0;
-    --border-gold:   #D4AF37;
+    --white:           #FFFFFF;
+    --metallic-gold:   #D4AF37;
+    --gold-dark:       #B8860B;
+    --metallic-silver: #CBD5E1;
+    --silver-dark:     #64748B;
+    --neon-green:      #00C853;
+    --tiffany-blue:    #0abab5;
+    --hermes-orange:   #FF7900;
     
-    --gold:          #B8860B;
-    --silver:        #64748B;
-    --tiffany-blue:  #0abab5;
-    --hermes-orange: #FF7900;
+    --border-silver:   #E2E8F0;
+    --border-gold:     #D4AF37;
     
-    --text-dark:     #0F172A;
-    --text-muted:    #475569;
-    --text-light:    #64748B;
+    --text-dark:       #0F172A;
+    --text-muted:      #475569;
+    --text-light:      #64748B;
     
     --font-ui:    'Inter', system-ui, -apple-system, sans-serif;
     --font-mono:  'JetBrains Mono', monospace;
@@ -49,7 +59,7 @@
   .hero-title {
     font-family: var(--font-title); font-size: clamp(2rem, 4vw, 3.4rem); font-weight: 900;
     letter-spacing: 4px; text-transform: uppercase; margin-bottom: 12px;
-    background: linear-gradient(135deg, #0F172A 0%, var(--tiffany-blue) 50%, var(--gold) 100%);
+    background: linear-gradient(135deg, #0F172A 0%, var(--tiffany-blue) 40%, var(--metallic-gold) 100%);
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 2px 8px rgba(10, 186, 181, 0.15));
   }
@@ -61,7 +71,7 @@
 
   .divider-line {
     width: 100%; height: 1.5px;
-    background: linear-gradient(90deg, transparent 0%, var(--tiffany-blue) 30%, var(--gold) 70%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, var(--tiffany-blue) 30%, var(--neon-green) 50%, var(--metallic-gold) 70%, transparent 100%);
     margin: 28px 0 44px; opacity: 0.8;
   }
 
@@ -75,7 +85,7 @@
   .pillar-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
   .pillar-card.tiffany::before  { background: var(--tiffany-blue); }
   .pillar-card.hermes::before   { background: var(--hermes-orange); }
-  .pillar-card.gold::before     { background: var(--gold); }
+  .pillar-card.green::before    { background: var(--neon-green); }
   
   .pillar-card:hover {
     transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); border-color: var(--tiffany-blue);
@@ -83,7 +93,7 @@
   .pillar-icon { font-size: 36px; margin-bottom: 14px; }
   .pillar-card.tiffany .pillar-title { color: var(--tiffany-blue); }
   .pillar-card.hermes  .pillar-title { color: var(--hermes-orange); }
-  .pillar-card.gold    .pillar-title { color: var(--gold); }
+  .pillar-card.green   .pillar-title { color: var(--neon-green); }
   
   .pillar-title { font-family: var(--font-title); font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
   .pillar-sub { font-family: var(--font-mono); font-size: 11px; color: var(--text-light); margin-bottom: 12px; font-weight: 700; }
@@ -99,7 +109,7 @@
   .btn-launch-operation {
     display: inline-block; padding: 16px 40px; border-radius: 8px;
     font-family: var(--font-mono); font-size: 13px; font-weight: 800; letter-spacing: 2px;
-    background: var(--hermes-orange); color: #FFFFFF; text-decoration: none; transition: all 0.25s;
+    background: var(--hermes-orange); color: var(--white); text-decoration: none; transition: all 0.25s;
     box-shadow: 0 6px 20px rgba(255, 121, 0, 0.3);
   }
   .btn-launch-operation:hover { background: #E66C00; transform: translateY(-2px); box-shadow: 0 10px 28px rgba(255, 121, 0, 0.4); }
@@ -110,7 +120,7 @@
     background: var(--bg-subtle); border: 1px solid var(--border-silver); border-radius: 12px;
     padding: 18px 28px; font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
   }
-  .hw-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--tiffany-blue); box-shadow: 0 0 8px var(--tiffany-blue); margin-right: 8px; }
+  .hw-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); margin-right: 8px; }
 </style>
 </head>
 <body>
@@ -148,7 +158,7 @@
     <div class="divider-line"></div>
   </section>
 
-  <!-- THREE MEDICAL PILLARS -->
+  <!-- THREE MEDICAL PILLARS (Tiffany Blue, Hermès Orange, Neon Green) -->
   <div class="pillars-grid">
     <div class="pillar-card tiffany">
       <div class="pillar-icon">🩺</div>
@@ -164,7 +174,7 @@
       <div class="pillar-text">Maps anomalous biomarker targets to 3D protein structures (PDB / AlphaFold) and evaluates multi-drug interaction risks in pre-surgery contexts.</div>
     </div>
 
-    <div class="pillar-card gold">
+    <div class="pillar-card green">
       <div class="pillar-icon">⚖️</div>
       <div class="pillar-title">HARDWARE RISK ACCELERATION</div>
       <div class="pillar-sub">FPGA Silicon Engine &amp; Register Mapping</div>
@@ -183,8 +193,8 @@
 
   <!-- HARDWARE MONITOR FOOTER -->
   <div class="hw-bar">
-    <div><span class="hw-dot"></span>FPGA ENGINE: <span style="color: var(--tiffany-blue); font-weight: bold;">och.v (ACTIVE)</span></div>
-    <div>AXI REGISTERS: <span style="color: var(--gold); font-weight: bold;">0x7000–0x70FF</span></div>
+    <div><span class="hw-dot"></span>FPGA ENGINE: <span style="color: var(--neon-green); font-weight: bold;">och.v (ACTIVE)</span></div>
+    <div>AXI REGISTERS: <span style="color: var(--gold-dark); font-weight: bold;">0x7000–0x70FF</span></div>
     <div>CASTELLI INDEX: <span style="color: var(--text-dark); font-weight: bold;">1.45 (Q16.16)</span></div>
     <div>SOFA SCORE: <span style="color: var(--tiffany-blue); font-weight: bold;">0 / 24 (NOMINAL)</span></div>
   </div>

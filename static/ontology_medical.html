@@ -12,20 +12,35 @@
 <link rel="stylesheet" href="css/sovereign-header-fixes.css?v=4">
 <style>
   /* ==========================================================================
-     SOVEREIGN OCH · 3D MEDICAL OPERATION CENTER — Style Compatible with OP-01 ~ OP-03
+     SOVEREIGN OCH · 3D MEDICAL OPERATION CENTER
+     - White Background  : #FFFFFF / #F8FAFC
+     - Metallic Gold     : #D4AF37 / #B8860B
+     - Metallic Silver   : #CBD5E1 / #64748B
+     - Neon Green        : #00C853
+     - Tiffany Blue      : #0abab5
+     - Hermès Orange     : #FF7900
      ========================================================================== */
   :root {
-    --gold:          #D4AF37;
-    --gold-lt:       #f0d060;
-    --gold-dk:       #7a5c10;
-    --orange:        #FF7900;
-    --tiffany-blue:  #0abab5;
-    --green:         #00C853;
-    --black:         #000000;
-    --bg-dark:       #050507;
-    --bg-panel:      #0a0f0d;
-    --border-gold:   rgba(212, 175, 55, 0.35);
-    --border-silver: rgba(255, 255, 255, 0.12);
+    --bg-main:         #FFFFFF;
+    --bg-subtle:       #F8FAFC;
+    --bg-card:         #FFFFFF;
+    --bg-panel:        #F8FAFC;
+    
+    --white:           #FFFFFF;
+    --metallic-gold:   #D4AF37;
+    --gold-dark:       #B8860B;
+    --metallic-silver: #CBD5E1;
+    --silver-dark:     #64748B;
+    --neon-green:      #00C853;
+    --tiffany-blue:    #0abab5;
+    --hermes-orange:   #FF7900;
+    
+    --border-silver:   #E2E8F0;
+    --border-gold:     #D4AF37;
+    
+    --text-dark:       #0F172A;
+    --text-muted:      #475569;
+    --text-light:      #64748B;
     
     --font-ui:    'Inter', sans-serif;
     --font-mono:  'JetBrains Mono', monospace;
@@ -33,18 +48,19 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { width: 1920px; background: #000000; overflow-y: auto; }
-  body { width: 1920px; min-height: 1080px; background: #000000; color: #eee; font-family: var(--font-ui); overflow-x: hidden; }
+  html { width: 1920px; background: var(--bg-main); overflow-y: auto; }
+  body { width: 1920px; min-height: 1080px; background: var(--bg-main); color: var(--text-dark); font-family: var(--font-ui); overflow-x: hidden; }
 
   /* ── MAIN LAYOUT GRID ── */
   .layout {
     display: grid; grid-template-columns: 1fr 440px;
-    height: calc(100vh - 212px); margin-top: 0; background: #000000;
+    height: calc(100vh - 212px); margin-top: 0; background: var(--bg-main);
   }
-  .viz-pane { position: relative; overflow: hidden; background: #000000; }
+  .viz-pane { position: relative; overflow: hidden; background: #030712; }
   .info-pane {
     display: flex; flex-direction: column; background: var(--bg-panel);
-    border-left: 1px solid var(--border-gold); overflow-y: auto;
+    border-left: 1.5px solid var(--border-silver); overflow-y: auto;
+    box-shadow: -4px 0 20px rgba(0,0,0,0.04);
   }
 
   /* ── THREE.JS CANVAS ── */
@@ -56,67 +72,69 @@
   }
   .tab-btn {
     font-family: var(--font-mono); font-size: 10px; font-weight: 700; padding: 8px 16px;
-    border-radius: 4px; background: rgba(0, 0, 0, 0.85); color: #aaa;
-    border: 1px solid var(--border-gold); cursor: pointer; transition: all 0.2s;
+    border-radius: 4px; background: rgba(15, 23, 42, 0.88); color: var(--metallic-silver);
+    border: 1px solid var(--border-silver); cursor: pointer; transition: all 0.2s;
   }
-  .tab-btn.active { color: #000; background: var(--gold); border-color: var(--gold); }
+  .tab-btn.active { color: var(--white); background: var(--tiffany-blue); border-color: var(--tiffany-blue); }
 
   /* ── HUD OVERLAY ── */
   .viz-hud {
     position: absolute; top: 16px; left: 16px; z-index: 80;
-    font-family: var(--font-mono); font-size: 11px; color: #888; pointer-events: none;
+    font-family: var(--font-mono); font-size: 11px; color: rgba(255,255,255,0.7); pointer-events: none;
   }
-  .viz-hud-title { font-family: var(--font-title); font-size: 14px; font-weight: 900; color: var(--gold); margin-bottom: 4px; letter-spacing: 1px; }
+  .viz-hud-title { font-family: var(--font-title); font-size: 14px; font-weight: 900; color: var(--tiffany-blue); margin-bottom: 4px; letter-spacing: 1px; }
 
-  /* ── SIDEBAR PANELS (OP-01 ~ OP-03 Style) ── */
-  .panel-section { padding: 18px 24px; border-bottom: 1px solid var(--border-gold); }
+  /* ── SIDEBAR PANELS ── */
+  .panel-section { padding: 20px 24px; border-bottom: 1px solid var(--border-silver); background: var(--bg-card); }
   .panel-label { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--tiffany-blue); margin-bottom: 6px; }
-  .panel-title { font-family: var(--font-title); font-size: 17px; font-weight: 900; color: var(--gold); letter-spacing: 1px; }
+  .panel-title { font-family: var(--font-title); font-size: 17px; font-weight: 900; color: var(--text-dark); letter-spacing: 1px; }
 
   /* INGESTION DROP ZONE BLOCK */
   .ingest-block {
-    background: rgba(0, 0, 0, 0.6); border: 2px dashed var(--tiffany-blue); border-radius: 8px;
-    padding: 18px; text-align: center; margin-top: 10px; cursor: pointer; transition: all 0.2s;
+    background: var(--bg-subtle); border: 2px dashed var(--tiffany-blue); border-radius: 12px;
+    padding: 22px; text-align: center; margin-top: 10px; cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(10, 186, 181, 0.05);
   }
-  .ingest-block:hover { border-color: var(--orange); background: rgba(255, 121, 0, 0.05); }
-  .ingest-title { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .ingest-block:hover { border-color: var(--hermes-orange); background: rgba(255, 121, 0, 0.04); }
+  .ingest-title { font-size: 12px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
   .btn-upload-file {
-    display: inline-block; margin-top: 10px; padding: 6px 16px; border-radius: 3px;
+    display: inline-block; margin-top: 10px; padding: 8px 18px; border-radius: 4px;
     font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 1px;
-    background: var(--orange); color: #000; border: none; cursor: pointer;
+    background: var(--hermes-orange); color: var(--white); border: none; cursor: pointer; transition: all 0.2s;
   }
+  .btn-upload-file:hover { background: #E66C00; box-shadow: 0 4px 14px rgba(255, 121, 0, 0.3); }
 
   /* STATS ROW */
   .stats-row { display: flex; gap: 10px; margin-top: 14px; }
   .stat-card {
-    flex: 1; background: rgba(0,0,0,0.5); border: 1px solid var(--border-gold);
-    border-radius: 6px; padding: 10px; text-align: center;
+    flex: 1; background: var(--bg-subtle); border: 1px solid var(--border-silver);
+    border-radius: 8px; padding: 10px; text-align: center;
   }
-  .stat-val { font-family: var(--font-mono); font-size: 18px; font-weight: 800; color: var(--gold); }
-  .stat-lbl { font-family: var(--font-mono); font-size: 9px; color: #888; letter-spacing: 1px; margin-top: 2px; }
+  .stat-val { font-family: var(--font-mono); font-size: 18px; font-weight: 800; color: var(--gold-dark); }
+  .stat-lbl { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); letter-spacing: 1px; margin-top: 2px; }
 
   /* AXIOM SELECTION CHECKBOX TABLE */
   .axiom-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-family: var(--font-mono); font-size: 11px; }
-  .axiom-table th { text-align: left; padding: 6px 0; border-bottom: 1px solid var(--border-gold); color: var(--gold); }
-  .axiom-table td { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; }
-  .empty-msg { font-style: italic; color: #777; font-size: 11px; padding: 12px 0; }
+  .axiom-table th { text-align: left; padding: 8px; border-bottom: 2px solid var(--border-silver); color: var(--text-muted); background: var(--bg-subtle); }
+  .axiom-table td { padding: 8px; border-bottom: 1px solid var(--border-silver); color: var(--text-dark); }
+  .empty-msg { font-style: italic; color: var(--text-muted); font-size: 11px; padding: 12px 0; }
 
   /* CTA BUTTONS */
-  .cta-bar { padding: 20px 24px; margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+  .cta-bar { padding: 20px 24px; margin-top: auto; display: flex; flex-direction: column; gap: 10px; background: var(--bg-card); border-top: 1px solid var(--border-silver); }
   .btn-cta {
-    display: block; width: 100%; padding: 12px 0; text-align: center; border-radius: 4px;
+    display: block; width: 100%; padding: 12px 0; text-align: center; border-radius: 6px;
     font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
     text-decoration: none; transition: all 0.2s; border: none; cursor: pointer;
   }
-  .btn-primary { background: var(--green); color: #000; }
+  .btn-primary { background: var(--neon-green); color: #000000; font-weight: 800; }
   .btn-primary:hover { background: #00E676; box-shadow: 0 0 16px rgba(0, 200, 83, 0.4); }
-  .btn-secondary { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
-  .btn-secondary:hover { background: rgba(212, 175, 55, 0.1); }
+  .btn-secondary { background: var(--bg-subtle); color: var(--text-dark); border: 1px solid var(--border-silver); }
+  .btn-secondary:hover { background: var(--border-silver); }
 </style>
 </head>
 <body>
 
-<!-- CANONICAL SOVEREIGN HEADER ARCHITECTURE (OP-01 ~ OP-03) -->
+<!-- CANONICAL SOVEREIGN HEADER ARCHITECTURE (OP-01 ~ OP-03 Style) -->
 <header class="sm-header">
   <div class="hdr-wing left">
     <video autoplay loop muted playsinline src="P01Header_L.mp4"></video>
@@ -165,7 +183,7 @@
       <div class="panel-label">📄 01. INGEST CLINICAL EVIDENCE FILE</div>
       <div class="ingest-block" onclick="document.getElementById('side-file-input').click()">
         <div class="ingest-title" id="ingest-headline">Drag &amp; drop patient lab record or click to browse</div>
-        <div style="font-size: 10px; color: #888;">PDF &middot; CSV &middot; JSON &middot; XLS &middot; PNG</div>
+        <div style="font-size: 10px; color: var(--silver-dark);">PDF &middot; CSV &middot; JSON &middot; XLS &middot; PNG</div>
         <button class="btn-upload-file">BROWSE EVIDENCE FILE</button>
         <input type="file" id="side-file-input" style="display:none;" accept=".pdf,.txt,.csv,.json">
       </div>
@@ -175,7 +193,7 @@
     <div class="panel-section">
       <div class="panel-label">SELECTED BRANCH &amp; PIPELINE STATUS</div>
       <div class="panel-title">HEALTHCARE EVALUATION</div>
-      <div style="font-family: var(--font-mono); font-size: 11px; color: #888; margin-top: 4px;">Live Graded Audit &middot; LOINC Biomarkers</div>
+      <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-top: 4px;">Live Graded Audit &middot; LOINC Biomarkers</div>
 
       <div class="stats-row">
         <div class="stat-card">
@@ -187,7 +205,7 @@
           <div class="stat-lbl">AXIOMS</div>
         </div>
         <div class="stat-card">
-          <div class="stat-val" id="stat-status" style="color: var(--gold); font-size: 12px; line-height: 24px;">AWAITING</div>
+          <div class="stat-val" id="stat-status" style="color: var(--gold-dark); font-size: 12px; line-height: 24px;">AWAITING</div>
           <div class="stat-lbl">STATUS</div>
         </div>
       </div>
@@ -265,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ingestBlock.addEventListener(evt, (e) => {
             e.preventDefault(); e.stopPropagation();
             ingestBlock.style.borderColor = '#0abab5';
-            ingestBlock.style.background = 'rgba(0,0,0,0.6)';
+            ingestBlock.style.background = '#F8FAFC';
         });
     });
 
@@ -328,25 +346,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 <tbody>
                     <tr>
                         <td><input type="checkbox" checked></td>
-                        <td style="color:#D4AF37;font-weight:bold;">HC_AIP_001</td>
+                        <td style="color:#B8860B;font-weight:bold;">HC_AIP_001</td>
                         <td>AIP = log10(TG / HDL)</td>
                         <td><span style="color:#00C853;font-weight:bold;">ALLOW</span></td>
                     </tr>
                     <tr>
                         <td><input type="checkbox" checked></td>
-                        <td style="color:#D4AF37;font-weight:bold;">HC_GLU_001</td>
+                        <td style="color:#B8860B;font-weight:bold;">HC_GLU_001</td>
                         <td>Glucose &le; 140 mg/dL</td>
                         <td><span style="color:#00C853;font-weight:bold;">ALLOW</span></td>
                     </tr>
                     <tr>
                         <td><input type="checkbox" checked></td>
-                        <td style="color:#D4AF37;font-weight:bold;">HC_CRE_001</td>
+                        <td style="color:#B8860B;font-weight:bold;">HC_CRE_001</td>
                         <td>Creatinine &le; 1.5 mg/dL</td>
                         <td><span style="color:#00C853;font-weight:bold;">ALLOW</span></td>
                     </tr>
                     <tr>
                         <td><input type="checkbox" checked></td>
-                        <td style="color:#D4AF37;font-weight:bold;">HC_BP_001</td>
+                        <td style="color:#B8860B;font-weight:bold;">HC_BP_001</td>
                         <td>BP Systolic &le; 130 mmHg</td>
                         <td><span style="color:#00C853;font-weight:bold;">ALLOW</span></td>
                     </tr>
@@ -358,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const bmContainer = document.getElementById('biomarker-container');
         let html = '<table class="axiom-table"><thead><tr><th>BIOMARKER</th><th>VALUE</th><th>REF RANGE</th></tr></thead><tbody>';
         Object.entries(fieldValues).forEach(([k, v]) => {
-            html += `<tr><td style="color:#aaa;">${k.toUpperCase()}</td><td style="color:#0abab5;font-weight:bold;">${v}</td><td>Normal</td></tr>`;
+            html += `<tr><td style="color:#475569;">${k.toUpperCase()}</td><td style="color:#0abab5;font-weight:bold;">${v}</td><td>Normal</td></tr>`;
         });
         html += '</tbody></table>';
         bmContainer.innerHTML = html;
