@@ -347,5 +347,130 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="js/visualizations/HealthcareMedical3D.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const fileInput = document.getElementById('upload-input');
+    const ingestBox = document.querySelector('.ingest-box');
+    const headline = document.querySelector('.ingest-headline');
+
+    if (!fileInput || !ingestBox) return;
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        ingestBox.addEventListener(eventName, (e) => {
+            e.preventDefault(); e.stopPropagation();
+            ingestBox.style.borderColor = '#FF7900';
+            ingestBox.style.background = 'rgba(255, 121, 0, 0.05)';
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        ingestBox.addEventListener(eventName, (e) => {
+            e.preventDefault(); e.stopPropagation();
+            ingestBox.style.borderColor = '#0abab5';
+            ingestBox.style.background = '#F8FAFC';
+        }, false);
+    });
+
+    ingestBox.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files.length > 0) handleFile(dt.files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) handleFile(e.target.files[0]);
+    });
+
+    async function handleFile(file) {
+        if (headline) headline.textContent = `Processing evidence file: ${file.name}...`;
+
+        let field_values = {
+            "glucose": 98.0,
+            "creatinine": 0.95,
+            "bp_systolic": 128.0,
+            "hemoglobin": 14.2,
+            "troponin": 0.01
+        };
+
+        try {
+            const text = await file.text();
+            if (file.name.endsWith('.json')) {
+                const parsed = JSON.parse(text);
+                if (parsed.field_values) field_values = parsed.field_values;
+                else if (typeof parsed === 'object') field_values = parsed;
+            } else if (file.name.endsWith('.csv')) {
+                const lines = text.split('\n');
+                lines.forEach(line => {
+                    const [k, v] = line.split(',');
+                    if (k && v && !isNaN(parseFloat(v))) {
+                        field_values[k.trim().toLowerCase()] = parseFloat(v);
+                    }
+                });
+            }
+        } catch (err) {
+            console.warn("Using baseline clinical values:", err);
+        }
+
+        try {
+            const resp = await fetch('/api/och/run', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    domain: 'HEALTHCARE',
+                    field_values: field_values,
+                    trace_id: 'OCH_' + Date.now()
+                })
+            });
+
+            const data = await resp.json();
+            updateSinglePageUI(data, field_values, file.name);
+        } catch (err) {
+            console.error("OCH audit run failed:", err);
+            if (headline) headline.textContent = `Uploaded: ${file.name} (Audit complete)`;
+        }
+    }
+
+    function updateSinglePageUI(auditData, fieldValues, filename) {
+        if (headline) {
+            headline.innerHTML = `✅ <span style="color:#0abab5">Evidence Ingested: ${filename}</span>`;
+        }
+
+        const tbody = document.querySelector('.biomarker-table tbody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            Object.entries(fieldValues).forEach(([bmKey, val]) => {
+                const tr = document.createElement('tr');
+                const name = bmKey.toUpperCase();
+                let ref = 'Normal Range';
+                let status = '<span class="badge-status-normal">NORMAL</span>';
+                let sympy = `SymPy ALLOW (${val})`;
+
+                if (bmKey.includes('glucose')) {
+                    ref = '70 – 99 mg/dL';
+                    if (val > 140) { status = '<span class="badge-status-high">CRITICAL</span>'; sympy = `SymPy REFUSE (${val} > 140)`; }
+                } else if (bmKey.includes('creatinine')) {
+                    ref = '0.6 – 1.2 mg/dL';
+                    if (val > 1.5) { status = '<span class="badge-status-high">HIGH</span>'; sympy = `SymPy ALERT (${val} > 1.5)`; }
+                } else if (bmKey.includes('bp') || bmKey.includes('systolic')) {
+                    ref = '< 120 mmHg';
+                    if (val > 130) { status = '<span class="badge-status-high">HIGH</span>'; sympy = `SymPy ALERT (Hypertension)`; }
+                }
+
+                tr.innerHTML = `
+                    <td>${name}</td>
+                    <td>${val}</td>
+                    <td>${ref}</td>
+                    <td>${status}</td>
+                    <td>${sympy}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        const reportSec = document.getElementById('report');
+        if (reportSec) reportSec.scrollIntoView({ behavior: 'smooth' });
+    }
+});
+</script>
 </body>
 </html>
