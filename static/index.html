@@ -6,30 +6,35 @@
 <title>OCH · Sovereign Ontology Compliance Healthcare</title>
 <meta name="description" content="Dedicated single-purposed OCH (Ontology Compliance Healthcare) service — deterministic clinical biomarker verification, LOINC standards, and hardware-accelerated FPGA risk evaluation.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
   /* ==========================================================================
-     OCH DESIGN SYSTEM & COLOR PALETTE
-     - Primary Medical White : #FFFFFF / #F8FAFC
-     - Metallic Gold         : linear-gradient(135deg, #FFF0C2, #D4AF37, #AA8B2B) / #D4AF37
-     - Metallic Silver       : linear-gradient(135deg, #FFFFFF, #E2E8F0, #94A3B8) / #CBD5E1
-     - Tiffany Blue          : #0abab5 / rgba(10, 186, 181, 0.15)
-     - Hermès Orange         : #FF7900 / rgba(255, 121, 0, 0.15)
+     OCH CLINICAL WHITE DESIGN SYSTEM & FINE-TUNED COLOR PALETTE
+     - Background            : Pure White (#FFFFFF) & Soft Slate (#F8FAFC)
+     - Primary Dark Text     : Deep Charcoal (#0F172A / #1E293B)
+     - Metallic Gold         : #B8860B / #D4AF37 / linear-gradient
+     - Metallic Silver       : #64748B / #CBD5E1 / #E2E8F0
+     - Tiffany Blue          : #0abab5 / rgba(10, 186, 181, 0.1)
+     - Hermès Orange         : #FF7900 / rgba(255, 121, 0, 0.1)
      ========================================================================== */
   :root {
-    --bg-dark:       #030712;
-    --bg-card:       #0B0F19;
-    --bg-panel:      #111827;
-    --border-silver: #334155;
-    --border-gold:   rgba(212, 175, 55, 0.35);
+    --bg-main:       #FFFFFF;
+    --bg-subtle:     #F8FAFC;
+    --bg-card:       #FFFFFF;
+    --bg-panel:      #F1F5F9;
     
-    /* Brand Colors */
-    --gold:          #D4AF37;
-    --silver:        #CBD5E1;
+    --border-silver: #E2E8F0;
+    --border-gold:   #D4AF37;
+    
+    /* Brand Colors tuned for White BG */
+    --gold:          #B8860B;
+    --silver:        #64748B;
     --tiffany-blue:  #0abab5;
     --hermes-orange: #FF7900;
-    --white:         #FFFFFF;
-    --text-muted:    #94A3B8;
+    
+    --text-dark:     #0F172A;
+    --text-muted:    #475569;
+    --text-light:    #64748B;
     
     /* Fonts */
     --font-ui:    'Inter', system-ui, -apple-system, sans-serif;
@@ -40,93 +45,90 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
   body {
-    background: var(--bg-dark);
-    color: var(--white);
+    background: var(--bg-main);
+    color: var(--text-dark);
     font-family: var(--font-ui);
     overflow-x: hidden;
-    background-image: radial-gradient(circle at 50% 0%, rgba(10, 186, 181, 0.08) 0%, transparent 60%),
-                      radial-gradient(circle at 80% 40%, rgba(255, 121, 0, 0.05) 0%, transparent 50%);
   }
 
   /* ── SINGLE NAV HEADER ── */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    height: 60px; display: flex; align-items: center; padding: 0 32px;
-    background: rgba(3, 7, 18, 0.92); backdrop-filter: blur(16px);
+    height: 64px; display: flex; align-items: center; padding: 0 36px;
+    background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border-silver);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   }
   .nav-logo {
-    font-family: var(--font-title); font-size: 15px; font-weight: 900;
+    font-family: var(--font-title); font-size: 16px; font-weight: 900;
     letter-spacing: 3px; text-decoration: none;
-    background: linear-gradient(135deg, #FFF0C2 0%, var(--gold) 50%, #AA8B2B 100%);
+    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
   }
-  .nav-links { display: flex; gap: 16px; margin-left: 40px; }
+  .nav-links { display: flex; gap: 16px; margin-left: 48px; }
   .nav-link {
     font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
-    color: var(--silver); text-decoration: none; padding: 6px 14px; border-radius: 4px; transition: all 0.2s;
+    color: var(--text-muted); text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: all 0.2s;
   }
-  .nav-link:hover { color: var(--tiffany-blue); background: rgba(10, 186, 181, 0.1); }
+  .nav-link:hover { color: var(--tiffany-blue); background: rgba(10, 186, 181, 0.08); }
   .nav-tag {
     margin-left: auto; font-family: var(--font-mono); font-size: 10px; font-weight: 700;
-    color: var(--tiffany-blue); border: 1px solid var(--tiffany-blue);
-    padding: 4px 12px; border-radius: 3px; letter-spacing: 1.5px;
+    color: var(--tiffany-blue); background: rgba(10, 186, 181, 0.08);
+    border: 1.5px solid var(--tiffany-blue); padding: 5px 14px; border-radius: 4px; letter-spacing: 1.5px;
   }
 
   /* ── MAIN CONTAINER ── */
-  .och-container { max-width: 1400px; margin: 0 auto; padding: 90px 24px 40px; }
+  .och-container { max-width: 1400px; margin: 0 auto; padding: 100px 32px 48px; }
 
   /* ── HERO SECTION ── */
   .hero-box { text-align: center; margin-bottom: 48px; }
   .hero-title {
     font-family: var(--font-title); font-size: clamp(1.8rem, 4vw, 3.2rem); font-weight: 900;
     letter-spacing: 4px; text-transform: uppercase; margin-bottom: 12px;
-    background: linear-gradient(135deg, #FFFFFF 0%, var(--tiffany-blue) 50%, var(--gold) 100%);
+    background: linear-gradient(135deg, #0F172A 0%, var(--tiffany-blue) 50%, var(--gold) 100%);
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 4px 12px rgba(10, 186, 181, 0.25));
+    filter: drop-shadow(0 2px 8px rgba(10, 186, 181, 0.15));
   }
   .hero-subtitle {
-    font-size: 1.15rem; color: var(--hermes-orange); font-weight: 700; letter-spacing: 1.5px;
+    font-size: 1.15rem; color: var(--hermes-orange); font-weight: 800; letter-spacing: 1.5px;
     margin-bottom: 8px; text-transform: uppercase;
   }
-  .hero-desc { font-size: 0.95rem; color: var(--text-muted); font-style: italic; }
+  .hero-desc { font-size: 0.98rem; color: var(--text-muted); font-style: italic; }
 
   .divider-line {
-    width: 100%; height: 1px;
+    width: 100%; height: 1.5px;
     background: linear-gradient(90deg, transparent 0%, var(--tiffany-blue) 30%, var(--gold) 70%, transparent 100%);
-    margin: 28px 0 40px; opacity: 0.6;
+    margin: 28px 0 44px; opacity: 0.8;
   }
 
   /* ── MEDICAL PILLAR CARDS ── */
-  .pillars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 48px; }
+  .pillars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px; margin-bottom: 56px; }
   .pillar-card {
-    background: var(--bg-card); border-radius: 12px; padding: 28px 24px;
-    border: 1px solid var(--border-silver); backdrop-filter: blur(8px);
+    background: var(--bg-card); border-radius: 14px; padding: 32px 28px;
+    border: 1px solid var(--border-silver); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     transition: all 0.25s ease; position: relative; overflow: hidden;
   }
-  .pillar-card::before {
-    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  }
+  .pillar-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
   .pillar-card.tiffany::before  { background: var(--tiffany-blue); }
   .pillar-card.hermes::before   { background: var(--hermes-orange); }
   .pillar-card.gold::before     { background: var(--gold); }
   
   .pillar-card:hover {
-    transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); border-color: var(--tiffany-blue);
   }
-  .pillar-icon { font-size: 32px; margin-bottom: 12px; }
+  .pillar-icon { font-size: 36px; margin-bottom: 14px; }
   .pillar-card.tiffany .pillar-title { color: var(--tiffany-blue); }
   .pillar-card.hermes  .pillar-title { color: var(--hermes-orange); }
   .pillar-card.gold    .pillar-title { color: var(--gold); }
   
-  .pillar-title { font-family: var(--font-title); font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
-  .pillar-sub { font-family: var(--font-mono); font-size: 11px; color: var(--silver); margin-bottom: 12px; font-weight: 700; }
-  .pillar-text { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+  .pillar-title { font-family: var(--font-title); font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
+  .pillar-sub { font-family: var(--font-mono); font-size: 11px; color: var(--text-light); margin-bottom: 12px; font-weight: 700; }
+  .pillar-text { font-size: 0.9rem; color: var(--text-muted); line-height: 1.65; }
 
   /* ── SINGLE PAGE SECTIONS ── */
   .section-title {
-    font-family: var(--font-title); font-size: 1.3rem; font-weight: 900; letter-spacing: 2px;
-    color: var(--white); margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
+    font-family: var(--font-title); font-size: 1.35rem; font-weight: 900; letter-spacing: 2px;
+    color: var(--text-dark); margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
   }
   .section-title span.accent-tb { color: var(--tiffany-blue); }
   .section-title span.accent-ho { color: var(--hermes-orange); }
@@ -134,63 +136,64 @@
 
   /* ── 1. EVIDENCE INGESTION DROP ZONE ── */
   .ingest-box {
-    background: var(--bg-card); border: 2px dashed var(--tiffany-blue); border-radius: 14px;
-    padding: 40px; text-align: center; margin-bottom: 52px; cursor: pointer;
-    transition: all 0.2s ease;
+    background: var(--bg-subtle); border: 2px dashed var(--tiffany-blue); border-radius: 16px;
+    padding: 48px; text-align: center; margin-bottom: 56px; cursor: pointer;
+    box-shadow: 0 4px 16px rgba(10, 186, 181, 0.05); transition: all 0.2s ease;
   }
   .ingest-box:hover { background: rgba(10, 186, 181, 0.04); border-color: var(--hermes-orange); }
-  .ingest-headline { font-size: 1.1rem; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+  .ingest-headline { font-size: 1.15rem; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
   .btn-browse {
-    display: inline-block; padding: 10px 24px; border-radius: 4px; margin-top: 14px;
-    font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 1px;
-    background: var(--hermes-orange); color: var(--white); border: none; cursor: pointer; transition: all 0.2s;
+    display: inline-block; padding: 12px 28px; border-radius: 6px; margin-top: 16px;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    background: var(--hermes-orange); color: var(--bg-main); border: none; cursor: pointer; transition: all 0.2s;
   }
-  .btn-browse:hover { background: #FF9233; box-shadow: 0 0 16px rgba(255, 121, 0, 0.4); }
+  .btn-browse:hover { background: #E66C00; box-shadow: 0 4px 16px rgba(255, 121, 0, 0.3); }
 
   /* ── 2. 3D BIOMARKER KNOWLEDGE GRAPH EXPLORER ── */
   .graph-wrapper {
     display: grid; grid-template-columns: 1fr 380px; gap: 24px; height: 600px;
-    background: var(--bg-card); border: 1px solid var(--border-silver); border-radius: 14px;
-    overflow: hidden; margin-bottom: 52px;
+    background: var(--bg-card); border: 1px solid var(--border-silver); border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06); overflow: hidden; margin-bottom: 56px;
   }
-  .viz-pane { position: relative; background: #000000; height: 100%; }
+  .viz-pane { position: relative; background: #030712; height: 100%; }
   #ontology-canvas { width: 100%; height: 100%; display: block; }
 
   .manifold-tabs {
     position: absolute; top: 16px; right: 16px; z-index: 90; display: flex; gap: 8px;
   }
   .tab-btn {
-    font-family: var(--font-mono); font-size: 10px; font-weight: 700; padding: 6px 12px;
-    border-radius: 3px; background: rgba(15, 23, 42, 0.85); color: var(--silver);
+    font-family: var(--font-mono); font-size: 10px; font-weight: 700; padding: 7px 14px;
+    border-radius: 4px; background: rgba(15, 23, 42, 0.85); color: var(--silver);
     border: 1px solid var(--border-silver); cursor: pointer; transition: all 0.2s;
   }
-  .tab-btn.active { color: var(--white); background: var(--tiffany-blue); border-color: var(--tiffany-blue); }
+  .tab-btn.active { color: var(--bg-main); background: var(--tiffany-blue); border-color: var(--tiffany-blue); }
 
   /* ── 3. LIVE OAR AUDIT REPORT VIEWER ── */
   .oar-box {
-    background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: 14px;
-    padding: 32px; margin-bottom: 52px;
+    background: var(--bg-card); border: 1.5px solid var(--border-gold); border-radius: 16px;
+    padding: 36px; margin-bottom: 56px; box-shadow: 0 6px 24px rgba(212, 175, 55, 0.08);
   }
-  .oar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-silver); padding-bottom: 16px; }
-  .oar-title { font-family: var(--font-title); font-size: 1.2rem; color: var(--gold); }
+  .oar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-silver); padding-bottom: 18px; }
+  .oar-title { font-family: var(--font-title); font-size: 1.25rem; color: var(--gold); }
   .badge-verdict {
-    font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 3px;
-    background: rgba(10, 186, 181, 0.15); color: var(--tiffany-blue); border: 1px solid var(--tiffany-blue);
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 6px 16px; border-radius: 4px;
+    background: rgba(10, 186, 181, 0.1); color: var(--tiffany-blue); border: 1.5px solid var(--tiffany-blue);
   }
 
-  .biomarker-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-family: var(--font-mono); font-size: 11px; }
-  .biomarker-table th { text-align: left; padding: 10px; border-bottom: 1px solid var(--border-silver); color: var(--silver); }
-  .biomarker-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--white); }
-  .badge-status-normal { color: var(--tiffany-blue); font-weight: bold; }
-  .badge-status-high { color: var(--hermes-orange); font-weight: bold; }
+  .biomarker-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-family: var(--font-mono); font-size: 12px; }
+  .biomarker-table th { text-align: left; padding: 12px; border-bottom: 2px solid var(--border-silver); color: var(--text-muted); background: var(--bg-subtle); }
+  .biomarker-table td { padding: 12px; border-bottom: 1px solid var(--border-silver); color: var(--text-dark); }
+  .badge-status-normal { color: var(--tiffany-blue); font-weight: bold; background: rgba(10, 186, 181, 0.08); padding: 3px 8px; border-radius: 3px; }
+  .badge-status-high { color: var(--hermes-orange); font-weight: bold; background: rgba(255, 121, 0, 0.08); padding: 3px 8px; border-radius: 3px; }
 
   /* ── 4. LIVE FPGA HARDWARE STATUS BAR ── */
   .hw-bar {
     display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
-    background: rgba(15, 23, 42, 0.95); border: 1px solid var(--border-silver); border-radius: 10px;
-    padding: 16px 24px; font-family: var(--font-mono); font-size: 11px; color: var(--silver);
+    background: var(--bg-subtle); border: 1px solid var(--border-silver); border-radius: 12px;
+    padding: 18px 28px; font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
   }
-  .hw-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--tiffany-blue); box-shadow: 0 0 8px var(--tiffany-blue); margin-right: 8px; }
+  .hw-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--tiffany-blue); box-shadow: 0 0 8px var(--tiffany-blue); margin-right: 8px; }
 </style>
 </head>
 <body>
@@ -246,7 +249,7 @@
     <div class="section-title"><span class="accent-ho">📄 01.</span> INGEST CLINICAL EVIDENCE DOCUMENT</div>
     <div class="ingest-box" onclick="document.getElementById('upload-input').click()">
       <div class="ingest-headline">Drag &amp; drop patient lab record or clinical document here</div>
-      <div style="font-size: 0.85rem; color: var(--silver);">Supported Formats: PDF &middot; CSV &middot; JSON &middot; XLS &middot; XLSX &middot; PNG &middot; JPG</div>
+      <div style="font-size: 0.88rem; color: var(--silver); margin-top: 4px;">Supported Formats: PDF &middot; CSV &middot; JSON &middot; XLS &middot; XLSX &middot; PNG &middot; JPG</div>
       <button class="btn-browse">BROWSE EVIDENCE FILE</button>
       <input type="file" id="upload-input" style="display:none;" accept=".pdf,.txt,.csv,.json">
     </div>
@@ -266,16 +269,16 @@
       </div>
 
       <!-- Detail Info Panel -->
-      <div style="padding: 24px; background: var(--bg-panel); display: flex; flex-direction: column; justify-content: space-between;">
+      <div style="padding: 28px; background: var(--bg-panel); display: flex; flex-direction: column; justify-content: space-between;">
         <div>
-          <div style="font-family: var(--font-mono); font-size: 10px; color: var(--tiffany-blue); letter-spacing: 2px;">OCH CLINICAL DOMAIN</div>
-          <div style="font-family: var(--font-title); font-size: 16px; color: var(--white); margin: 6px 0 16px;">CARDIOVASCULAR &amp; METABOLIC</div>
-          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">Click any node on the 3D canvas to inspect LOINC biomarker thresholds, SymPy derivation formulas, and AlphaFold protein targets.</div>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--tiffany-blue); font-weight: 700; letter-spacing: 2px;">OCH CLINICAL DOMAIN</div>
+          <div style="font-family: var(--font-title); font-size: 17px; color: var(--text-dark); margin: 8px 0 16px;">CARDIOVASCULAR &amp; METABOLIC</div>
+          <div style="font-size: 13px; color: var(--text-muted); line-height: 1.65;">Click any node on the 3D canvas to inspect LOINC biomarker thresholds, SymPy derivation formulas, and AlphaFold protein targets.</div>
         </div>
 
-        <div style="border-top: 1px solid var(--border-silver); padding-top: 16px;">
-          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--gold); margin-bottom: 6px;">HARDWARE GATE</div>
-          <div style="font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--tiffany-blue);">DEC_ALLOW (2'b10)</div>
+        <div style="border-top: 1px solid var(--border-silver); padding-top: 18px;">
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--gold); margin-bottom: 6px; font-weight: 700;">HARDWARE GATE</div>
+          <div style="font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--tiffany-blue);">DEC_ALLOW (2'b10)</div>
         </div>
       </div>
     </div>
@@ -288,7 +291,7 @@
       <div class="oar-header">
         <div>
           <div class="oar-title">OCH CLINICAL ADMISSIBILITY AUDIT</div>
-          <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Trace ID: 20260801_OCH_CLINICAL_PROOFS &nbsp;|&nbsp; Standard: ISO 13485 / FDA 510(k)</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Trace ID: 20260801_OCH_CLINICAL_PROOFS &nbsp;|&nbsp; Standard: ISO 13485 / FDA 510(k)</div>
         </div>
         <div class="badge-verdict">VERDICT: ALLOW</div>
       </div>
@@ -309,14 +312,14 @@
             <td>95 mg/dL</td>
             <td>70 – 99 mg/dL</td>
             <td><span class="badge-status-normal">NORMAL</span></td>
-            <td>SymPy ALLOW (95 <= 140)</td>
+            <td>SymPy ALLOW (95 &lt;= 140)</td>
           </tr>
           <tr>
             <td>Serum Creatinine</td>
             <td>0.9 mg/dL</td>
             <td>0.6 – 1.2 mg/dL</td>
             <td><span class="badge-status-normal">NORMAL</span></td>
-            <td>SymPy ALLOW (0.9 <= 1.5)</td>
+            <td>SymPy ALLOW (0.9 &lt;= 1.5)</td>
           </tr>
           <tr>
             <td>Systolic BP</td>
@@ -332,10 +335,10 @@
 
   <!-- HARDWARE MONITOR FOOTER -->
   <div class="hw-bar">
-    <div><span class="hw-dot"></span>FPGA ENGINE: <span style="color: var(--tiffany-blue)">och.v (ACTIVE)</span></div>
-    <div>AXI REGISTERS: <span style="color: var(--gold)">0x7000–0x70FF</span></div>
-    <div>CASTELLI INDEX: <span style="color: var(--white)">1.45 (Q16.16)</span></div>
-    <div>SOFA SCORE: <span style="color: var(--tiffany-blue)">0 / 24 (NOMINAL)</span></div>
+    <div><span class="hw-dot"></span>FPGA ENGINE: <span style="color: var(--tiffany-blue); font-weight: bold;">och.v (ACTIVE)</span></div>
+    <div>AXI REGISTERS: <span style="color: var(--gold); font-weight: bold;">0x7000–0x70FF</span></div>
+    <div>CASTELLI INDEX: <span style="color: var(--text-dark); font-weight: bold;">1.45 (Q16.16)</span></div>
+    <div>SOFA SCORE: <span style="color: var(--tiffany-blue); font-weight: bold;">0 / 24 (NOMINAL)</span></div>
   </div>
 
 </div>
