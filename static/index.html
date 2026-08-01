@@ -3,19 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OCH · Sovereign Ontology Compliance Healthcare</title>
+<title>OCH · Ontology Compliance Healthcare</title>
 <meta name="description" content="Dedicated single-purposed OCH (Ontology Compliance Healthcare) service — deterministic clinical biomarker verification, LOINC standards, and hardware-accelerated FPGA risk evaluation.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/sovereign_scrollbar.css?v=20260603_05">
+<link rel="stylesheet" href="css/sovereign-header.css?v=20260501">
 <style>
   /* ==========================================================================
-     OCH LANDING PAGE — Fixed Header Bounds & White Background Luxury Palette
-     - Background        : Pure White (#FFFFFF) & Soft Slate (#F8FAFC)
-     - Metallic Gold     : #D4AF37 / #B8860B
-     - Metallic Silver   : #CBD5E1 / #64748B
-     - Neon Green        : #00C853
-     - Tiffany Blue      : #0abab5
-     - Hermès Orange     : #FF7900
+     OCH LANDING PAGE — Pure White Background + Luxury Palette
+     Branding: OCH (Ontology Compliance Healthcare)
      ========================================================================== */
   :root {
     --bg-main:         #FFFFFF;
@@ -47,28 +44,23 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { width: 100%; min-height: 100%; background: var(--bg-main); color: var(--text-dark); font-family: var(--font-ui); overflow-x: hidden; }
 
-  /* ── NAVIGATION HEADER (FIXED BOUNDS — NO VIDEO BLOWOUT) ── */
-  header.sm-header-bar {
-    position: sticky; top: 0; left: 0; right: 0; z-index: 100;
-    height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 36px;
-    background: #000000; border-bottom: 2px solid var(--border-gold);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); overflow: hidden;
+  /* ── CANONICAL HEADER SHAPE BOUNDS ── */
+  header.sm-header {
+    position: relative; width: 100%; height: 212px; background: #000000;
+    overflow: hidden; flex-shrink: 0; border-bottom: 2px solid var(--border-gold);
   }
-  .hdr-brand-box { display: flex; align-items: center; gap: 14px; }
-  .hdr-logo-img { height: 38px; width: auto; object-fit: contain; }
-  .hdr-brand-title {
-    font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 3px;
-    background: linear-gradient(45deg, #3b2222, #654328, #D4AF37, #ffeaaa);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .hdr-nav-links { display: flex; gap: 12px; align-items: center; }
-  .hdr-nav-btn {
-    padding: 8px 18px; border-radius: 4px; font-family: var(--font-mono); font-size: 11px; font-weight: 700;
-    letter-spacing: 1px; text-decoration: none; transition: all 0.2s;
-  }
-  .hdr-nav-btn.active { background: rgba(0, 200, 83, 0.15); color: var(--neon-green); border: 1.5px solid var(--neon-green); }
-  .hdr-nav-btn.inactive { background: transparent; color: var(--metallic-gold); border: 1.5px solid var(--border-gold); }
-  .hdr-nav-btn.inactive:hover { background: rgba(212, 175, 55, 0.15); }
+  .hdr-wing { position: absolute; top: 0; width: 220px; height: 212px; overflow: hidden; z-index: 2; }
+  .hdr-wing.left  { left: 0; }
+  .hdr-wing.right { right: 0; }
+  .hdr-wing video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hdr-engines { position: absolute; top: 0; left: 220px; right: 220px; height: 212px; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 16px; z-index: 5; }
+  .hdr-bottom { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+  .hdr-brand { display: flex; align-items: center; gap: 12px; }
+  .hdr-logo { height: 36px; width: auto; }
+  .hdr-brand-text { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 3px; background: linear-gradient(45deg, #3b2222, #654328, #D4AF37, #ffeaaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hdr-nav { display: flex; gap: 10px; }
+  .hdr-btn { padding: 8px 16px; border-radius: 4px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: #aaa; text-decoration: none; border: 1px solid rgba(212,175,55,0.3); transition: all 0.2s; }
+  .hdr-btn:hover { color: var(--neon-green); background: rgba(0,200,83,0.1); border-color: var(--neon-green); }
 
   /* ── MAIN CONTAINER ── */
   .och-landing-container { max-width: 1400px; margin: 0 auto; padding: 40px 32px 60px; }
@@ -144,15 +136,26 @@
 </head>
 <body>
 
-<!-- FIXED CLEAN HEADER -->
-<header class="sm-header-bar">
-  <div class="hdr-brand-box">
-    <img class="hdr-logo-img" src="aichip-logo-home.png" alt="AIChip Logo">
-    <span class="hdr-brand-title">SOVEREIGN OCH</span>
+<!-- CANONICAL OCH HEADER ARCHITECTURE -->
+<header class="sm-header">
+  <div class="hdr-wing left">
+    <video autoplay loop muted playsinline src="P01Header_L.mp4"></video>
   </div>
-  <div class="hdr-nav-links">
-    <a class="hdr-nav-btn active" href="index.html">HOME / OVERVIEW</a>
-    <a class="hdr-nav-btn inactive" href="ontology_medical.html">OCH OPERATION CENTER (3D)</a>
+  <div class="hdr-wing right">
+    <video autoplay loop muted playsinline src="P01header_R.mp4"></video>
+  </div>
+
+  <div class="hdr-engines">
+    <div class="hdr-bottom">
+      <div class="hdr-brand">
+        <img class="hdr-logo" src="aichip-logo-home.png" alt="AIChip Logo">
+        <span class="hdr-brand-text">OCH</span>
+      </div>
+      <div class="hdr-nav">
+        <a class="hdr-btn" href="index.html" style="background:rgba(0,200,83,0.15);color:#00C853;border-color:#00C853;">HOME / OVERVIEW</a>
+        <a class="hdr-btn" href="ontology_medical.html">OCH OPERATION CENTER (3D)</a>
+      </div>
+    </div>
   </div>
 </header>
 

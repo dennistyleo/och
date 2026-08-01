@@ -3,13 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sovereign OCH · 3D Medical Evaluation &amp; Biomarker Audit</title>
-<meta name="description" content="Hierarchical OCH 3D Medical Explorer — GNN Biomarkers, World Models, Causal Pathways, and G3FP+SAA Evidence Ingestion.">
+<title>OCH · 3D Medical Evaluation &amp; Biomarker Audit</title>
+<meta name="description" content="Hierarchical OCH 3D Medical Explorer — GNN Biomarkers, World Models, Causal Pathways, LOINC Axiom Repository, and G3FP+SAA Evidence Ingestion.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700;800&family=Orbitron:wght@700;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/sovereign_scrollbar.css?v=20260603_05">
+<link rel="stylesheet" href="css/sovereign-header.css?v=20260501">
 <style>
   /* ==========================================================================
-     SOVEREIGN OCH · 3D MEDICAL OPERATION CENTER — Robust Layout
+     OCH · 3D MEDICAL OPERATION CENTER — Canonical Header & Axiom Repository
+     Branding: OCH (Ontology Compliance Healthcare)
      ========================================================================== */
   :root {
     --bg-main:         #FFFFFF;
@@ -41,31 +44,28 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { width: 100%; height: 100%; background: var(--bg-main); color: var(--text-dark); font-family: var(--font-ui); overflow: hidden; }
 
-  /* ── NAVIGATION HEADER ── */
-  header.sm-header-bar {
-    height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 32px;
-    background: #000000; border-bottom: 2px solid var(--border-gold); flex-shrink: 0;
+  /* ── CANONICAL OCH HEADER SHAPE (EXACT OP-01 ~ OP-03) ── */
+  header.sm-header {
+    position: relative; width: 100%; height: 212px; background: #000000;
+    overflow: hidden; flex-shrink: 0; border-bottom: 2px solid var(--border-gold);
   }
-  .hdr-brand-box { display: flex; align-items: center; gap: 14px; }
-  .hdr-logo-img { height: 34px; width: auto; object-fit: contain; }
-  .hdr-brand-title {
-    font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px;
-    background: linear-gradient(45deg, #3b2222, #654328, #D4AF37, #ffeaaa);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .hdr-nav-links { display: flex; gap: 12px; align-items: center; }
-  .hdr-nav-btn {
-    padding: 6px 16px; border-radius: 4px; font-family: var(--font-mono); font-size: 11px; font-weight: 700;
-    letter-spacing: 1px; text-decoration: none; transition: all 0.2s;
-  }
-  .hdr-nav-btn.active { background: rgba(0, 200, 83, 0.15); color: var(--neon-green); border: 1.5px solid var(--neon-green); }
-  .hdr-nav-btn.inactive { background: transparent; color: var(--metallic-gold); border: 1.5px solid var(--border-gold); }
-  .hdr-nav-btn.inactive:hover { background: rgba(212, 175, 55, 0.15); }
+  .hdr-wing { position: absolute; top: 0; width: 220px; height: 212px; overflow: hidden; z-index: 2; }
+  .hdr-wing.left  { left: 0; }
+  .hdr-wing.right { right: 0; }
+  .hdr-wing video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hdr-engines { position: absolute; top: 0; left: 220px; right: 220px; height: 212px; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 16px; z-index: 5; }
+  .hdr-bottom { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+  .hdr-brand { display: flex; align-items: center; gap: 12px; }
+  .hdr-logo { height: 36px; width: auto; }
+  .hdr-brand-text { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 3px; background: linear-gradient(45deg, #3b2222, #654328, #D4AF37, #ffeaaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hdr-nav { display: flex; gap: 10px; }
+  .hdr-btn { padding: 8px 16px; border-radius: 4px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: #aaa; text-decoration: none; border: 1px solid rgba(212,175,55,0.3); transition: all 0.2s; }
+  .hdr-btn:hover { color: var(--neon-green); background: rgba(0,200,83,0.1); border-color: var(--neon-green); }
 
   /* ── MAIN LAYOUT GRID ── */
   .layout {
     display: grid; grid-template-columns: 1fr 440px;
-    height: calc(100vh - 64px); background: var(--bg-main);
+    height: calc(100vh - 212px); background: var(--bg-main);
   }
   .viz-pane { position: relative; overflow: hidden; background: #030712; }
   .info-pane {
@@ -96,64 +96,97 @@
   .viz-hud-title { font-family: var(--font-title); font-size: 14px; font-weight: 900; color: var(--tiffany-blue); margin-bottom: 4px; letter-spacing: 1px; }
 
   /* ── SIDEBAR PANELS ── */
-  .panel-section { padding: 20px 24px; border-bottom: 1px solid var(--border-silver); background: var(--bg-card); }
+  .panel-section { padding: 18px 22px; border-bottom: 1px solid var(--border-silver); background: var(--bg-card); }
   .panel-label { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--tiffany-blue); margin-bottom: 6px; }
-  .panel-title { font-family: var(--font-title); font-size: 17px; font-weight: 900; color: var(--text-dark); letter-spacing: 1px; }
+  .panel-title { font-family: var(--font-title); font-size: 16px; font-weight: 900; color: var(--text-dark); letter-spacing: 1px; }
 
   /* INGESTION DROP ZONE BLOCK */
   .ingest-block {
-    background: var(--bg-subtle); border: 2px dashed var(--tiffany-blue); border-radius: 12px;
-    padding: 22px; text-align: center; margin-top: 10px; cursor: pointer; transition: all 0.2s;
-    box-shadow: 0 4px 14px rgba(10, 186, 181, 0.05);
+    background: var(--bg-subtle); border: 2px dashed var(--tiffany-blue); border-radius: 10px;
+    padding: 18px; text-align: center; margin-top: 10px; cursor: pointer; transition: all 0.2s;
   }
   .ingest-block:hover { border-color: var(--hermes-orange); background: rgba(255, 121, 0, 0.04); }
   .ingest-title { font-size: 12px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
   .btn-upload-file {
-    display: inline-block; margin-top: 10px; padding: 8px 18px; border-radius: 4px;
+    display: inline-block; margin-top: 8px; padding: 7px 16px; border-radius: 4px;
     font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 1px;
-    background: var(--hermes-orange); color: var(--white); border: none; cursor: pointer; transition: all 0.2s;
+    background: var(--hermes-orange); color: var(--white); border: none; cursor: pointer;
   }
-  .btn-upload-file:hover { background: #E66C00; box-shadow: 0 4px 14px rgba(255, 121, 0, 0.3); }
 
   /* STATS ROW */
-  .stats-row { display: flex; gap: 10px; margin-top: 14px; }
+  .stats-row { display: flex; gap: 10px; margin-top: 12px; }
   .stat-card {
     flex: 1; background: var(--bg-subtle); border: 1px solid var(--border-silver);
-    border-radius: 8px; padding: 10px; text-align: center;
+    border-radius: 6px; padding: 8px; text-align: center;
   }
-  .stat-val { font-family: var(--font-mono); font-size: 18px; font-weight: 800; color: var(--gold-dark); }
+  .stat-val { font-family: var(--font-mono); font-size: 17px; font-weight: 800; color: var(--gold-dark); }
   .stat-lbl { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); letter-spacing: 1px; margin-top: 2px; }
 
-  /* AXIOM SELECTION CHECKBOX TABLE */
-  .axiom-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-family: var(--font-mono); font-size: 11px; }
-  .axiom-table th { text-align: left; padding: 8px; border-bottom: 2px solid var(--border-silver); color: var(--text-muted); background: var(--bg-subtle); }
-  .axiom-table td { padding: 8px; border-bottom: 1px solid var(--border-silver); color: var(--text-dark); }
-  .empty-msg { font-style: italic; color: var(--text-muted); font-size: 11px; padding: 12px 0; }
+  /* TABLES & BADGES */
+  .axiom-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-family: var(--font-mono); font-size: 10.5px; }
+  .axiom-table th { text-align: left; padding: 6px 8px; border-bottom: 2px solid var(--border-silver); color: var(--text-muted); background: var(--bg-subtle); }
+  .axiom-table td { padding: 6px 8px; border-bottom: 1px solid var(--border-silver); color: var(--text-dark); }
+  .empty-msg { font-style: italic; color: var(--text-muted); font-size: 11px; padding: 10px 0; }
+
+  /* AXIOM REPO CARD */
+  .repo-card {
+    background: var(--bg-subtle); border: 1px solid var(--border-silver); border-radius: 8px;
+    padding: 12px; margin-top: 10px; font-family: var(--font-mono); font-size: 11px;
+  }
+  .repo-card-id { color: var(--gold-dark); font-weight: bold; }
 
   /* CTA BUTTONS */
-  .cta-bar { padding: 20px 24px; margin-top: auto; display: flex; flex-direction: column; gap: 10px; background: var(--bg-card); border-top: 1px solid var(--border-silver); }
+  .cta-bar { padding: 16px 22px; margin-top: auto; display: flex; flex-direction: column; gap: 8px; background: var(--bg-card); border-top: 1px solid var(--border-silver); }
   .btn-cta {
-    display: block; width: 100%; padding: 12px 0; text-align: center; border-radius: 6px;
+    display: block; width: 100%; padding: 11px 0; text-align: center; border-radius: 6px;
     font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
     text-decoration: none; transition: all 0.2s; border: none; cursor: pointer;
   }
   .btn-primary { background: var(--neon-green); color: #000000; font-weight: 800; }
-  .btn-primary:hover { background: #00E676; box-shadow: 0 0 16px rgba(0, 200, 83, 0.4); }
   .btn-secondary { background: var(--bg-subtle); color: var(--text-dark); border: 1px solid var(--border-silver); }
-  .btn-secondary:hover { background: var(--border-silver); }
+
+  /* AXIOM REPOSITORY MODAL DRAWER */
+  #axiom-repo-modal {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999;
+    background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px);
+    display: none; justify-content: center; align-items: center; padding: 40px;
+  }
+  .repo-modal-box {
+    background: #FFFFFF; width: 900px; max-width: 95vw; max-height: 85vh; border-radius: 14px;
+    border: 2px solid var(--metallic-gold); box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .repo-modal-header {
+    padding: 20px 28px; background: #000000; border-bottom: 2px solid var(--metallic-gold);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .repo-modal-title { font-family: var(--font-title); font-size: 18px; color: var(--metallic-gold); font-weight: 900; letter-spacing: 2px; }
+  .repo-modal-body { padding: 24px 28px; overflow-y: auto; flex: 1; font-family: var(--font-mono); font-size: 11px; }
+  .btn-close-modal { background: var(--hermes-orange); color: #FFF; border: none; padding: 6px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; }
 </style>
 </head>
 <body>
 
-<!-- FIXED CLEAN HEADER -->
-<header class="sm-header-bar">
-  <div class="hdr-brand-box">
-    <img class="hdr-logo-img" src="aichip-logo-home.png" alt="AIChip Logo">
-    <span class="hdr-brand-title">SOVEREIGN OCH</span>
+<!-- CANONICAL OCH HEADER SHAPE (EXACT OP-01 ~ OP-03) -->
+<header class="sm-header">
+  <div class="hdr-wing left">
+    <video autoplay loop muted playsinline src="P01Header_L.mp4"></video>
   </div>
-  <div class="hdr-nav-links">
-    <a class="hdr-nav-btn inactive" href="index.html">HOME / OVERVIEW</a>
-    <a class="hdr-nav-btn active" href="ontology_medical.html">OCH OPERATION CENTER (3D)</a>
+  <div class="hdr-wing right">
+    <video autoplay loop muted playsinline src="P01header_R.mp4"></video>
+  </div>
+
+  <div class="hdr-engines">
+    <div class="hdr-bottom">
+      <div class="hdr-brand">
+        <img class="hdr-logo" src="aichip-logo-home.png" alt="AIChip Logo">
+        <span class="hdr-brand-text">OCH</span>
+      </div>
+      <div class="hdr-nav">
+        <a class="hdr-btn" href="index.html">HOME / OVERVIEW</a>
+        <a class="hdr-btn" href="ontology_medical.html" style="background:rgba(0,200,83,0.15);color:#00C853;border-color:#00C853;">OCH OPERATION CENTER (3D)</a>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -189,11 +222,11 @@
       </div>
     </div>
 
-    <!-- 2. BRANCH & PIPELINE STATS -->
+    <!-- 2. PIPELINE STATUS -->
     <div class="panel-section">
       <div class="panel-label">SELECTED BRANCH &amp; PIPELINE STATUS</div>
       <div class="panel-title">HEALTHCARE EVALUATION</div>
-      <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-top: 4px;">Live Graded Audit &middot; LOINC Biomarkers</div>
+      <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-top: 2px;">Live Graded Audit &middot; LOINC Biomarkers</div>
 
       <div class="stats-row">
         <div class="stat-card">
@@ -205,25 +238,40 @@
           <div class="stat-lbl">AXIOMS</div>
         </div>
         <div class="stat-card">
-          <div class="stat-val" id="stat-status" style="color: var(--gold-dark); font-size: 12px; line-height: 24px;">AWAITING</div>
+          <div class="stat-val" id="stat-status" style="color: var(--gold-dark); font-size: 12px; line-height: 22px;">AWAITING</div>
           <div class="stat-lbl">STATUS</div>
         </div>
       </div>
     </div>
 
-    <!-- 3. AXIOMS ELECTION & SELECTION PANEL -->
+    <!-- 3. ELECTED AXIOMS SELECTION PANEL -->
     <div class="panel-section">
       <div class="panel-label">📋 02. ELECTED AXIOMS &amp; SELECTION PANEL</div>
       <div id="axiom-selection-container">
-        <div class="empty-msg">No axioms elected. Ingest a patient lab record above to execute G3FP &amp; SAA solver.</div>
+        <div class="empty-msg">No axioms elected. Ingest a lab record above to execute G3FP &amp; SAA solver.</div>
       </div>
     </div>
 
-    <!-- 4. EXTRACTED EVIDENCE BIOMARKERS TABLE -->
+    <!-- 4. EXTRACTED BIOMARKERS TABLE -->
     <div class="panel-section">
       <div class="panel-label">📊 03. EXTRACTED EVIDENCE BIOMARKERS</div>
       <div id="biomarker-container">
         <div class="empty-msg">No evidence file uploaded yet. Ingest a lab record to extract biomarkers.</div>
+      </div>
+    </div>
+
+    <!-- 5. EXPLICIT LOINC AXIOM REPOSITORY SECTION -->
+    <div class="panel-section">
+      <div class="panel-label">📚 04. LOINC AXIOM REPOSITORY LIBRARY</div>
+      <div class="repo-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="repo-card-id">OCH LOINC AXIOM REPOSITORY</span>
+          <span style="background:var(--tiffany-blue); color:#FFF; padding:2px 6px; border-radius:3px; font-size:9px; font-weight:bold;">16 AXIOMS</span>
+        </div>
+        <div style="color:var(--text-muted); font-size:10px; margin-top:4px;">16-Channel Q16.16 SymPy reference rules for Glucose, Creatinine, Hemoglobin, Troponin, and Blood Pressure.</div>
+        <button onclick="toggleAxiomRepoModal()" style="margin-top:10px; width:100%; padding:6px 0; background:var(--gold-dark); color:#FFF; border:none; border-radius:4px; font-family:var(--font-mono); font-size:10px; font-weight:bold; cursor:pointer;">
+          OPEN LOINC AXIOM REPOSITORY &rarr;
+        </button>
       </div>
     </div>
 
@@ -237,6 +285,81 @@
 
 </div>
 
+<!-- LOINC AXIOM REPOSITORY MODAL DRAWER -->
+<div id="axiom-repo-modal">
+  <div class="repo-modal-box">
+    <div class="repo-modal-header">
+      <div class="repo-modal-title">📚 OCH LOINC AXIOM REPOSITORY &amp; SYMPY PROOF LIBRARY</div>
+      <button class="btn-close-modal" onclick="toggleAxiomRepoModal()">CLOSE &times;</button>
+    </div>
+    <div class="repo-modal-body">
+      <table class="axiom-table" style="font-size:11px;">
+        <thead>
+          <tr><th>AXIOM ID</th><th>LOINC CODE</th><th>NAME / BIOMARKER</th><th>SYMPY VALIDATION PROOF</th><th>REF RANGE</th><th>STATUS</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--gold-dark);font-weight:bold;">HC_AIP_001</td>
+            <td>34714-6</td>
+            <td>Atherogenic Index of Plasma</td>
+            <td>\text{AIP} = \log_{10}\left(\frac{\text{TG}}{\text{HDL}}\right) \le 0.21</td>
+            <td>&lt; 0.21</td>
+            <td><span style="color:var(--neon-green);font-weight:bold;">REGISTERED</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--gold-dark);font-weight:bold;">HC_GLU_001</td>
+            <td>2345-7</td>
+            <td>Fasting Glucose</td>
+            <td>\text{Glucose} \le 140 \text{ mg/dL}</td>
+            <td>70 - 99 mg/dL</td>
+            <td><span style="color:var(--neon-green);font-weight:bold;">REGISTERED</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--gold-dark);font-weight:bold;">HC_CRE_001</td>
+            <td>2160-0</td>
+            <td>Serum Creatinine</td>
+            <td>\text{Creatinine} \le 1.5 \text{ mg/dL}</td>
+            <td>0.6 - 1.2 mg/dL</td>
+            <td><span style="color:var(--neon-green);font-weight:bold;">REGISTERED</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--gold-dark);font-weight:bold;">HC_BP_001</td>
+            <td>8480-6</td>
+            <td>Systolic Blood Pressure</td>
+            <td>\text{BP}_{sys} \le 130 \text{ mmHg}</td>
+            <td>90 - 120 mmHg</td>
+            <td><span style="color:var(--neon-green);font-weight:bold;">REGISTERED</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--gold-dark);font-weight:bold;">HC_HBA1C_001</td>
+            <td>4548-4</td>
+            <td>Hemoglobin A1c</td>
+            <td>\text{HbA1c} \le 6.5 \%</td>
+            <td>4.0 - 5.6 %</td>
+            <td><span style="color:var(--neon-green);font-weight:bold;">REGISTERED</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--gold-dark);font-weight:bold;">HC_TROP_001</td>
+            <td>49563-0</td>
+            <td>Cardiac Troponin I</td>
+            <td>\text{Troponin} \le 0.04 \text{ ng/mL}</td>
+            <td>&lt; 0.04 ng/mL</td>
+            <td><span style="color:var(--neon-green);font-weight:bold;">REGISTERED</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--gold-dark);font-weight:bold;">HC_HEMO_001</td>
+            <td>718-7</td>
+            <td>Blood Hemoglobin</td>
+            <td>12.0 \le \text{Hemoglobin} \le 17.5 \text{ g/dL}</td>
+            <td>12.0 - 17.5 g/dL</td>
+            <td><span style="color:var(--neon-green);font-weight:bold;">REGISTERED</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <!-- HITL MODAL BRIDGE & THREE.JS SCRIPTS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -244,6 +367,13 @@
 <script src="hitl_modal_bridge.js?v=10010"></script>
 
 <script>
+function toggleAxiomRepoModal() {
+    const modal = document.getElementById('axiom-repo-modal');
+    if (modal) {
+        modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+    }
+}
+
 function openHITLModalBridge(sampleFile = 'patient_lab_record.pdf') {
     if (typeof HITLModal !== 'undefined' && HITLModal.show) {
         HITLModal.show({
