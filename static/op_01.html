@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1920">
-    <title>Sovereign OCM · OP-01 Compliance Ingestion</title>
-    <meta name="description" content="Sovereign OCM OP-01 — Ontology Compliance Matrix">
+    <title>Sovereign OCH · OP-01 Compliance Ingestion</title>
+    <meta name="description" content="Sovereign OCH OP-01 — Ontology Compliance Healthcare">
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="css/sovereign-header-fixes.css?v=4">
     <style>
         /* ═══════════════════════════════════════════════════════════
-       SOVEREIGN OCM · OP-01  —  Ontology Compliance Matrix v4.0
+       SOVEREIGN OCH · OP-01  —  Ontology Compliance Healthcare v4.0
 
        HEADER ARCHITECTURE (FIXED):
          Wings are ABSOLUTE-POSITIONED, spanning the full non-bridge
@@ -3067,7 +3067,7 @@
                     /* [ECP-FLASH-FIX] PURE CONTEXT UPDATER — NEVER calls HITLModal.show().
                      * The modal is opened exactly once by the unconditional HITLModal.show()
                      * in the main upload flow. This function only updates sessionStorage,
-                     * the headline, SovereignBUS, and the OCM iframe. */
+                     * the headline, SovereignBUS, and the OCH iframe. */
                     if (g3fpData) {
                         try {
                             var _ex = JSON.parse(sessionStorage.getItem('sovereign_g3fp_context') || '{}');
@@ -3082,7 +3082,7 @@
                         var _bf = document.getElementById('hitl-bridge-frame');
                         if (_bf && _bf.contentWindow) _bf.contentWindow.postMessage({ type: 'G3FP_CONTEXT_READY', trace_id: g3fpData.trace_id || g3fpData.traceId || null, domain: g3fpData.domain, elected_count: _el.length }, '*');
                     } else if (statusMode) {
-                        hl.innerHTML = '<span style="color:#D4AF37;font-family:\'JetBrains Mono\',monospace;font-size:12px">\u23f3 G3FP analysing <strong>' + f.name + '</strong>\u2026 OCM will keep you informed.</span>';
+                        hl.innerHTML = '<span style="color:#D4AF37;font-family:\'JetBrains Mono\',monospace;font-size:12px">\u23f3 G3FP analysing <strong>' + f.name + '</strong>\u2026 OCH will keep you informed.</span>';
                     } else {
                         hl.innerHTML = '<strong style="color:var(--green2)">Ready (degraded): </strong>' + f.name;
                     }
@@ -3092,8 +3092,8 @@
                  * G3FP is always live (singleton initialized at startup).
                  * If G3FP resolves within 2s → open HITL modal fully populated.
                  * If G3FP takes longer → open modal immediately in status mode so
-                 * OCM can communicate non-stop with the user while G3FP finishes.
-                 * When G3FP resolves → post G3FP_CONTEXT_READY to iframe; OCM transitions.
+                 * OCH can communicate non-stop with the user while G3FP finishes.
+                 * When G3FP resolves → post G3FP_CONTEXT_READY to iframe; OCH transitions.
                  * User is NEVER left with a frozen drop zone or an empty modal.
                  * ──────────────────────────────────────────────────────────────────────── */
                 const _fd = new FormData();
@@ -3557,7 +3557,7 @@
                         /* options */ { systemTier }
                     );
 
-                    /* ── STEP 2: Start processing IMMEDIATELY (concurrent with OCM dialogue) ── */
+                    /* ── STEP 2: Start processing IMMEDIATELY (concurrent with OCH dialogue) ── */
                     /* [UNCONDITIONAL] Reset all tubes to 0 before processing starts. */
                     if (window.SovereignTubes) SovereignTubes.reset();
 
@@ -4434,9 +4434,9 @@ ${notes ? 'Notes: ' + notes : ''}`;
                     /* Narrative: prefer G3FP executive_summary, fallback to inferred */
                     const _execSummary = (t.clinical_narrative && t.clinical_narrative.executive_summary) || '';
                     const narrative = _execSummary
-                        ? `${_execSummary}<br><br><span class="highlight">${sel.length} axiom(s)</span> formally elected under <b>${modeLabel}</b> mode. Average confidence: <b>${Math.round(confAvg * 100)}%</b>.${can.length ? ` <span class="warn">${can.length} candidate(s) pending.</span>` : ''}<br><br>Sovereign OCM classification: <b>${verdict}</b>.`
+                        ? `${_execSummary}<br><br><span class="highlight">${sel.length} axiom(s)</span> formally elected under <b>${modeLabel}</b> mode. Average confidence: <b>${Math.round(confAvg * 100)}%</b>.${can.length ? ` <span class="warn">${can.length} candidate(s) pending.</span>` : ''}<br><br>Sovereign OCH classification: <b>${verdict}</b>.`
                         : sel.length
-                            ? `The subject document <b>${fname}</b> has been evaluated under <b>${modeLabel}</b> mode across <b>${activeDomains.length}</b> active ontological domain(s).<br><br><span class="highlight">${sel.length} axiom(s)</span> have been elected above the confidence threshold, with an average confidence of <b>${Math.round(confAvg * 100)}%</b>.${can.length ? `<br><br><span class="warn">${can.length} candidate axiom(s)</span> are pending confirmation.` : ''}${sby.length ? `<br><br>${sby.length} standby axiom(s) noted below threshold.` : ''}<br><br>The Sovereign OCM has classified this document as <b>${verdict}</b> based on the elected axiom profile.`
+                            ? `The subject document <b>${fname}</b> has been evaluated under <b>${modeLabel}</b> mode across <b>${activeDomains.length}</b> active ontological domain(s).<br><br><span class="highlight">${sel.length} axiom(s)</span> have been elected above the confidence threshold, with an average confidence of <b>${Math.round(confAvg * 100)}%</b>.${can.length ? `<br><br><span class="warn">${can.length} candidate axiom(s)</span> are pending confirmation.` : ''}${sby.length ? `<br><br>${sby.length} standby axiom(s) noted below threshold.` : ''}<br><br>The Sovereign OCH has classified this document as <b>${verdict}</b> based on the elected axiom profile.`
                             : `<span class="critical">No axioms were elected in this evaluation.</span> The pipeline returned insufficient evidence above the election threshold.`;
 
                     const domainNarrative = activeDomains.length
@@ -4503,8 +4503,8 @@ ${notes ? 'Notes: ' + notes : ''}`;
                         /* ── eof G3FP Rich Clinical Data ── */
                         operator: (typeof _sovOperator !== 'undefined' ? _sovOperator : null)
                             || sessionStorage.getItem('sovereign_operator')
-                            || 'OCM SYSTEM',
-                        pipelineVersion: 'G3FP·OCM·v4.1',
+                            || 'OCH SYSTEM',
+                        pipelineVersion: 'G3FP·OCH·v4.1',
                         generatedAt: new Date().toISOString(),
                         gates: gatesOverride,
                         clientOrg: (window._sovereignClientConfig && window._sovereignClientConfig.orgName) || '',
@@ -4649,7 +4649,7 @@ ${notes ? 'Notes: ' + notes : ''}`;
                     if (!cats[cat]) cats[cat] = [];
                     cats[cat].push(ax);
                 });
-                let html = '<div style="font-family:Calibri,\u5fae\u8edf\u6b63\u9ed1\u9ad4,sans-serif;font-size:12px;color:#555;padding:5px 8px 4px;border-bottom:1px solid #222;letter-spacing:.5px">⚡ OCM ELECTION: NO AXIOMS ELECTED — upload a document</div>';
+                let html = '<div style="font-family:Calibri,\u5fae\u8edf\u6b63\u9ed1\u9ad4,sans-serif;font-size:12px;color:#555;padding:5px 8px 4px;border-bottom:1px solid #222;letter-spacing:.5px">⚡ OCH ELECTION: NO AXIOMS ELECTED — upload a document</div>';
                 for (const [cat, axioms] of Object.entries(cats)) {
                     html += '<div class="tele-section">&gt;&gt; ' + cat + '</div><ul class="tele-list">';
                     axioms.forEach(ax => {
@@ -4846,7 +4846,7 @@ ${notes ? 'Notes: ' + notes : ''}`;
                      const _w = window.open('', '_blank');
                      if (!_w) { alert('Browser blocked popup. Please allow popups for this site.'); return; }
                      _w.document.open();
-                     _w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Sovereign OCM — Generating…</title>
+                     _w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Sovereign OCH — Generating…</title>
 <style>body{font-family:Calibri,sans-serif;background:#000;color:#ccc;padding:40px;display:flex;align-items:center;justify-content:center;min-height:80vh;flex-direction:column}
 .spinner{width:48px;height:48px;border:4px solid #222;border-top:4px solid #D4AF37;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px}
 @keyframes spin{to{transform:rotate(360deg)}}p{color:#D4AF37;font-size:14px;letter-spacing:2px}</style></head>
@@ -4900,7 +4900,7 @@ td{border-bottom:1px solid #0d0d0d;font-size:12px}
 .footer{margin-top:40px;padding-top:16px;border-top:1px solid #111;color:#333;font-size:11px;text-align:center}
 @media print{body{background:#fff;color:#000}h1,h2{color:#000}.nb{background:#f8f8f8}}
 </style></head><body>
-<h1>⬡ SOVEREIGN OCM — ONTOLOGY COMPLIANCE AUDIT REPORT</h1>
+<h1>⬡ SOVEREIGN OCH — ONTOLOGY COMPLIANCE AUDIT REPORT</h1>
 <div class="meta">
   <strong>Target:</strong> <span style="color:#eee">${fname}</span><br>
   <strong>Domain:</strong> <span style="color:#D4AF37">${domain}</span> · <strong>Mode:</strong> <span style="color:#D4AF37">${curMode.toUpperCase()}</span> (Gemini 3 Flash Preview)<br>
@@ -4919,7 +4919,7 @@ ${sel.length ? `<h2>⚡ ELECTED AXIOMS APPLIED</h2><table><thead><tr><th>Tier</t
 ${can.length ? `<h2>◇ CANDIDATE AXIOMS</h2><table><thead><tr><th>Tier</th><th>ID</th><th>Name</th><th>Score</th></tr></thead><tbody>${rows(can, '#D4AF37', 'CANDIDATE')}</tbody></table>` : ''}
 ${sby.length ? `<h2>⬛ STANDBY (DEFERRED)</h2><table><thead><tr><th>Tier</th><th>ID</th><th>Name</th><th>Score</th></tr></thead><tbody>${rows(sby, '#666', 'STANDBY')}</tbody></table>` : ''}
 
-<div class="footer">SOVEREIGN OCM · ONTOLOGY COMPLIANCE MATRIX v4.1 · Gemini 3 Flash Preview · ${ts}</div>
+<div class="footer">SOVEREIGN OCH · ONTOLOGY COMPLIANCE MATRIX v4.1 · Gemini 3 Flash Preview · ${ts}</div>
 </body></html>`;
                      _w.document.open(); _w.document.write(fullHtml); _w.document.close();
                  }; /* end btnReport.onclick */
@@ -5222,7 +5222,7 @@ ${sby.length ? `<h2>⬛ STANDBY (DEFERRED)</h2><table><thead><tr><th>Tier</th><t
                         <button class="ded-domain-tab" onclick="dedModalDomain(2)" title="Causal Deduction Layer">⟴ CAU</button>
                         <button class="ded-domain-tab" onclick="dedModalDomain(3)" title="Stability & Convergence">◈ STAB</button>
                         <button class="ded-domain-tab" onclick="dedModalDomain(4)" title="Physical Admissibility Layer">⊗ PAL</button>
-                        <button class="ded-domain-tab" onclick="dedModalDomain(5)" title="OCM Deduction-Lock Engine">⚙ OCM</button>
+                        <button class="ded-domain-tab" onclick="dedModalDomain(5)" title="OCH Deduction-Lock Engine">⚙ OCH</button>
                         <button class="ded-domain-tab" onclick="dedModalDomain(6)" title="International Canonical Laws">⊞ INTL</button>
                     </div>
                     <button class="ded-modal-close" id="ded-modal-close-btn" onclick="dedModalClose()" aria-label="Close 3D viewer">✕ CLOSE</button>

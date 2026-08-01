@@ -395,7 +395,7 @@
             <button id="hitl-cancel-btn">Cancel</button>
         </div>
 
-        <!-- OCM progress panel -->
+        <!-- OCH progress panel -->
         <div id="ocm-progress-panel"></div>
 
         <!-- L1-L5 tubes (gates G7–G8 poll .eng-bar-fill widths) -->
@@ -469,13 +469,13 @@
                     modal.style.visibility = 'visible';
                 }
 
-                /* ── Inject initial OCM message after 400 ms ── */
+                /* ── Inject initial OCH message after 400 ms ── */
                 setTimeout(() => {
                     const chat = document.getElementById('hitl-ocm-chat');
                     if (chat && !chat.querySelector('.ocm-msg')) {
                         const msg = document.createElement('div');
                         msg.className = 'ocm-msg';
-                        msg.textContent = 'OCM: Please confirm the analysis purpose (deduction / induction / abduction).';
+                        msg.textContent = 'OCH: Please confirm the analysis purpose (deduction / induction / abduction).';
                         chat.appendChild(msg);
                     }
                     /* Arm confirm button with sovBlink */
@@ -612,7 +612,7 @@
         const E2E_CATALOGUE = [
             { id: 'TC-E01', desc: 'Synthetic file injection via handleFile()' },
             { id: 'TC-E02', desc: 'HITL modal renders within timeout' },
-            { id: 'TC-E03', desc: 'OCM purpose prompt appears in terminal' },
+            { id: 'TC-E03', desc: 'OCH purpose prompt appears in terminal' },
             { id: 'TC-E04', desc: 'Purpose confirmed — dual-gate released' },
             { id: 'TC-E05', desc: 'sovBlink: confirm button receives armed class' },
             { id: 'TC-E06', desc: 'hitl:confirmed dispatched / modal dismissed' },

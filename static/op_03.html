@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1920">
-    <title>Sovereign OCM · OP-03 Deduction</title>
+    <title>Sovereign OCH · OP-03 Deduction</title>
     <meta name="description" content="Sovereign Matrix OP-03 Deduction — Deduction Specified Evaluation">
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
@@ -1295,7 +1295,7 @@
                         </div>
 
                         <div class="ev-score-display" id="ev-score">—</div>
-                        <div class="ev-score-label">OCM CONFIDENCE SCORE</div>
+                        <div class="ev-score-label">OCH CONFIDENCE SCORE</div>
                     </div><!-- /ded-log-block -->
                 </div>
 
@@ -1332,13 +1332,13 @@
                                 style="color:#D4AF37" data-i18n="ded.standby">STANDBY</span></div>
                         <div class="ded-log-desc" data-i18n="ded.trace_log_desc">Maps the active topological state of
                             the causal inference engine. Visualizes internal parameter bounds and transition matrices
-                            processed by the OCM layer.</div>
+                            processed by the OCH layer.</div>
                         <div class="ded-log-scroll" id="ded-trace-log">
                             <div class="ded-log-entry sys">Waiting for initialization...</div>
                             <div class="ded-log-entry sys">[INIT] Topological state engine loaded.</div>
                             <div class="ded-log-entry sys">[INIT] Causal matrix buffer allocated.</div>
                             <div class="ded-log-entry sys">[INIT] Parameter bound monitor ready.</div>
-                            <div class="ded-log-entry sys">[INIT] OCM transition layer armed.</div>
+                            <div class="ded-log-entry sys">[INIT] OCH transition layer armed.</div>
                             <div class="ded-log-entry sys">[INIT] Inference graph indexed.</div>
                             <div class="ded-log-entry sys">[TRACE_ENGINE: STANDBY] Awaiting input stream.</div>
                         </div>
@@ -1571,7 +1571,7 @@
                 if (ing) ing.innerHTML = '&gt; INGEST RATE: <span style="color:' + (rate ? '#D4AF37' : '#aaa') + '">' + (rate || 'IDLE') + '</span>';
             }
 
-            /* ── OCM confidence score computation ──────────────────────────── */
+            /* ── OCH confidence score computation ──────────────────────────── */
             function computeConfidence(tiered) {
                 if (!tiered || !tiered.selected) return 0;
                 const s = tiered.selected;
@@ -1625,7 +1625,7 @@
 
                 /* Immediate acknowledgment — shown BEFORE HITL modal opens */
                 window._showToastOp03 && window._showToastOp03('⬡ SUBSTRATE BOUND',
-                    'File: ' + file.name + ' \u00b7 ' + Math.round(file.size / 1024) + ' KB — Running OCM election\u2026',
+                    'File: ' + file.name + ' \u00b7 ' + Math.round(file.size / 1024) + ' KB — Running OCH election\u2026',
                     '#D4AF37', 4000);
 
                 /* 1. Right-panel immediate feedback */
@@ -1648,10 +1648,10 @@
                             if (tp) tp.innerHTML = '<div style="padding:14px;font-family: Calibri, 微軟正黑體, sans-serif;font-size: 12px;line-height:2">'
                                 + '<div style="color:#D4AF37">&#8987; PROCESSING</div>'
                                 + '<div style="color:#555">' + file.name + '</div>'
-                                + '<div style="color:#555">Running OCM election engine...</div></div>';
+                                + '<div style="color:#555">Running OCH election engine...</div></div>';
 
                             if (!window.AxiomMatcher) {
-                                if (tp) tp.innerHTML = '<div style="padding:14px;font-family: Calibri, 微軟正黑體, sans-serif;font-size: 12px;color:#ff4444">&#9888; E005: OCM engine not loaded. Press Cmd+Shift+R to reload.</div>';
+                                if (tp) tp.innerHTML = '<div style="padding:14px;font-family: Calibri, 微軟正黑體, sans-serif;font-size: 12px;color:#ff4444">&#9888; E005: OCH engine not loaded. Press Cmd+Shift+R to reload.</div>';
                                 return;
                             }
 
@@ -1755,7 +1755,7 @@
                                     const can = tiered.candidate || [];
                                     const sby = tiered.standby || [];
                                     const TOTAL = (window.SOVEREIGN_AXIOM_DB || []).length || 103;
-                                    console.log('[OCM OP-03] sel=' + sel.length + ' can=' + can.length + ' mode=' + tiered.electionMode);
+                                    console.log('[OCH OP-03] sel=' + sel.length + ' can=' + can.length + ' mode=' + tiered.electionMode);
 
                                     /* 0. Result notification modal */
                                     const nc0 = sel.length ? '#00C853' : can.length ? '#D4AF37' : '#888';
@@ -1824,7 +1824,7 @@
                                         const oc3 = sel.length ? '<span style="color:#008c3c">&#10003; DEDUCTION COMPLETE &mdash; generate AUDIT REPORT</span>'
                                             : can.length ? '<span style="color:#b8860b">&#9888; CANDIDATE ONLY</span>'
                                                 : '<span style="color:#aaa">&#9675; NO MATCH</span>';
-                                        p3.innerHTML = '<div class="ded-title" style="color:#b8860b">OCM ELECTION RESULT</div>'
+                                        p3.innerHTML = '<div class="ded-title" style="color:#b8860b">OCH ELECTION RESULT</div>'
                                             + '<div style="font-size: 12px;color:#666;line-height:2.1;padding:4px 0">'
                                             + '<div>&#9889; ' + sel.length + ' ELECTED &middot; ' + can.length + ' CANDIDATE &middot; ' + (TOTAL - sel.length - can.length) + ' STANDBY</div>'
                                             + '<div>Mode: ' + (tiered.electionMode || '?') + ' / gap=' + (tiered.certaintygap || 0).toFixed(2) + '</div>'
@@ -1972,7 +1972,7 @@
                                     })();
 
                                 } catch (err) {
-                                    console.error('[OCM onDone CRASH]', err);
+                                    console.error('[OCH onDone CRASH]', err);
                                     _modal('&#9888; DEDUCTION ENGINE ERROR', '<p style="color:#ff4444;font-size: 12px">' + err.message + '</p>'
                                         + '<pre style="color:#888;font-size: 12px;margin-top:8px;overflow:auto;max-height:120px">' + (err.stack || '').slice(0, 400) + '</pre>');
                                 }
@@ -1981,7 +1981,7 @@
                     /* onCancel */() => { }
                     );
                 } else {
-                    console.warn('[OCM] HITLModal not available — direct processing');
+                    console.warn('[OCH] HITLModal not available — direct processing');
                     /* FIX-3 fallback: G3FP-First also fires on this path */
                     (function _g3fpFirstIngestDedFallback() {
                         try {
@@ -2049,7 +2049,7 @@
             /* ── hitl:open ─────────────────────────────────────────────────────
                Routes incoming events by reason:
                • MANUAL_SELECTION  → Axiom Repository Modal (NEVER file-picker)
-               • anything else     → HITL OCM review or file-picker fallback
+               • anything else     → HITL OCH review or file-picker fallback
                NOTE: The 'MANUAL AXIOM SELECTION' button now calls
                HealthcareMedical3D.openAxiomRepoModal() directly and no longer
                dispatches hitl:open. This listener is a secondary safety net only.
@@ -2070,11 +2070,11 @@
                     return;  /* ← Early exit: nothing else should handle MANUAL_SELECTION */
                 }
 
-                /* Non-MANUAL_SELECTION: standard HITL OCM review flow */
+                /* Non-MANUAL_SELECTION: standard HITL OCH review flow */
                 if (window.HITLModal && window._sovereignCurrentFile) {
                     HITLModal.show(window._sovereignCurrentFile, 'deduction',
                         (payload) => {
-                            appendLog('ded-timestamp-log', '[HITL CONFIRMED] Re-running OCM on existing file…', 'sys');
+                            appendLog('ded-timestamp-log', '[HITL CONFIRMED] Re-running OCH on existing file…', 'sys');
                             if (window.AxiomMatcher) {
                                 AxiomMatcher.processFile(window._sovereignCurrentFile, 'tele-body-op03', (tiered) => {
                                     setScore(computeConfidence(tiered));
@@ -2222,7 +2222,7 @@
                     textHtml = '<text x="50" y="46" text-anchor="middle" font-family="Calibri, \'微軟正黑體\', sans-serif" font-size="' + fs2 + '" font-weight="900" fill="' + c + '">' + l1 + '</text><text x="50" y="62" text-anchor="middle" font-family="Calibri, \'微軟正黑體\', sans-serif" font-size="' + fs2 + '" font-weight="900" fill="' + c + '">' + l2 + '</text>';
                 }
                 var sm = Math.round(sz * 0.088);
-                return '<svg xmlns="http://www.w3.org/2000/svg" width="' + sz + '" height="' + sz + '" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="' + c + '" stroke-width="2.5" stroke-dasharray="5 2.5" opacity=".85"/><circle cx="50" cy="50" r="37" fill="' + c + '" fill-opacity=".06" stroke="' + c + '" stroke-width="1" opacity=".5"/>' + textHtml + '<text x="50" y="81" text-anchor="middle" font-family="Calibri, \'微軟正黑體\', sans-serif" font-size="' + sm + '" fill="' + c + '" opacity=".65">SOVEREIGN</text><text x="50" y="22" text-anchor="middle" font-family="Calibri, \'微軟正黑體\', sans-serif" font-size="' + sm + '" fill="' + c + '" opacity=".65">OCM</text></svg>';
+                return '<svg xmlns="http://www.w3.org/2000/svg" width="' + sz + '" height="' + sz + '" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="' + c + '" stroke-width="2.5" stroke-dasharray="5 2.5" opacity=".85"/><circle cx="50" cy="50" r="37" fill="' + c + '" fill-opacity=".06" stroke="' + c + '" stroke-width="1" opacity=".5"/>' + textHtml + '<text x="50" y="81" text-anchor="middle" font-family="Calibri, \'微軟正黑體\', sans-serif" font-size="' + sm + '" fill="' + c + '" opacity=".65">SOVEREIGN</text><text x="50" y="22" text-anchor="middle" font-family="Calibri, \'微軟正黑體\', sans-serif" font-size="' + sm + '" fill="' + c + '" opacity=".65">OCH</text></svg>';
             }
 
             /* ── Step 1: Audit report customization HITL modal ───────────────────── */
@@ -2351,8 +2351,8 @@
                         + '<div style="font-size:12px;color:#555;letter-spacing:1px;font-weight:700;">REQUIRED STEPS:</div>'
                         + '<ol style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:10px;">'
                         + '<li style="font-size:12px;color:#888;line-height:1.7;">Click <strong style="color:#D4AF37;">UPLOAD AXIOM SUBSTRATE</strong> in the left panel (or drag &amp; drop a file)</li>'
-                        + '<li style="font-size:12px;color:#888;line-height:1.7;">Review the HITL OCM Modal — verify extracted data and confirm</li>'
-                        + '<li style="font-size:12px;color:#888;line-height:1.7;">Wait for OCM axiom election to complete (tube progress will animate)</li>'
+                        + '<li style="font-size:12px;color:#888;line-height:1.7;">Review the HITL OCH Modal — verify extracted data and confirm</li>'
+                        + '<li style="font-size:12px;color:#888;line-height:1.7;">Wait for OCH axiom election to complete (tube progress will animate)</li>'
                         + '<li style="font-size:12px;color:#D4AF37;line-height:1.7;">Return here to <strong>Generate Audit Report</strong></li>'
                         + '</ol>'
                         + '</div>'
@@ -2537,7 +2537,7 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
                       + '<span class="highlight">' + sel.length + ' axiom(s)</span> have been elected above the confidence threshold, '
                       + 'with an average confidence of <b>' + Math.round(confAvg * 100) + '%</b>.'
                       + (can.length ? '<br><br><span class="warn">' + can.length + ' candidate axiom(s)</span> are pending confirmation.' : '')
-                      + '<br><br>Sovereign OCM classification: <b>' + verdict + '</b>.'
+                      + '<br><br>Sovereign OCH classification: <b>' + verdict + '</b>.'
                     : '<span class="critical">No axioms were elected in this evaluation.</span> The pipeline returned insufficient evidence above the election threshold.';
 
                 var conclusion = sel.length
@@ -2560,8 +2560,8 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
                     conclusion:     conclusion,
                     generatedAt:    ts,
                     hash:           hash,
-                    operator:       sessionStorage.getItem('sovereign_operator') || 'OCM SYSTEM',
-                    pipelineVersion:'G3FP·OCM·v4.1',
+                    operator:       sessionStorage.getItem('sovereign_operator') || 'OCH SYSTEM',
+                    pipelineVersion:'G3FP·OCH·v4.1',
                     gates:          [
                         { name: 'L1 · Extraction',     status: 'PASS', score: 1.00 },
                         { name: 'L2 · Pathway',        status: 'PASS', score: 1.00 },
@@ -3014,7 +3014,7 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
                     <button class="ded-domain-tab" onclick="dedModalDomain(2)" title="Causal Deduction Layer">⟴ CAU</button>
                     <button class="ded-domain-tab" onclick="dedModalDomain(3)" title="Stability & Convergence">◈ STAB</button>
                     <button class="ded-domain-tab" onclick="dedModalDomain(4)" title="Physical Admissibility Layer">⊗ PAL</button>
-                    <button class="ded-domain-tab" onclick="dedModalDomain(5)" title="OCM Deduction-Lock Engine">⚙ OCM</button>
+                    <button class="ded-domain-tab" onclick="dedModalDomain(5)" title="OCH Deduction-Lock Engine">⚙ OCH</button>
                     <button class="ded-domain-tab" onclick="dedModalDomain(6)" title="International Canonical Laws">⊞ INTL</button>
                 </div>
                 <button class="ded-modal-close" id="ded-modal-close-btn" onclick="dedModalClose()" aria-label="Close 3D viewer">✕ CLOSE</button>
@@ -3591,7 +3591,7 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
             CAU: { badge:'#004D40', bg:'#E0F2F1', border:'#00695C', text:'#004D40' },  /* deep teal    — Causal Deduction Layer */
             STAB:{ badge:'#0D47A1', bg:'#E3F2FD', border:'#1565C0', text:'#0D47A1' }, /* deep navy    — Stability & Convergence */
             PAL: { badge:'#4A148C', bg:'#F3E5F5', border:'#6A1B9A', text:'#4A148C' }, /* deep purple  — Physical Admissibility Layer */
-            OCM: { badge:'#B71C1C', bg:'#FFEBEE', border:'#C62828', text:'#B71C1C' }, /* maroon       — OCM Deduction-Lock Engine */
+            OCH: { badge:'#B71C1C', bg:'#FFEBEE', border:'#C62828', text:'#B71C1C' }, /* maroon       — OCH Deduction-Lock Engine */
             INTL:{ badge:'#1B5E20', bg:'#E8F5E9', border:'#2E7D32', text:'#1B5E20' },  /* deep green   — International Canonical Laws */
             AGT: { badge:'#37474F', bg:'#ECEFF1', border:'#546E7A', text:'#37474F' }   /* blue-grey    — Agent Governance Theorem */
         };
@@ -3635,7 +3635,7 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
                 CAU:'GNN · d-Separation Causal Identification Graph',
                 STAB:'GNN · Lyapunov-Banach Stability Parameter Space',
                 PAL:'GNN · Physical Admissibility Layer Grid',
-                OCM:'GNN · Deduction-Lock DSM Election Graph',
+                OCH:'GNN · Deduction-Lock DSM Election Graph',
                 INTL:'GNN · International Canonical Laws Network'
             },
             wm:{
@@ -3644,7 +3644,7 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
                 CAU:'WM · Do-Calculus Identifiability Surface',
                 STAB:'WM · (Φ*, V̇) Lyapunov Stability Manifold',
                 PAL:'WM · (h(t), E_prop) Admissibility Surface',
-                OCM:'WM · (Score, q) Deduction-Gate Design Space',
+                OCH:'WM · (Score, q) Deduction-Gate Design Space',
                 INTL:'WM · Canonical Laws Verification Manifold'
             },
             cm:{
@@ -3653,7 +3653,7 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
                 CAU:'CM · Root Cause Cardinality Corridor',
                 STAB:'CM · Banach Fixed-Point Convergence Corridor',
                 PAL:'CM · Hazard→E_prop Causal Corridor',
-                OCM:'CM · Deduction-Lock→DOE Closure Chain',
+                OCH:'CM · Deduction-Lock→DOE Closure Chain',
                 INTL:'CM · Physical Law Causal Verification Chain'
             }
         };
@@ -3849,7 +3849,7 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
 
           /* ── PAL: Physical Admissibility Layer ──────────────────────────────────────── */
           { id:'PAL', label:'Physical Admissibility Layer', domain:'PAL',
-            cascades:[['PAL-001','PAL-002'],['PAL-002','OCM-003']],
+            cascades:[['PAL-001','PAL-002'],['PAL-002','OCH-003']],
             axioms:[
               { id:'PAL-001', name:'Domain Hazard Integral Gate \u00b7 \u222bH(domain,t)dt',
                 formula:'h(t) = \u222bH(domain,t)dt < h_max \u2014 cumulative domain hazard over evaluation window',
@@ -3889,11 +3889,11 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
                 c_weights:[0.45,0.25,0.20,0.10] }
             ]},
 
-          /* ── OCM: Deduction-Lock Engine ──────────────────────────────────────────────── */
-          { id:'OCM', label:'OCM \u00b7 Deduction-Lock Engine', domain:'OCM',
-            cascades:[['OCM-001','OCM-002'],['OCM-003','HITL']],
+          /* ── OCH: Deduction-Lock Engine ──────────────────────────────────────────────── */
+          { id:'OCH', label:'OCH \u00b7 Deduction-Lock Engine', domain:'OCH',
+            cascades:[['OCH-001','OCH-002'],['OCH-003','HITL']],
             axioms:[
-              { id:'OCM-001', name:'Deduction FSM Determinism Gate \u00b7 |\u03b4(s,a)|=1',
+              { id:'OCH-001', name:'Deduction FSM Determinism Gate \u00b7 |\u03b4(s,a)|=1',
                 formula:'\u2200s\u2208States, \u2200a\u2208Inputs: |\u03b4(s,a)|=1 \u2014 each (state,input) has exactly one successor',
                 verdict:'ALLOW', computed:0, threshold:0, unit:'violations', ref:'arXiv DSM1, OCG_APP §0.3 Lemma 1',
                 desc:'G3FP: {state_set,transition_function,input_alphabet} | SAA: semantic_fingerprint\u2283{deterministic,state-machine,transition-uniqueness,FSM} AND FSM_enumerated=TRUE | STRUCTURAL DETERMINISM of deduction automaton. | [FSM-DETERMINISM]',
@@ -3902,16 +3902,16 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
                 narratives:['deterministic transition','state machine check','FSM determinism','no ambiguity','unique successor','deduction lock'],
                 file_signals:['state machine','FSM','deterministic','transition function','automaton','deduction pipeline','state diagram'],
                 c_weights:[0.30,0.20,0.30,0.20] },
-              { id:'OCM-002', name:'Axiom Election Score Gate \u00b7 R\u00d70.4+C\u00d70.3+H\u00d70.2+(1-Cost)\u00d70.1',
+              { id:'OCH-002', name:'Axiom Election Score Gate \u00b7 R\u00d70.4+C\u00d70.3+H\u00d70.2+(1-Cost)\u00d70.1',
                 formula:'Score = R\u00d70.4+C\u00d70.3+H\u00d70.2+(1-Cost)\u00d70.1 \u2265 \u03b8_elect \u2014 SAA election formula (spec/21)',
-                verdict:'ALLOW', computed:0.76, threshold:0.65, unit:'score', ref:'SoS spec/21 §OCM, spec/23 v2.0',
+                verdict:'ALLOW', computed:0.76, threshold:0.65, unit:'score', ref:'SoS spec/21 §OCH, spec/23 v2.0',
                 desc:'G3FP: {Relevance,Consistency,Historical_success,Cost} | SAA: semantic_fingerprint\u2283{election,score,relevance,consistency,weighted} AND pipeline_stage=L3 | CANDIDATE AXIOM RANKING at L3. | [ELECTION-SCORE]',
                 fingerprint:'axiom election score relevance consistency historical weighted composite ranking SAA L3 pipeline election formula',
                 intents:['rank candidate axioms','compute election score','which axiom is most relevant','axiom selection scoring'],
                 narratives:['election score','axiom ranking','most relevant axiom','relevance consistency historical','weighted score','axiom selection'],
                 file_signals:['relevance score','consistency','historical success','election','axiom rank','weighted score','candidate axiom'],
                 c_weights:[0.25,0.20,0.35,0.20] },
-              { id:'OCM-003', name:'SymPy Sole-Evaluator Lock \u00b7 Zero-Hallucination Gate',
+              { id:'OCH-003', name:'SymPy Sole-Evaluator Lock \u00b7 Zero-Hallucination Gate',
                 formula:'param_gaps=0, SymPy sole evaluator \u2014 any AI-generated number \u21d2 REFUSE + HITL (OCG_APP Cor.4)',
                 verdict:'REFUSE', computed:2, threshold:0, unit:'gaps', ref:'SoS spec/25_aipmc_rtl_spec.md, OCG_APP §0.8',
                 desc:'G3FP: {param_gaps:int,evaluator_identity:str} | SAA: semantic_fingerprint\u2283{sympy,sole-evaluator,param-gap,zero-hallucination} | COMPUTATIONAL PURITY. | [SYMPY-LOCK][ZERO-HALLUCINATION]',
@@ -3920,7 +3920,7 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
                 narratives:['SymPy check','hallucination detected','AI-generated number','parameter gap','sole evaluator','deduction lock violation','non-deterministic'],
                 file_signals:['SymPy','parameter gap','hallucination','AI-generated','stochastic','non-deterministic','sole evaluator','param_gap'],
                 c_weights:[0.30,0.20,0.25,0.25] },
-              { id:'OCM-004', name:'Causal Temporal Antecedence Gate \u00b7 t_cause<t_effect',
+              { id:'OCH-004', name:'Causal Temporal Antecedence Gate \u00b7 t_cause<t_effect',
                 formula:'t_cause < t_effect \u2200 causal pairs \u2014 strict temporal ordering; simultaneity = REFUSE (acausality)',
                 verdict:'ALLOW', computed:0, threshold:0, unit:'violations', ref:'SoS spec/30 DEDUCT_CAUSAL_001, AX-PA2',
                 desc:'G3FP: {causal_pairs:[{cause,effect,t_cause,t_effect}]} post CAU identification | SAA: entity_keywords\u2283{temporal-order,timestamp,antecedence} AND causal_pairs_available=TRUE | TEMPORAL ORDER of already-identified pairs. | [TEMPORAL-ANTECEDENCE]',
@@ -4079,13 +4079,13 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
             CAU: { badge:'#004D40', bg:'#E0F2F1', border:'#00695C' },
             STAB:{ badge:'#0D47A1', bg:'#E3F2FD', border:'#1565C0' },
             PAL: { badge:'#4A148C', bg:'#F3E5F5', border:'#6A1B9A' },
-            OCM: { badge:'#B71C1C', bg:'#FFEBEE', border:'#C62828' },
+            OCH: { badge:'#B71C1C', bg:'#FFEBEE', border:'#C62828' },
             INTL:{ badge:'#1B5E20', bg:'#E8F5E9', border:'#2E7D32' }
         };
         var PHASE_SUBTITLE = {
-            gnn:{ FON:'GNN · Ontological Soundness Network', OCP:'GNN · Ontological Core Primitives (Alex)', CAU:'GNN · d-Separation Causal Graph', STAB:'GNN · Lyapunov-Banach Stability Space', PAL:'GNN · Physical Admissibility Grid', OCM:'GNN · Deduction-Lock DSM Graph', INTL:'GNN · International Canonical Laws' },
-            wm: { FON:'WM · Meta-Logic Completeness Manifold', OCP:'WM · (E_prop,ε,v_Φ) Primitive Manifold', CAU:'WM · Do-Calculus Surface', STAB:'WM · (Φ*,V̇) Stability Manifold', PAL:'WM · (h(t),E_prop) Admissibility Surface', OCM:'WM · (Score,q) Deduction Space', INTL:'WM · Canonical Laws Manifold' },
-            cm: { FON:'CM · Soundness->Completeness Chain', OCP:'CM · E_prop->ε->v_Φ Corridor (Alex)', CAU:'CM · Root Cause Corridor', STAB:'CM · Banach Convergence Corridor', PAL:'CM · Hazard->E_prop Corridor', OCM:'CM · DeductionLock->DOE Chain', INTL:'CM · Physical Law Verification Chain' }
+            gnn:{ FON:'GNN · Ontological Soundness Network', OCP:'GNN · Ontological Core Primitives (Alex)', CAU:'GNN · d-Separation Causal Graph', STAB:'GNN · Lyapunov-Banach Stability Space', PAL:'GNN · Physical Admissibility Grid', OCH:'GNN · Deduction-Lock DSM Graph', INTL:'GNN · International Canonical Laws' },
+            wm: { FON:'WM · Meta-Logic Completeness Manifold', OCP:'WM · (E_prop,ε,v_Φ) Primitive Manifold', CAU:'WM · Do-Calculus Surface', STAB:'WM · (Φ*,V̇) Stability Manifold', PAL:'WM · (h(t),E_prop) Admissibility Surface', OCH:'WM · (Score,q) Deduction Space', INTL:'WM · Canonical Laws Manifold' },
+            cm: { FON:'CM · Soundness->Completeness Chain', OCP:'CM · E_prop->ε->v_Φ Corridor (Alex)', CAU:'CM · Root Cause Corridor', STAB:'CM · Banach Convergence Corridor', PAL:'CM · Hazard->E_prop Corridor', OCH:'CM · DeductionLock->DOE Chain', INTL:'CM · Physical Law Verification Chain' }
         };
         var SETS = [
           { label:'Foundational Ontology Logic', domain:'FON', cascades:[['FON-001','FON-004']],
@@ -4144,7 +4144,7 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
               {id:'STAB-004',name:'Sovereign Stability Triad Index Gate \u00b7 \u03a6*',
                desc:'G3FP: {G_star,R_star,M_star,w_G,w_R,w_M} | SAA: entity_keywords\u2283{GNN-score,RAG-score,model-score,phi-star} AND all_scores_available=TRUE | Discriminates from STAB-001/002/003 (mathematical stability) by computing SOS-SPECIFIC composite \u03a6*. | [SST][PHI-STAR][SOS-SPECIFIC]',
                formula:'\u03a6* = w_G\u00b7G*+w_R\u00b7R*+w_M\u00b7M* \u2265 \u03a6_thr — SoS composite stability index (w_G+w_R+w_M=1.0)', verdict:'ALLOW',  computed:0.83, threshold:0.75, unit:'\u03a6*'}]},
-          { label:'Physical Admissibility Layer', domain:'PAL', cascades:[['PAL-001','PAL-002'],['PAL-002','OCM-003']],
+          { label:'Physical Admissibility Layer', domain:'PAL', cascades:[['PAL-001','PAL-002'],['PAL-002','OCH-003']],
             axioms:[
               {id:'PAL-001',name:'Domain Hazard Integral Gate \u00b7 \u222bH(domain,t)dt',
                desc:'G3FP: {H_domain_t:time_series,h_max,time_window} | SAA: semantic_fingerprint\u2283{hazard,temporal-integral,accumulation,domain-limit} AND telemetry_available=TRUE | Discriminates from PAL-002 (epistemic E\u2212M) by requiring TIME-SERIES hazard data. | [HAZARD-INTEGRAL][TELEMETRY]',
@@ -4158,18 +4158,18 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
               {id:'PAL-004',name:'State Vector Norm Boundedness Gate \u00b7 \u2016x\u2016\u2264X_max',
                desc:'G3FP: {x_state_vector,X_max} | SAA: semantic_fingerprint\u2283{boundedness,state-vector,norm-check,domain-bounds} AND state_computed=TRUE | Discriminates from PAL-003 (transition DELTA) by checking ABSOLUTE MAGNITUDE of current state. | [STATE-BOUNDEDNESS][OOD-GATE]',
                formula:'\u2016x\u2016 \u2264 X_max \u2200 state variables — no state exceeds its physical or ontological domain maximum', verdict:'ALLOW',  computed:0.87, threshold:1.00, unit:'\u2016x\u2016'}]},
-          { label:'OCM \u00b7 Deduction-Lock Engine', domain:'OCM', cascades:[['OCM-001','OCM-002'],['OCM-003','HITL']],
+          { label:'OCH \u00b7 Deduction-Lock Engine', domain:'OCH', cascades:[['OCH-001','OCH-002'],['OCH-003','HITL']],
             axioms:[
-              {id:'OCM-001',name:'Deduction FSM Determinism Gate \u00b7 |\u03b4(s,a)|=1',
-               desc:'G3FP: {state_set,transition_function,input_alphabet} | SAA: semantic_fingerprint\u2283{deterministic,state-machine,transition-uniqueness,automaton} AND FSM_enumerated=TRUE | Discriminates from OCM-002 (election score) by validating STRUCTURAL DETERMINISM of the deduction automaton. | [FSM-DETERMINISM][AUTOMATON-INTEGRITY]',
+              {id:'OCH-001',name:'Deduction FSM Determinism Gate \u00b7 |\u03b4(s,a)|=1',
+               desc:'G3FP: {state_set,transition_function,input_alphabet} | SAA: semantic_fingerprint\u2283{deterministic,state-machine,transition-uniqueness,automaton} AND FSM_enumerated=TRUE | Discriminates from OCH-002 (election score) by validating STRUCTURAL DETERMINISM of the deduction automaton. | [FSM-DETERMINISM][AUTOMATON-INTEGRITY]',
                formula:'\u2200s\u2208States, \u2200a\u2208Inputs: |\u03b4(s,a)|=1 — each (state,input) has exactly one successor; no ambiguous branching', verdict:'ALLOW',  computed:0,    threshold:0,    unit:'violations'},
-              {id:'OCM-002',name:'Axiom Election Score Gate \u00b7 R\u00d70.4+C\u00d70.3+H\u00d70.2+(1-Cost)\u00d70.1',
-               desc:'G3FP: {Relevance,Consistency,Historical_success,Cost: all floats} | SAA: semantic_fingerprint\u2283{election,score,relevance,consistency,weighted} AND pipeline_stage=L3 | Discriminates from OCM-001 (automaton) by operating on CANDIDATE AXIOM RANKING at L3. | [ELECTION-SCORE][L3-STAGE]',
+              {id:'OCH-002',name:'Axiom Election Score Gate \u00b7 R\u00d70.4+C\u00d70.3+H\u00d70.2+(1-Cost)\u00d70.1',
+               desc:'G3FP: {Relevance,Consistency,Historical_success,Cost: all floats} | SAA: semantic_fingerprint\u2283{election,score,relevance,consistency,weighted} AND pipeline_stage=L3 | Discriminates from OCH-001 (automaton) by operating on CANDIDATE AXIOM RANKING at L3. | [ELECTION-SCORE][L3-STAGE]',
                formula:'Score = R\u00d70.4+C\u00d70.3+H\u00d70.2+(1-Cost)\u00d70.1 \u2265 \u03b8_elect — SAA election formula (spec/21)', verdict:'ALLOW',  computed:0.76, threshold:0.65, unit:'score'},
-              {id:'OCM-003',name:'SymPy Sole-Evaluator Lock \u00b7 Zero-Hallucination Gate',
-               desc:'G3FP: {param_gaps:int,evaluator_identity:str} | SAA: semantic_fingerprint\u2283{sympy,sole-evaluator,param-gap,zero-hallucination} AND (param_gap_detected OR evaluator_check) | Discriminates from OCM-001 (automaton) by testing COMPUTATIONAL PURITY — SymPy must be ONLY evaluator. | [SYMPY-LOCK][ZERO-HALLUCINATION]',
+              {id:'OCH-003',name:'SymPy Sole-Evaluator Lock \u00b7 Zero-Hallucination Gate',
+               desc:'G3FP: {param_gaps:int,evaluator_identity:str} | SAA: semantic_fingerprint\u2283{sympy,sole-evaluator,param-gap,zero-hallucination} AND (param_gap_detected OR evaluator_check) | Discriminates from OCH-001 (automaton) by testing COMPUTATIONAL PURITY — SymPy must be ONLY evaluator. | [SYMPY-LOCK][ZERO-HALLUCINATION]',
                formula:'param_gaps=0, SymPy sole evaluator — no AI-generated numbers; any stochastic injection \u21d2 REFUSE + HITL', verdict:'REFUSE', computed:2,    threshold:0,    unit:'gaps'},
-              {id:'OCM-004',name:'Causal Temporal Antecedence Gate \u00b7 t_cause<t_effect',
+              {id:'OCH-004',name:'Causal Temporal Antecedence Gate \u00b7 t_cause<t_effect',
                desc:'G3FP: {causal_pairs:[{cause,effect,t_cause,t_effect}]} post CAU identification | SAA: entity_keywords\u2283{temporal-order,timestamp,antecedence} AND causal_pairs_available=TRUE | Discriminates from CAU-001/002/003 (causal IDENTIFICATION) by validating TEMPORAL ORDER of already-identified pairs. | [TEMPORAL-ANTECEDENCE][POST-IDENTIFICATION]',
                formula:'t_cause < t_effect \u2200 causal pairs — strict temporal ordering; simultaneity = REFUSE (acausality)', verdict:'ALLOW',  computed:0,    threshold:0,    unit:'violations'}]},
           { label:'International Canonical Laws', domain:'INTL', cascades:[['INTL-001','INTL-002'],['INTL-003','INTL-004']],
@@ -4338,7 +4338,7 @@ Mode: DEDUCTION &nbsp;|&nbsp; ${ts.replace('T',' ').substring(0,19)} UTC<br>${no
         var DED_LABELS = {
             'zone2-gnn-visual': 'Phase 1 — PAL · Physical Admissibility Network',
             'zone3-wm-visual':  'Phase 2 — SST · Lyapunov Stability Manifold',
-            'zone4-cm-visual':  'Phase 3 — OCM · Deduction-Lock Causal Closure'
+            'zone4-cm-visual':  'Phase 3 — OCH · Deduction-Lock Causal Closure'
         };
         function applyDedLabels() {
             Object.keys(DED_LABELS).forEach(function(id) {

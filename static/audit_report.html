@@ -576,7 +576,7 @@ body{background:var(--bg);color:var(--text);font-family:'Fira Code',monospace;fo
     </div>
     <div class="meta-cell">
       <div class="meta-label" data-i18n="report.cover.operator">Operator</div>
-      <div class="meta-val" id="rpt-operator">OCM SYSTEM</div>
+      <div class="meta-val" id="rpt-operator">OCH SYSTEM</div>
     </div>
     <div style="margin-left:auto; display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
       <div id="rpt-verdict" class="verdict-badge" style="margin-left:0;">COMPLIANT</div>
@@ -604,9 +604,9 @@ body{background:var(--bg);color:var(--text);font-family:'Fira Code',monospace;fo
     </div>
   </div>
 
-  <!-- OCM System Glossary -->
+  <!-- OCH System Glossary -->
   <div class="sov-section" style="border-color:rgba(212,175,55,0.25)">
-    <div class="section-head">📘 OCM SYSTEM GLOSSARY & COMPLIANCE KEY</div>
+    <div class="section-head">📘 OCH SYSTEM GLOSSARY & COMPLIANCE KEY</div>
     <div class="narrative" style="font-size:11px; line-height:1.5; color:#ccc; margin-bottom: 0;">
       <div style="margin-bottom:8px">
         <strong style="color:var(--neon)">ADMISSIVE (ALLOW)</strong>: The patient's biomarker values comply with the registered clinical axiom constraints (within safe physiological limits).
@@ -742,7 +742,7 @@ body{background:var(--bg);color:var(--text);font-family:'Fira Code',monospace;fo
 
     <!-- Section E: Questions for the Surgeon -->
     <div class="section-head" style="color:#ff9900;margin-bottom:10px">❓ Questions to Ask the Surgical Team</div>
-    <div style="font-size:10px;color:#666;margin-bottom:10px">Based on the specific lab values in this report, OCM has generated these targeted questions. You have the right to ask them — and to receive clear answers — before proceeding.</div>
+    <div style="font-size:10px;color:#666;margin-bottom:10px">Based on the specific lab values in this report, OCH has generated these targeted questions. You have the right to ask them — and to receive clear answers — before proceeding.</div>
     <ol id="surg-questions" style="margin:0 0 20px 18px;padding:0;font-size:12px;color:#ccc;line-height:2"></ol>
 
     <!-- Section F: Surgical Audit Disclaimer -->
@@ -931,9 +931,9 @@ body{background:var(--bg);color:var(--text);font-family:'Fira Code',monospace;fo
     </tr></thead><tbody id="contract-clause-body"></tbody></table>
   </div>
 
-  <!-- ── OCM NARRATIVE SECTION (all domains) ── -->
+  <!-- ── OCH NARRATIVE SECTION (all domains) ── -->
   <div class="sov-section" id="panel-xai" style="display:none">
-    <div class="section-head">🧠 OCM EXPLAINABILITY NARRATIVE</div>
+    <div class="section-head">🧠 OCH EXPLAINABILITY NARRATIVE</div>
     <div class="xai-panel">
       <div class="xai-label">G3FP SYNTHESIZED EXPLANATION</div>
       <div class="xai-text" id="xai-general-text"></div>
@@ -1126,7 +1126,7 @@ body{background:var(--bg);color:var(--text);font-family:'Fira Code',monospace;fo
   <div>
     <div id="footer-company-row" style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
       <img id="footer-client-logo" src="" alt="" style="height:24px;display:none;filter:brightness(0.7)">
-      <div class="footer-sig" id="footer-sig-text">SOVEREIGN OCM · ONTOLOGY COMPLIANCE MATRIX v4.0</div>
+      <div class="footer-sig" id="footer-sig-text">SOVEREIGN OCH · ONTOLOGY COMPLIANCE MATRIX v4.0</div>
     </div>
     <div class="footer-stamp" id="footer-ts">—</div>
   </div>
@@ -1144,7 +1144,7 @@ body{background:var(--bg);color:var(--text);font-family:'Fira Code',monospace;fo
 // SOVEREIGN AUDIT REPORT — DATA LAYER v5.0
 // Source: solver_results (SymPy) + xai_narrative (G3FP) + g3fp_context
 // Zero hardcoded clinical defaults. All content derived from real pipeline.
-// Brand: AI Chip Corporation · OCM Audit Report
+// Brand: AI Chip Corporation · OCH Audit Report
 // ══════════════════════════════════════════════════════════════════
 (function () {
   // ── 0. GUARD: Abort and redirect if no valid evaluation data exists ──
@@ -1215,15 +1215,15 @@ body{background:var(--bg);color:var(--text);font-family:'Fira Code',monospace;fo
   const BRAND = {
     company : R.clientOrg  || 'AI Chip Corporation',
     logo    : R.clientLogo || 'aichip-logo-home.png',
-    footer  : R.clientDesc || 'AI Chip Certified OCM Report',
-    version : R.pipelineVersion || 'G3FP·OCM·v4.1',
+    footer  : R.clientDesc || 'AI Chip Certified OCH Report',
+    version : R.pipelineVersion || 'G3FP·OCH·v4.1',
   };
 
   // ── 3. DOCUMENT IDENTITY (from file extraction) ──────────────────
   const fname   = R.filename  || R.file_name || '—';
   const domain  = (R.domain   || R.detected_domain || 'GENERAL').toUpperCase();
   const mode    = (R.mode     || R.electionMode || 'INDUCTION').toUpperCase();
-  const operator= R.operator  || sessionStorage.getItem('sovereign_operator') || 'OCM SYSTEM';
+  const operator= R.operator  || sessionStorage.getItem('sovereign_operator') || 'OCH SYSTEM';
   const generatedAt = R.generatedAt || new Date().toISOString();
 
   // Report title: "INDUCTION ONTOLOGY COMPLIANCE MATRIX AUDIT REPORT"
@@ -1329,7 +1329,7 @@ body{background:var(--bg);color:var(--text);font-family:'Fira Code',monospace;fo
 
   if (isEmptyReport) {
     narrative = `
-      <b style="color:#ff3c3c;font-size:12px;">[OCM DIAGNOSTIC RESOLUTION] EMPTY AUDIT SPECIFICATION</b><br><br>
+      <b style="color:#ff3c3c;font-size:12px;">[OCH DIAGNOSTIC RESOLUTION] EMPTY AUDIT SPECIFICATION</b><br><br>
       This Ontology Compliance Audit Report currently contains <b>no active evaluation data</b>. This occurs when the document has not yet been processed by the primary SAA (Sovereign Axiom Agent) reasoning pipeline, or the pre-screen filter yielded zero compliance deviations.<br><br>
       To populate the compliance narratives and execute SymPy mathematical constraint verification:<br>
       1. Return to the <b>Ingestion Gate (OP-01)</b>.<br>
@@ -1338,7 +1338,7 @@ body{background:var(--bg);color:var(--text);font-family:'Fira Code',monospace;fo
       4. Click <b>Approve & Start Evaluation</b> to run the L1-L5 pipeline.
     `;
     conclusion = `
-      No axioms were elected or evaluated in the current session. The system requires an active compliance context to run SymPy constraint verification and generate OCM narratives.
+      No axioms were elected or evaluated in the current session. The system requires an active compliance context to run SymPy constraint verification and generate OCH narratives.
     `;
   }
 
@@ -1448,7 +1448,7 @@ body{background:var(--bg);color:var(--text);font-family:'Fira Code',monospace;fo
     if (XAI.insight_digest) {
       html += `
         <div class="insight-box" style="background:rgba(212,175,55,0.06); border:0.5px solid rgba(212,175,55,0.3); border-radius:6px; padding:12px; margin-bottom:16px;">
-          <span style="color:#d4af37; font-family:'Courier New', monospace; font-size:10px; font-weight:bold; letter-spacing:1px; display:block; margin-bottom:4px;">🩺 OCM CLINICAL INSIGHT DIGEST</span>
+          <span style="color:#d4af37; font-family:'Courier New', monospace; font-size:10px; font-weight:bold; letter-spacing:1px; display:block; margin-bottom:4px;">🩺 OCH CLINICAL INSIGHT DIGEST</span>
           <p style="margin:0; font-size:11px; line-height:1.5; color:#eee;">${XAI.insight_digest}</p>
         </div>`;
     }

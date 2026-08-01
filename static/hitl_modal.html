@@ -1277,7 +1277,7 @@
                             <div class="eng-bar-track">
                                 <div class="eng-bar-fill" id="t2" data-test-progress="0"></div>
                             </div>
-                            <div class="track-log stencil-text" id="log2">> [t=0] G3FP OCM monitoring active — NLP parse
+                            <div class="track-log stencil-text" id="log2">> [t=0] G3FP OCH monitoring active — NLP parse
                                 in progress…</div>
                         </div>
 
@@ -1322,7 +1322,7 @@
                         </div>
                     </div>
 
-                    <!-- ═══════════ CHAT COLUMN — OCM Agent ═══════════ -->
+                    <!-- ═══════════ CHAT COLUMN — OCH Agent ═══════════ -->
                     <div class="chat-col">
                         <div class="chat-col-header stencil-text" style="
                         padding:10px 18px 8px;
@@ -1334,7 +1334,7 @@
                         flex-shrink:0;
                     ">
                             <div class="bot-avatar stencil-text"
-                                style="width:20px;height:20px;font-size:9px;flex-shrink:0;">OCM</div>
+                                style="width:20px;height:20px;font-size:9px;flex-shrink:0;">OCH</div>
                             <span data-i18n="hitl.ocm.header_title">ONTOLOGY COMPLIANCE MONITOR — Live Dialogue</span>
                             <span data-i18n="hitl.ocm.g3fp_skills"
                                 style="margin-left:auto;font-size:9px;color:#555;">G3FP Agent Skills Active</span>
@@ -1342,7 +1342,7 @@
 
                         <!-- Chat messages log -->
                         <div class="chat-area" id="hitl-chat-log">
-                            <!-- OCM messages injected here by startOCMConversation() -->
+                            <!-- OCH messages injected here by startOCHConversation() -->
                         </div>
 
                         <!-- Chat input bar — two-row layout prevents icon clipping -->
@@ -1355,8 +1355,8 @@
                             <div class="chat-input-row">
                                 <input class="chat-input" id="hitl-chat-input"
                                     data-i18n-placeholder="hitl.chat.placeholder"
-                                    placeholder="Tell OCM the purpose of this file upload…" disabled autocomplete="off"
-                                    aria-label="OCM chat input">
+                                    placeholder="Tell OCH the purpose of this file upload…" disabled autocomplete="off"
+                                    aria-label="OCH chat input">
                             </div>
 
                             <!-- Row 2: Send + Mic — both fully visible, no clipping -->
@@ -2132,7 +2132,7 @@
         };
 
         /* ═══════════════════════════════════════════════════════
-           LEADING-DRIVEN OCM DIALOGUE BUILDER (4 messages)
+           LEADING-DRIVEN OCH DIALOGUE BUILDER (4 messages)
         ═══════════════════════════════════════════════════════ */
         const COMPLEXITY_LABELS = ['MINIMAL', 'LOW', 'MODERATE', 'HIGH', 'CRITICAL'];
         const COMPLEXITY_COLORS = ['#00C853', '#CCFF00', '#FFB300', '#FF6B35', '#FF2244'];
@@ -2144,7 +2144,7 @@
             'summary': 'executive summarization'
         };
 
-        function buildOCMMessages(ctx) {
+        function buildOCHMessages(ctx) {
             const ci = Math.min(Math.max((ctx.complexityLevel || 3) - 1, 0), 4);
             const ccolor = COMPLEXITY_COLORS[ci];
             const domain = (ctx.fileDomain || 'GENERAL').toUpperCase();
@@ -2160,7 +2160,7 @@
                     : _t('hitl.ocm.salut.evening', 'Good evening');
 
             // ── BEAT 1: Personal greeting + file acknowledgement ────────────────
-            const beat1 = `${salut}, <strong>${name}</strong>. ${_t('hitl.ocm.b1.intro', "I'm <strong>OCM</strong> — the Ontology Compliance Monitor.")}<br>` +
+            const beat1 = `${salut}, <strong>${name}</strong>. ${_t('hitl.ocm.b1.intro', "I'm <strong>OCH</strong> — the Ontology Compliance Monitor.")}<br>` +
                 `${_t('hitl.ocm.b1.received', "I've received")} <strong>${fileName}</strong> ` +
                 `${_t('hitl.ocm.b1.classified', 'and classified it as')} <span style="color:${ccolor};font-weight:600">${domain}</span>. ` +
                 `${_t('hitl.ocm.b1.g3fp', 'G3FP has scanned the document structure and is ready to elect axioms.')}`;
@@ -2193,13 +2193,13 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════════════
-           INDUCTION-SPECIFIC OCM DIALOGUE BUILDER
-           Reads live G3FP election results from sessionStorage so OCM can report
+           INDUCTION-SPECIFIC OCH DIALOGUE BUILDER
+           Reads live G3FP election results from sessionStorage so OCH can report
            *exactly* what it found in the document without the analyst having to
            ask. This is the core competitive differentiator vs generic LLM chatbots:
-           OCM already has the axiom map, domain, scores, and gaps — instantly.
+           OCH already has the axiom map, domain, scores, and gaps — instantly.
         ═══════════════════════════════════════════════════════════════════════ */
-        function buildOCMMessages_induction(ctx) {
+        function buildOCHMessages_induction(ctx) {
             /* Pull live G3FP election result from sessionStorage */
             let elected = [], domainName = ctx.fileDomain || 'GENERAL', gapWarning = '';
             try {
@@ -2226,7 +2226,7 @@
             const fileName2 = ctx.fileName || 'your document';
 
             // BEAT 1: Personal greeting + WHO I AM + WHAT I GUARANTEE [Induction Mode]
-            const beat1 = `${salut2}${nameTag}. ${_t('hitl.ocm.b1.intro', "I'm <strong>OCM</strong> \u2014 the Ontology Compliance Monitor.")}<br>` +
+            const beat1 = `${salut2}${nameTag}. ${_t('hitl.ocm.b1.intro', "I'm <strong>OCH</strong> \u2014 the Ontology Compliance Monitor.")}<br>` +
                 `${_t('hitl.ocm.b1.received', "I've received")} <strong>${fileName2}</strong>. ${_t('hitl.ind.b1.mode', 'In <strong>induction mode</strong>, I surface patterns and trends anchored to extracted evidence \u2014 not inferred from training data. If I can\'t cite the source, I won\'t surface the finding.')}`;
 
             // BEAT 2: WHAT I SEE IN YOUR DOCUMENT [Domain-aware + G3FP Findings]
@@ -2267,13 +2267,13 @@
         const THINK_MS_FAST = _chatMode === 'induction' ? 120 : 500;
         const THINK_MS_NORMAL = _chatMode === 'induction' ? 200 : 900;
 
-        /* [SNET ERR_N1.3_DELIVERY_TIMEOUT] Maximum wall-clock budget per OCM message delivery.
+        /* [SNET ERR_N1.3_DELIVERY_TIMEOUT] Maximum wall-clock budget per OCH message delivery.
          * If typeText() never resolves (e.g. network-isolated environment, stalled rAF),
-         * Promise.race() below rejects after this deadline, allowing startOCMConversation()
+         * Promise.race() below rejects after this deadline, allowing startOCHConversation()
          * to fire _lockSystemOnError() instead of hanging indefinitely.
          * NOTE: Increased from 12000→30000ms. gemini-3-flash-preview cold-start takes 15-25s
          * on first dialogue turn. The backend now has a 25s HTTP timeout ceiling. */
-        const OCM_DELIVER_TIMEOUT_MS = 30000;
+        const OCH_DELIVER_TIMEOUT_MS = 30000;
 
         function typeText(el, html, speed = CHAR_SPEED) {
             return new Promise(resolve => {
@@ -2299,21 +2299,21 @@
             });
         }
 
-        function deliverOCMMessage(htmlContent, thinkMs) {
+        function deliverOCHMessage(htmlContent, thinkMs) {
             thinkMs = (thinkMs == null) ? THINK_MS_NORMAL : thinkMs;
             /* [SNET ERR_N1.3_DELIVERY_TIMEOUT] Race the real delivery against a hard deadline.
              * In a network-isolated environment typeText may stall; without this guard the
-             * Promise hangs forever, blocking the entire startOCMConversation() chain and
+             * Promise hangs forever, blocking the entire startOCHConversation() chain and
              * preventing SOVEREIGN_TUBES_RESOLVED from ever reaching the Approve button. */
             const _timeoutSentinel = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('ERR_N1.3_DELIVERY_TIMEOUT: deliverOCMMessage exceeded ' + OCM_DELIVER_TIMEOUT_MS + 'ms')),
-                    OCM_DELIVER_TIMEOUT_MS + thinkMs)
+                setTimeout(() => reject(new Error('ERR_N1.3_DELIVERY_TIMEOUT: deliverOCHMessage exceeded ' + OCH_DELIVER_TIMEOUT_MS + 'ms')),
+                    OCH_DELIVER_TIMEOUT_MS + thinkMs)
             );
             const _delivery = new Promise(resolve => {
                 const cc = document.getElementById('hitl-chat-log');
                 const ind = document.createElement('div');
                 ind.className = 'chat-msg';
-                ind.innerHTML = `<div class="bot-avatar stencil-text">OCM</div><div class="chat-bubble chat-text"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
+                ind.innerHTML = `<div class="bot-avatar stencil-text">OCH</div><div class="chat-bubble chat-text"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
                 cc.appendChild(ind); void ind.offsetWidth; ind.classList.add('visible');
                 cc.scrollTop = cc.scrollHeight;
                 setTimeout(() => {
@@ -2322,7 +2322,7 @@
                     msgDiv.className = 'chat-msg';
                     const bubble = document.createElement('div');
                     bubble.className = 'chat-bubble chat-text';
-                    msgDiv.innerHTML = `<div class="bot-avatar stencil-text">OCM</div>`;
+                    msgDiv.innerHTML = `<div class="bot-avatar stencil-text">OCH</div>`;
                     msgDiv.appendChild(bubble);
                     cc.appendChild(msgDiv); void msgDiv.offsetWidth; msgDiv.classList.add('visible');
                     cc.scrollTop = cc.scrollHeight;
@@ -2345,7 +2345,7 @@
         }
 
         /* ═══════════════════════════════════════════════════════
-           OCM LIVE REPLY ENGINE
+           OCH LIVE REPLY ENGINE
            Generates context-aware replies from G3FP sessionStorage data.
            Falls back to graceful generic responses for unknown queries.
         ═══════════════════════════════════════════════════════ */
@@ -2360,12 +2360,12 @@
         /* ─── Primary: route to backend G3FP dialogue API, fall back to local engine ─── */
         async function _callDialogueAPI(userText, elected, domain) {
             /* SOFT-GUARD: fileName is preferred for document-grounded replies but not
-             * mandatory for general OCM questions (pipeline help, axiom explanations).
+             * mandatory for general OCH questions (pipeline help, axiom explanations).
              * Proceed with empty file_name — G3FP falls back to general context mode.
              * Hard block has been removed to eliminate the 'fake chatbot' symptom where
              * every message returned null before the hitl:context postMessage arrived. */
             if (!HITLContext.fileName) {
-                console.info('[OCM] _callDialogueAPI: no fileName yet — proceeding with general context mode.');
+                console.info('[OCH] _callDialogueAPI: no fileName yet — proceeding with general context mode.');
             }
 
             /* ── ECP-018 Phase 3 (Option C): Pull live G3FP corpus from sovereign_g3fp_context ──
@@ -2402,7 +2402,7 @@
                     const _tr = JSON.parse(sessionStorage.getItem('sovereign_tiered_results') || '{}');
                     if (_tr.primaryDomain) domain = _tr.primaryDomain || domain;
                 }
-            } catch (e) { console.warn('[OCM] G3FP corpus read error:', e); }
+            } catch (e) { console.warn('[OCH] G3FP corpus read error:', e); }
 
             /* Resolve trace_id: prefer runtime value, then sessionStorage keys */
             let _tid = _traceId;
@@ -2500,7 +2500,7 @@
             }
         }
 
-        /* ── i18n translation helper for OCM dialogue ── */
+        /* ── i18n translation helper for OCH dialogue ── */
         function _ocmT(key) {
             /* Use SovereignI18n.lang as the canonical source of truth for language state */
             const currentLang = (window.SovereignI18n && window.SovereignI18n.lang) ? window.SovereignI18n.lang : 'en';
@@ -2510,7 +2510,7 @@
                 mic_help: `<strong>麥克風按鈕</strong>（🎙）位於輸入框右下角，點擊後瀏覽器將請求麥克風權限。<br><br>` +
                     `若無反應：點擊網址列的 🔒 → 設定麥克風為<strong>允許</strong>。`,
                 help_menu: (fn, domain) =>
-                    `我是 <strong>OCM — 本體論合規監測器</strong>，正在分析 ${fn}。<br><br>` +
+                    `我是 <strong>OCH — 本體論合規監測器</strong>，正在分析 ${fn}。<br><br>` +
                     `🔴 <strong>紅旗警示</strong> — 超出臨床/物理參考範圍的數值<br>` +
                     `📋 <strong>已選公理</strong> — 匹配的本體論規則及信心水準<br>` +
                     `📊 <strong>信心分數</strong> — G3FP 每條公理評分<br>` +
@@ -2534,7 +2534,7 @@
                     `<strong>5. BOUNDARY · SAA⚡ 提案</strong> — 主權公理機構邊界通道<br><br>` +
                     `全部顯示 <span style="color:#00C853"><strong>已驗證</strong></span> 後，點擊 <strong>批准並開始評估</strong> 執行完整評分。`,
                 no_intent: (fn) =>
-                    `我是 OCM，正在分析 ${fn}。我沒有識別到特定的分析意圖，請嘗試：<br>` +
+                    `我是 OCH，正在分析 ${fn}。我沒有識別到特定的分析意圖，請嘗試：<br>` +
                     `• <em>「有哪些紅旗？」</em><br>` +
                     `• <em>「選了哪些公理？」</em><br>` +
                     `• <em>「信心分數是多少？」</em>`,
@@ -2544,7 +2544,7 @@
                 mic_help: `The <strong>microphone button</strong> (🎙) is at the bottom-right of the chat input. Click once — your browser will request mic permission.<br><br>` +
                     `If nothing happens: click the lock icon in the address bar → set Microphone to <strong>Allow</strong>.`,
                 help_menu: (fn, domain) =>
-                    `I'm <strong>OCM — Ontology Compliance Monitor</strong>, analysing ${fn}.<br><br>` +
+                    `I'm <strong>OCH — Ontology Compliance Monitor</strong>, analysing ${fn}.<br><br>` +
                     `🔴 <strong>Red flags</strong> — values outside clinical/physical reference ranges<br>` +
                     `📋 <strong>Elected axioms</strong> — matched ontology rules and confidence levels<br>` +
                     `📊 <strong>Confidence scores</strong> — G3FP per-axiom ratings<br>` +
@@ -2568,7 +2568,7 @@
                     `<strong>5. BOUNDARY · SAA⚡ Proposal</strong> — Sovereign Axiom Authority boundary channel<br><br>` +
                     `Once all show <span style="color:#00C853"><strong>Verified</strong></span>, click <strong>CONFIRM &amp; START EVALUATION</strong> to run the full scoring pass.`,
                 no_intent: (fn) =>
-                    `I'm OCM, analysing ${fn}. I didn't recognise a specific analysis intent — try:<br>` +
+                    `I'm OCH, analysing ${fn}. I didn't recognise a specific analysis intent — try:<br>` +
                     `• <em>"What are the red flags?"</em><br>` +
                     `• <em>"Which axioms were elected?"</em><br>` +
                     `• <em>"What's the confidence score?"</em>`,
@@ -2576,7 +2576,7 @@
             return isZH ? ZH[key] : EN[key];
         }
 
-        /* ── Main OCM reply dispatcher — called on every user message ── */
+        /* ── Main OCH reply dispatcher — called on every user message ── */
         function ocmRespond(userText) {
             if (_ocmBusy) return;
             _ocmBusy = true;
@@ -2594,7 +2594,7 @@
                     `Click once — your browser will request mic permission.<br><br>` +
                     `If nothing happens: click the lock icon in the address bar → set Microphone to <strong>Allow</strong>. ` +
                     `If previously denied, go to <em>Chrome → Site Settings → Microphone → Allow</em>.`;
-                deliverOCMMessage(micReply, THINK_MS_FAST)
+                deliverOCHMessage(micReply, THINK_MS_FAST)
                     .then(() => { _ocmBusy = false; })
                     .catch(() => { _ocmBusy = false; });
                 return;
@@ -2630,7 +2630,7 @@
             const cc = document.getElementById('hitl-chat-log');
             const ind = document.createElement('div');
             ind.className = 'chat-msg';
-            ind.innerHTML = `<div class="bot-avatar stencil-text">OCM</div><div class="chat-bubble chat-text"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
+            ind.innerHTML = `<div class="bot-avatar stencil-text">OCH</div><div class="chat-bubble chat-text"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
             if (cc) {
                 cc.appendChild(ind);
                 void ind.offsetWidth;
@@ -2663,7 +2663,7 @@
                 if (noticeEl) noticeEl.remove();
                 if (ind) ind.remove(); // Remove the typing indicator immediately
                 if (apiReply) {
-                    deliverOCMMessage(apiReply, 10)
+                    deliverOCHMessage(apiReply, 10)
                         .then(() => { _ocmBusy = false; })
                         .catch(() => { _ocmBusy = false; });
                 } else {
@@ -2676,12 +2676,12 @@
                             ? `🔴 <strong>G3FP 伺服器已離線。</strong>請啟動伺服器後重新載入頁面，以啟用即時 Gemini 對話。`
                             : `🔴 <strong>G3FP server is offline.</strong> Start the server and reload to enable live Gemini dialogue.`)
                         : (_isZhNow
-                            ? `⏳ <strong>OCM 仍在連結您的工作階段。</strong>G3FP 追蹤記錄尚未解析 — ` +
+                            ? `⏳ <strong>OCH 仍在連結您的工作階段。</strong>G3FP 追蹤記錄尚未解析 — ` +
                               `請稍候片刻後重新輸入您的問題，或點擊 <strong>批准並開始評估</strong> 以啟動完整 L1→L5 分析。`
-                            : `⏳ <strong>OCM is still linking your session.</strong> The G3FP trace hasn’t resolved yet — ` +
+                            : `⏳ <strong>OCH is still linking your session.</strong> The G3FP trace hasn’t resolved yet — ` +
                               `please wait a moment and then retype your question, or click ` +
                               `<strong>CONFIRM &amp; START EVALUATION</strong> to begin full L1→L5 analysis.`);
-                    deliverOCMMessage(offlineMsg, THINK_MS_FAST)
+                    deliverOCHMessage(offlineMsg, THINK_MS_FAST)
                         .then(() => { _ocmBusy = false; })
                         .catch(() => { _ocmBusy = false; });
                 }
@@ -2690,15 +2690,15 @@
                 const noticeEl = document.getElementById('ocm-latency-notice');
                 if (noticeEl) noticeEl.remove();
                 if (ind) ind.remove(); // Remove the typing indicator on error
-                console.warn('[OCM] _callDialogueAPI threw:', err);
+                console.warn('[OCH] _callDialogueAPI threw:', err);
                 const _isZhErr = (window.SovereignI18n && window.SovereignI18n.lang)
                     ? window.SovereignI18n.lang.toLowerCase().startsWith('zh')
                     : (sessionStorage.getItem('sovereign_lang_mode') || '').toUpperCase().includes('ZH');
                 const _errDetail = err && err.message ? err.message.slice(0, 60) : 'unknown';
                 const errMsg = _isZhErr
-                    ? `⚠️ OCM 發生網路錯誤（${_errDetail}）。請確認您的連線後再試一次。`
-                    : `⚠️ OCM encountered a network error (${_errDetail}). Please check your connection and try again.`;
-                deliverOCMMessage(errMsg, THINK_MS_FAST)
+                    ? `⚠️ OCH 發生網路錯誤（${_errDetail}）。請確認您的連線後再試一次。`
+                    : `⚠️ OCH encountered a network error (${_errDetail}). Please check your connection and try again.`;
+                deliverOCHMessage(errMsg, THINK_MS_FAST)
                     .then(() => { _ocmBusy = false; })
                     .catch(() => { _ocmBusy = false; });
             });
@@ -2908,7 +2908,7 @@
                     }[event.error] || '⚠️ Mic unavailable (' + event.error + ') — please type';
                     _micToast(toastMsg, '#f88');   /* persistent — no auto-remove */
 
-                    /* ── For macOS audio-capture: also insert a permanent, readable OCM bubble ── */
+                    /* ── For macOS audio-capture: also insert a permanent, readable OCH bubble ── */
                     if (event.error === 'audio-capture' || event.error === 'not-allowed') {
                         const cc = document.getElementById('hitl-chat-log');
                         if (cc) {
@@ -2997,16 +2997,16 @@
                     labelEl.textContent = lang.toUpperCase();
                     dropdown.style.display = 'none';
                     _reapplyFrozen(lang);
-                    // 3. Re-boot OCM conversation in the new language
+                    // 3. Re-boot OCH conversation in the new language
                     const chatCont = document.getElementById('chatbox-messages');
                     if (chatCont) {
-                        chatCont.innerHTML = '<div class="sys-msg" style="color:#d4af37;font-size:10px;">[SOVEREIGN] Language switched to ' + lang.toUpperCase() + '. Re-initialising OCM…</div>';
+                        chatCont.innerHTML = '<div class="sys-msg" style="color:#d4af37;font-size:10px;">[SOVEREIGN] Language switched to ' + lang.toUpperCase() + '. Re-initialising OCH…</div>';
                     }
-                    if (typeof startOCMConversation === 'function') {
+                    if (typeof startOCHConversation === 'function') {
                         // Small delay so DOM translation settles first
                         setTimeout(function () {
-                            startOCMConversation({}).catch(function (err) {
-                                console.warn('[OCM LangSwitch] Re-boot degraded:', err.message);
+                            startOCHConversation({}).catch(function (err) {
+                                console.warn('[OCH LangSwitch] Re-boot degraded:', err.message);
                             });
                         }, 350);
                     }
@@ -3103,10 +3103,10 @@
         });
 
         /* ── Live G3FP elapsed counter: starts from modal-open (t=0).
-           Proves OCM/G3FP has been active since BEFORE the analyst reads anything.
+           Proves OCH/G3FP has been active since BEFORE the analyst reads anything.
            This is purely clock-driven — no pipeline simulation. ──────────── */
         const _modalOpenTime = performance.now();
-        (function tickOCMTimer() {
+        (function tickOCHTimer() {
             const el = document.getElementById('ocm-timer');
             if (!el) return;
             function tick() {
@@ -3460,13 +3460,13 @@
          * No duplicate registration possible. */
 
         /* ═══════════════════════════════════════════════════════════════════════
-           startOCMConversation — OCM guided-dialogue boot sequence.
+           startOCHConversation — OCH guided-dialogue boot sequence.
            Called from initPipeline Track B after UI is unlocked.
            Delivers: greeting → document-intent probe → pipeline instruction.
            Mode-aware: induction shows elected axioms, deduction/abduction shows
            formal admissibility framing. Falls back gracefully if msgs are empty.
         ═══════════════════════════════════════════════════════════════════════ */
-        async function startOCMConversation(overrideCtx) {
+        async function startOCHConversation(overrideCtx) {
             const ctx = Object.assign({}, HITLContext, overrideCtx || {});
 
             /* ── Origin-Mode Inheritance ─────────────────────────────────────────────
@@ -3492,12 +3492,12 @@
             ).toLowerCase(); /* 'qa' | 'rca' | 'rfp' | 'causal' | '' */
 
             /* ══════════════════════════════════════════════════════════════════════
-             * G3FP is the sole author of every OCM opening beat.
+             * G3FP is the sole author of every OCH opening beat.
              * __SESSION_OPEN__ fires unconditionally — no traceId/fileName gate.
              * 8-second AbortSignal timeout prevents UI blocking on slow networks.
              * On error, a minimal i18n "connecting" notice is shown as Beat 1 so
              * the analyst always sees activity; the purpose menu still follows.
-             * Template builders (buildOCMMessages / buildOCMMessages_induction) are
+             * Template builders (buildOCHMessages / buildOCHMessages_induction) are
              * kept as the last-resort backstop but should never fire in production.
              ══════════════════════════════════════════════════════════════════════ */
 
@@ -3507,13 +3507,13 @@
                 const _g3fpRaw = sessionStorage.getItem('sovereign_g3fp_context');
                 if (_g3fpRaw) {
                     _g3fpCtx = JSON.parse(_g3fpRaw);
-                    console.log(`[OCM] __SESSION_OPEN__: sovereign_g3fp_context | domain:${_g3fpCtx.domain} biomarkers:${(_g3fpCtx.g3fp_biomarkers || []).length} metrics:${(_g3fpCtx.g3fp_metrics || []).length}`);
+                    console.log(`[OCH] __SESSION_OPEN__: sovereign_g3fp_context | domain:${_g3fpCtx.domain} biomarkers:${(_g3fpCtx.g3fp_biomarkers || []).length} metrics:${(_g3fpCtx.g3fp_metrics || []).length}`);
                 } else {
                     const _legacyRaw = sessionStorage.getItem('sovereign_tiered_results');
                     if (_legacyRaw) _g3fpCtx = JSON.parse(_legacyRaw);
-                    console.warn('[OCM] __SESSION_OPEN__: sovereign_g3fp_context not yet available — using sovereign_tiered_results.');
+                    console.warn('[OCH] __SESSION_OPEN__: sovereign_g3fp_context not yet available — using sovereign_tiered_results.');
                 }
-            } catch (e) { console.warn('[OCM] G3FP context parse error:', e); }
+            } catch (e) { console.warn('[OCH] G3FP context parse error:', e); }
 
             /* ── SAA threshold results ── */
             let _saaThresholdResults = _g3fpCtx.saa_threshold_results || [];
@@ -3581,7 +3581,7 @@
                     }
                 }
             } catch (e) {
-                console.info('[OCM] __SESSION_OPEN__ unreachable:', e.message || e);
+                console.info('[OCH] __SESSION_OPEN__ unreachable:', e.message || e);
             }
 
             /* ── Build message sequence ──────────────────────────────────────── */
@@ -3635,23 +3635,23 @@
                 /* G3FP unreachable — show a minimal i18n "connecting" notice,
                  * then the standard purpose menu so the analyst can still proceed.
                  * Template builders are the absolute last-resort backstop. */
-                console.warn('[OCM] G3FP greeting unavailable — using i18n template builder as backstop.');
+                console.warn('[OCH] G3FP greeting unavailable — using i18n template builder as backstop.');
                 if (_modalMode === 'induction') {
-                    msgs = buildOCMMessages_induction(ctx);
+                    msgs = buildOCHMessages_induction(ctx);
                 } else {
-                    msgs = buildOCMMessages(ctx);
+                    msgs = buildOCHMessages(ctx);
                 }
             }
 
             /* ── Deliver beats sequentially with typing effect ──────────────── */
             const delays = [THINK_MS_NORMAL, THINK_MS_NORMAL, THINK_MS_FAST, THINK_MS_FAST];
             for (let i = 0; i < msgs.length; i++) {
-                await deliverOCMMessage(msgs[i], delays[i] || THINK_MS_FAST);
+                await deliverOCHMessage(msgs[i], delays[i] || THINK_MS_FAST);
             }
         }
 
         /* ═══════════════════════════════════════════════════════════════════════
-           initPipeline — TRACK A (sync UI unlock) + TRACK B (async OCM boot)
+           initPipeline — TRACK A (sync UI unlock) + TRACK B (async OCH boot)
         ═══════════════════════════════════════════════════════════════════════ */
         async function initPipeline() {
             /* Real visible input (test types into this: #hitl-chat-input) */
@@ -3719,14 +3719,14 @@
             }
 
             // =========================================================
-            // 2. TRACK B: ASYNCHRONOUS OCM BOOT
+            // 2. TRACK B: ASYNCHRONOUS OCH BOOT
             //    Non-blocking — errors caught and reported via SNET_FAIL.
             // =========================================================
-            if (typeof startOCMConversation === 'function') {
+            if (typeof startOCHConversation === 'function') {
                 _waitForContext(700).then(function () {
-                    startOCMConversation({}).catch(function (err) {
-                        console.warn('[OCM Boot] Track B degraded:', err.message);
-                        window.dispatchEvent(new CustomEvent('SNET_FAIL', { detail: err.message || 'ERR_OCM_BOOT' }));
+                    startOCHConversation({}).catch(function (err) {
+                        console.warn('[OCH Boot] Track B degraded:', err.message);
+                        window.dispatchEvent(new CustomEvent('SNET_FAIL', { detail: err.message || 'ERR_OCH_BOOT' }));
                     }).then(function () {
                         /* 2b — Proactive G3FP axiom report (fires 1.4s after greeting finishes) */
                         setTimeout(async function () {
@@ -3755,7 +3755,7 @@
                                     }
                                 } catch (e) { }
                             }
-                            if (candidates.length > 0 && typeof deliverOCMMessage === 'function') {
+                            if (candidates.length > 0 && typeof deliverOCHMessage === 'function') {
                                 const domain = (function () {
                                     try {
                                         const tr = JSON.parse(sessionStorage.getItem('sovereign_tiered_results') || '{}');
@@ -3764,7 +3764,7 @@
                                 })();
                                 const _electionSuffix = window.SovereignI18n?.t?.('hitl.ocm.election_msg') ||
                                     'These are <em>provisional</em> selections. Full confidence scoring and final election complete after you click <strong>CONFIRM &amp; START EVALUATION</strong>.';
-                                await deliverOCMMessage(
+                                await deliverOCHMessage(
                                     `G3FP pre-characterization elected <strong>${candidates.length}</strong> ` +
                                     `axiom candidate${candidates.length !== 1 ? 's' : ''}` +
                                     (domain ? ` for the <em>${domain}</em> domain` : '') + `:<br><br>` +

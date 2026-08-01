@@ -177,7 +177,7 @@
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="/">⬡ SOVEREIGN OCM</a>
+  <a class="nav-logo" href="/">⬡ SOVEREIGN OCH</a>
   <div class="nav-links">
     <a class="nav-link" href="/">HOME</a>
     <a class="nav-link active" href="/ontology_medical.html">ONTOLOGY MEDICAL</a>
@@ -557,7 +557,7 @@
             },
             riskTier:        verdictClass === 'fail' ? 'T3' : (verdictClass === 'warn' ? 'T2' : 'T1'),
             operator:        'HITL_OPERATOR',
-            pipelineVersion: 'G3FP·OCM·v4.2',
+            pipelineVersion: 'G3FP·OCH·v4.2',
             generatedAt:     new Date().toISOString(),
         };
     }
@@ -635,7 +635,7 @@
                     file,
                     'ontology_med',
                     /* onConfirm */ async (payload) => {
-                        console.log('[OCM Med] onConfirm payload:', JSON.stringify(payload));
+                        console.log('[OCH Med] onConfirm payload:', JSON.stringify(payload));
                         const traceId = payload.trace_id || sessionStorage.getItem('sovereign_trace_id');
                         if (traceId) {
                             sessionStorage.setItem('sovereign_trace_id', traceId);
@@ -662,7 +662,7 @@
                                 });
                             }
                         } catch(e) {
-                            console.error('[OCM Med] Error reading g3fp context:', e);
+                            console.error('[OCH Med] Error reading g3fp context:', e);
                         }
                         
                         // Fallback fields for healthcare if empty
@@ -708,11 +708,11 @@
                                     // FIX-3D: store raw audit_packet so audit_report can call initDeduction()
                                     mappedData._raw_audit_packet = auditPacket;
                                     localStorage.setItem('sovereign_audit_data', JSON.stringify(mappedData));
-                                    console.log('[OCM Med] Saved audit_data | file:', _fname, '| packet keys:', Object.keys(auditPacket));
+                                    console.log('[OCH Med] Saved audit_data | file:', _fname, '| packet keys:', Object.keys(auditPacket));
                                 }
                             }
                         } catch(err) {
-                            console.error('[OCM Med] Error running SAA deduction:', err);
+                            console.error('[OCH Med] Error running SAA deduction:', err);
                         }
 
                         sessionStorage.setItem('ontology_med_ingested', 'true');
@@ -1016,9 +1016,9 @@ function _initPostIngestView() {
             const mappedData = window._mapAuditPacketToReport(auditPacket, data.filename || 'Evaluated Document');
             mappedData._raw_audit_packet = auditPacket; // FIX-3D: always store raw audit_packet
             localStorage.setItem('sovereign_audit_data', JSON.stringify(mappedData));
-            console.log('[OCM Med] Restored sovereign_audit_data to localStorage:', mappedData);
+            console.log('[OCH Med] Restored sovereign_audit_data to localStorage:', mappedData);
           } catch(le) {
-            console.error('[OCM Med] Error backing up audit data:', le);
+            console.error('[OCH Med] Error backing up audit data:', le);
           }
           const _dt  = document.getElementById('detail-title');
           const _ds  = document.getElementById('detail-sub');
@@ -1323,7 +1323,7 @@ function _initPostIngestView() {
           ]
         },
         reevaluation_plan: "Re-evaluate compliance status in 8-12 weeks following initiation of pharmacological and dietary interventions.",
-        medical_disclaimer: "This OCM report is a deterministic compliance synthesis based on clinical axioms and is intended for clinical provider decision support. It does not replace professional medical judgment."
+        medical_disclaimer: "This OCH report is a deterministic compliance synthesis based on clinical axioms and is intended for clinical provider decision support. It does not replace professional medical judgment."
       }
     };
 
@@ -1331,9 +1331,9 @@ function _initPostIngestView() {
       const mapped = _mapAuditPacketToReport(mockAuditPacket, 'Mockup Medical Case');
       mapped._raw_audit_packet = mockAuditPacket;
       localStorage.setItem('sovereign_audit_data', JSON.stringify(mapped));
-      console.log('[OCM Med] Seeded mockup sovereign_audit_data to localStorage.');
+      console.log('[OCH Med] Seeded mockup sovereign_audit_data to localStorage.');
     } catch(err) {
-      console.error('[OCM Med] Failed to seed mockup data:', err);
+      console.error('[OCH Med] Failed to seed mockup data:', err);
     }
 
     const rBtn = document.getElementById('btn-generate-report');
