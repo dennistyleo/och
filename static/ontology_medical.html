@@ -3,1498 +3,245 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OCH · Sovereign Ontology Compliance Healthcare</title>
-<meta name="description" content="Hierarchical OCH (Ontology Compliance Healthcare) explorer — browse clinical domains, LOINC biomarker coverage, and evaluation formulas.">
+<title>OCH · 3D Medical Graph Explorer &amp; Biomarker Audit</title>
+<meta name="description" content="Hierarchical OCH (Ontology Compliance Healthcare) 3D Medical Explorer — interactive GNN correlation networks, World Models, and Causal Pathways for clinical biomarkers.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <style>
+  /* ==========================================================================
+     OCH CLINICAL WHITE DESIGN SYSTEM (Matching OP-01 ~ OP-03)
+     - Primary White Background: #FFFFFF / #F8FAFC
+     - Accent Metallic Gold    : #B8860B / #D4AF37
+     - Accent Metallic Silver  : #64748B / #E2E8F0
+     - Accent Tiffany Blue     : #0abab5
+     - Accent Hermès Orange    : #FF7900
+     ========================================================================== */
   :root {
-    --bg-deep:    #000000;
-    --bg-card:    #0a0a0a;
-    --bg-panel:   #111111;
-    --border:     #333333;
-    --gold:       #D4AF37;
-    --gold-dim:   #8a6f1a;
-    --blue:       #00ff88;
-    --blue-dim:   #008844;
-    --green:      #00C853;
-    --amber:      #FFBF00;
-    --red:        #ff4444;
-    --text:       #eeeeee;
-    --text-muted: #888888;
-    --text-dim:   #555555;
+    --bg-main:       #FFFFFF;
+    --bg-subtle:     #F8FAFC;
+    --bg-card:       #FFFFFF;
+    --bg-panel:      #F1F5F9;
+    
+    --border-silver: #E2E8F0;
+    --border-gold:   #D4AF37;
+    
+    --gold:          #B8860B;
+    --silver:        #64748B;
+    --tiffany-blue:  #0abab5;
+    --hermes-orange: #FF7900;
+    
+    --text-dark:     #0F172A;
+    --text-muted:    #475569;
+    --text-light:    #64748B;
+    
+    --font-ui:    'Inter', system-ui, -apple-system, sans-serif;
     --font-mono:  'JetBrains Mono', monospace;
-    --font-ui:    Calibri, 微軟正黑體, sans-serif;
     --font-title: 'Orbitron', sans-serif;
   }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; background: var(--bg-deep); color: var(--text); font-family: var(--font-ui); overflow: hidden; }
 
-  /* ── NAV ─────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--bg-main); color: var(--text-dark); font-family: var(--font-ui); overflow: hidden; }
+
+  /* ── SINGLE NAV HEADER ── */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    height: 52px; display: flex; align-items: center; padding: 0 24px;
-    background: rgba(0,0,0,0.92); backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
+    height: 64px; display: flex; align-items: center; padding: 0 36px;
+    background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-silver);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   }
-  .nav-logo { font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--gold); text-decoration: none; }
-  .nav-links { display: flex; gap: 8px; margin-left: 32px; }
-  .nav-link { font-family: var(--font-mono); font-size: 10px; letter-spacing: 1.5px; color: var(--text-muted); text-decoration: none; padding: 4px 12px; border-radius: 3px; transition: all 0.2s; }
-  .nav-link:hover, .nav-link.active { color: var(--blue); background: rgba(0,255,136,0.08); }
-  .nav-tag { margin-left: auto; font-family: var(--font-mono); font-size: 9px; color: var(--blue); border: 1px solid var(--blue-dim); padding: 3px 10px; border-radius: 2px; letter-spacing: 1px; }
+  .nav-logo {
+    font-family: var(--font-title); font-size: 16px; font-weight: 900;
+    letter-spacing: 3px; text-decoration: none;
+    background: linear-gradient(135deg, #D4AF37 0%, #B8860B 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .nav-links { display: flex; gap: 12px; margin-left: 40px; }
+  .nav-link {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    color: var(--text-muted); text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: all 0.2s;
+  }
+  .nav-link:hover, .nav-link.active { color: var(--tiffany-blue); background: rgba(10, 186, 181, 0.08); }
+  .nav-tag {
+    margin-left: auto; font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+    color: var(--tiffany-blue); background: rgba(10, 186, 181, 0.08);
+    border: 1.5px solid var(--tiffany-blue); padding: 5px 14px; border-radius: 4px; letter-spacing: 1.5px;
+  }
 
-  /* ── LAYOUT ──────────────────────────────────────────────── */
+  /* ── MAIN LAYOUT GRID ── */
   .layout {
-    display: grid; grid-template-columns: 1fr 380px;
-    height: 100vh; padding-top: 52px;
+    display: grid; grid-template-columns: 1fr 400px;
+    height: 100vh; padding-top: 64px; background: var(--bg-main);
   }
-  .viz-pane  { position: relative; overflow: hidden; background: var(--bg-deep); }
-  .info-pane { display: flex; flex-direction: column; background: var(--bg-card); border-left: 1px solid var(--border); overflow: hidden; }
+  .viz-pane  { position: relative; overflow: hidden; background: #030712; }
+  .info-pane {
+    display: flex; flex-direction: column; background: var(--bg-card);
+    border-left: 1px solid var(--border-silver); overflow-y: auto;
+    box-shadow: -4px 0 20px rgba(0,0,0,0.03);
+  }
 
-  /* ── THREE.JS CANVAS ─────────────────────────────────────── */
+  /* ── THREE.JS CANVAS ── */
   #ontology-canvas { width: 100%; height: 100%; display: block; }
 
-  /* ── HUD OVERLAY (top-left of canvas) ───────────────────── */
+  /* ── MANIFOLD PHASE SELECTORS ── */
+  .manifold-tabs {
+    position: absolute; top: 16px; right: 16px; z-index: 90; display: flex; gap: 8px;
+  }
+  .tab-btn {
+    font-family: var(--font-mono); font-size: 10px; font-weight: 700; padding: 8px 16px;
+    border-radius: 4px; background: rgba(15, 23, 42, 0.88); color: var(--silver);
+    border: 1px solid var(--border-silver); cursor: pointer; transition: all 0.2s;
+  }
+  .tab-btn.active { color: #FFFFFF; background: var(--tiffany-blue); border-color: var(--tiffany-blue); }
+
+  /* ── HUD OVERLAY ── */
   .viz-hud {
-    position: absolute; top: 16px; left: 16px;
-    font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);
+    position: absolute; top: 16px; left: 16px; z-index: 80;
+    font-family: var(--font-mono); font-size: 11px; color: rgba(255,255,255,0.7);
     pointer-events: none;
   }
-  .viz-hud-title { font-family: var(--font-title); font-size: 13px; font-weight: 900; color: var(--blue); margin-bottom: 4px; letter-spacing: 1px; }
-  .viz-hud-sub { font-size: 9px; color: var(--text-dim); }
+  .viz-hud-title { font-family: var(--font-title); font-size: 14px; font-weight: 900; color: var(--tiffany-blue); margin-bottom: 4px; letter-spacing: 1px; }
 
-  /* ── TOOLTIP ─────────────────────────────────────────────── */
-  #node-tooltip {
-    position: fixed; display: none; z-index: 999;
-    background: rgba(0,0,0,0.97); border: 1px solid var(--blue);
-    border-radius: 8px; padding: 12px 16px; min-width: 200px;
-    pointer-events: none;
-    box-shadow: 0 4px 24px rgba(0,255,136,0.2);
-    font-family: var(--font-mono); font-size: 11px;
-  }
-  #node-tooltip .tt-name { font-size: 13px; font-weight: 700; color: var(--blue); margin-bottom: 6px; }
-  #node-tooltip .tt-row  { display: flex; justify-content: space-between; gap: 16px; margin-top: 3px; color: var(--text-muted); }
-  #node-tooltip .tt-val  { color: var(--text); }
+  /* ── SIDEBAR SECTIONS ── */
+  .panel-section { padding: 20px 24px; border-bottom: 1px solid var(--border-silver); }
+  .panel-label { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--tiffany-blue); margin-bottom: 6px; }
+  .panel-title { font-family: var(--font-title); font-size: 18px; font-weight: 900; color: var(--text-dark); letter-spacing: 1px; }
 
-  /* ── INFO PANEL ──────────────────────────────────────────── */
-  .panel-header {
-    padding: 20px 20px 12px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
+  /* STATS ROW */
+  .stats-row { display: flex; gap: 12px; margin-top: 16px; }
+  .stat-card {
+    flex: 1; background: var(--bg-subtle); border: 1px solid var(--border-silver);
+    border-radius: 8px; padding: 12px; text-align: center;
   }
-  .panel-header-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: 2px; color: var(--text-dim); margin-bottom: 6px; }
-  .panel-header-title { font-family: var(--font-title); font-size: 18px; font-weight: 900; color: var(--blue); letter-spacing: 1px; }
-  .panel-header-sub   { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+  .stat-val { font-family: var(--font-mono); font-size: 18px; font-weight: 800; color: var(--gold); }
+  .stat-lbl { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); letter-spacing: 1px; margin-top: 2px; }
 
-  /* ── DOMAIN STATS BAR ────────────────────────────────────── */
-  .stats-bar {
-    display: flex; gap: 0; flex-shrink: 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .stat-cell {
-    flex: 1; padding: 10px 12px; text-align: center;
-    border-right: 1px solid var(--border);
-  }
-  .stat-cell:last-child { border-right: none; }
-  .stat-num  { font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--gold); }
-  .stat-label { font-size: 9px; color: var(--text-dim); letter-spacing: 1px; margin-top: 2px; }
+  /* BIOMARKER LIST */
+  .biomarker-list { margin-top: 12px; font-family: var(--font-mono); font-size: 11px; }
+  .bm-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-silver); }
+  .bm-name { color: var(--text-muted); }
+  .bm-val  { font-weight: 700; color: var(--tiffany-blue); }
 
-  /* ── BRANCH DETAIL ───────────────────────────────────────── */
-  .branch-detail { padding: 16px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-  .branch-name { font-family: var(--font-mono); font-size: 13px; font-weight: 700; letter-spacing: 0.5px; color: var(--gold); margin-bottom: 8px; }
-  .branch-meta-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-  .branch-tag {
-    font-family: var(--font-mono); font-size: 9px; letter-spacing: 1px;
-    padding: 2px 8px; border-radius: 2px;
-    border: 1px solid var(--border); color: var(--text-muted);
+  /* AXIOM BADGES */
+  .axiom-card {
+    background: var(--bg-subtle); border: 1px solid var(--border-silver); border-radius: 6px;
+    padding: 10px 14px; margin-top: 8px; font-family: var(--font-mono); font-size: 11px;
   }
-  .branch-tag.active { border-color: var(--green); color: var(--green); }
-  .branch-desc { font-size: 11px; color: var(--text-muted); line-height: 1.6; }
+  .axiom-id { color: var(--gold); font-weight: 700; }
+  .badge-status {
+    display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 9px; font-weight: 700; margin-top: 4px;
+  }
+  .badge-allow { background: rgba(10, 186, 181, 0.1); color: var(--tiffany-blue); border: 1px solid var(--tiffany-blue); }
+  .badge-refuse { background: rgba(255, 121, 0, 0.1); color: var(--hermes-orange); border: 1px solid var(--hermes-orange); }
 
-  /* ── AXIOM LIST ──────────────────────────────────────────── */
-  .axiom-list-header {
-    padding: 10px 20px 6px;
-    font-family: var(--font-mono); font-size: 9px; letter-spacing: 2px;
-    color: var(--text-dim); flex-shrink: 0;
+  /* CTA BUTTONS */
+  .cta-bar { padding: 20px 24px; margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+  .btn-cta {
+    display: block; width: 100%; padding: 12px 0; text-align: center; border-radius: 6px;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-decoration: none; transition: all 0.2s; border: none; cursor: pointer;
   }
-  .axiom-list { flex: 1; overflow-y: auto; padding: 0 12px 12px; }
-  .axiom-list::-webkit-scrollbar { width: 4px; }
-  .axiom-list::-webkit-scrollbar-track { background: transparent; }
-  .axiom-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-  .axiom-item {
-    padding: 8px 10px; margin-bottom: 4px; border-radius: 4px;
-    background: var(--bg-panel); border: 1px solid var(--border);
-    cursor: pointer; transition: all 0.15s;
-  }
-  .axiom-item:hover { border-color: var(--blue-dim); background: rgba(0,255,136,0.06); }
-  .axiom-item-id   { font-family: var(--font-mono); font-size: 10px; color: var(--blue); font-weight: 700; }
-  .axiom-item-name { font-size: 11px; color: var(--text); margin-top: 2px; }
-  .axiom-item-meta { display: flex; gap: 8px; margin-top: 4px; }
-  .axiom-badge {
-    font-family: var(--font-mono); font-size: 8px; letter-spacing: 1px;
-    padding: 1px 6px; border-radius: 2px;
-    background: rgba(0,200,83,0.12); color: var(--green); border: 1px solid rgba(0,200,83,0.3);
-  }
-  .axiom-badge.warn { background: rgba(255,191,0,0.10); color: var(--amber); border-color: rgba(255,191,0,0.3); }
-  .axiom-badge.crit { background: rgba(255,68,68,0.10); color: var(--red); border-color: rgba(255,68,68,0.3); }
-
-  /* ── CTA BUTTON ──────────────────────────────────────────── */
-  .cta-bar {
-    padding: 14px 16px; border-top: 1px solid var(--border); flex-shrink: 0;
-    display: flex; gap: 8px;
-  }
-  .btn {
-    flex: 1; padding: 10px 0; border-radius: 4px; cursor: pointer; font-family: var(--font-mono);
-    font-size: 10px; font-weight: 700; letter-spacing: 1.5px; border: none;
-    transition: all 0.2s; text-align: center; text-decoration: none; display: block;
-  }
-  .btn-primary { background: var(--blue); color: #020810; }
-  .btn-primary:hover { background: #33c4ff; box-shadow: 0 0 20px rgba(0,180,255,0.4); }
-  .btn-outline { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
-  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
-
-  /* ── LOADING OVERLAY ─────────────────────────────────────── */
-  #loading-overlay {
-    position: absolute; inset: 0; background: var(--bg-deep);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    z-index: 50; transition: opacity 0.4s;
-  }
-  .loading-ring {
-    width: 40px; height: 40px; border-radius: 50%;
-    border: 2px solid var(--border); border-top-color: var(--blue);
-    animation: spin 0.8s linear infinite; margin-bottom: 16px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .switch input:checked + .slider { background-color: var(--gold) !important; }
-  .switch input:checked + .slider::before { transform: translateX(14px); }
-  .slider::before {
-    position: absolute; content: ""; height: 10px; width: 10px; left: 3px; bottom: 3px;
-    background-color: white; transition: .4s; border-radius: 50%;
-  }
+  .btn-primary { background: var(--hermes-orange); color: #FFFFFF; }
+  .btn-primary:hover { background: #E66C00; box-shadow: 0 4px 16px rgba(255, 121, 0, 0.3); }
+  .btn-secondary { background: var(--bg-subtle); color: var(--text-dark); border: 1px solid var(--border-silver); }
+  .btn-secondary:hover { background: var(--border-silver); }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
+<!-- SINGLE NAV HEADER -->
 <nav>
-  <a class="nav-logo" href="/">⬡ SOVEREIGN OCH</a>
+  <a class="nav-logo" href="index.html">⬡ OCH</a>
   <div class="nav-links">
-    <a class="nav-link" href="/">HOME</a>
-    <a class="nav-link active" href="/ontology_medical.html">ONTOLOGY MEDICAL</a>
-    <a class="nav-link" href="/op_01.html">EVALUATE</a>
-    <a class="nav-link" href="/audit_report.html">AUDIT REPORT</a>
+    <a class="nav-link" href="index.html">HOME / OVERVIEW</a>
+    <a class="nav-link active" href="ontology_medical.html">ONTOLOGY MEDICAL 3D</a>
+    <a class="nav-link" href="index.html#ingestion">INGEST EVIDENCE</a>
+    <a class="nav-link" href="index.html#report">AUDIT REPORT</a>
   </div>
-  <div class="nav-tag">🧬 MEDICAL KNOWLEDGE GRAPH</div>
+  <div class="nav-tag">🧬 ONTOLOGY COMPLIANCE HEALTHCARE</div>
 </nav>
 
-<!-- INITIAL STATE: FILE DROP ZONE (Identical to OP-01) -->
-<div id="upload-stage" style="display:none;width:100%;height:calc(100vh - 60px);padding:40px;align-items:center;justify-content:center;background:var(--bg-deep);">
-    <div style="width:750px;height:420px;border:2.5px solid #b59140;border-radius:15px;overflow:hidden;background:#fff;display:flex;flex-direction:row;box-shadow:0 12px 40px rgba(0,0,0,0.6);">
-        <!-- Zone 3-1: Upload icon (42%) -->
-        <div style="flex:0 0 42%;display:flex;justify-content:center;align-items:center;background:#ffffff;padding:16px;border-right:1px solid #eee;">
-            <img src="OP-01_FUI.png" alt="Upload Document" style="max-width:90%;max-height:90%;object-fit:contain;">
-        </div>
-        <!-- Zone 3-2: Drop Zone -->
-        <div id="drop-zone" style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:28px 36px;cursor:pointer;background:#fff;">
-            <div style="display:flex;flex-direction:column;gap:16px;width:100%;">
-                <div class="drop-headline" style="font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:#111;line-height:1.6">
-                    <span>Drag &amp; drop your evidence file here,</span><br>
-                    <span id="browse-link" style="color:#ff6b1a;text-decoration:underline;cursor:pointer">click to browse</span>
-                </div>
-                <input type="file" id="upload-input" style="display:none" accept=".pdf,.txt,.csv,.json">
-                
-                <!-- Progress Area -->
-                <div id="upload-progress-wrap" style="display:none;width:100%;margin-top:20px;">
-                    <div style="display:flex;justify-content:space-between;font-size:12px;font-family:'JetBrains Mono',monospace;color:#555;margin-bottom:6px;">
-                        <span id="upload-status-label">Uploading...</span>
-                        <span id="upload-pct">0%</span>
-                    </div>
-                    <div style="width:100%;height:4px;background:#eee;border-radius:2px;overflow:hidden;">
-                        <div id="upload-fill" style="width:0%;height:100%;background:#b59140;transition:width 0.2s ease;"></div>
-                    </div>
-                </div>
+<div class="layout">
 
-                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#333;line-height:2;border-top:1px solid #e0d0a0;padding-top:18px;width:100%;margin-top:10px;">
-                    <span style="color:#555;font-weight:700">Supported:</span> PDF &middot; CSV &middot; JSON &middot; XLS &middot; XLSX &middot; PNG &middot; JPG<br>
-                    <span style="color:#555;font-weight:700">Max size:</span> 50 MB &nbsp;&middot;&nbsp;
-                    <span style="color:#555;font-weight:700">Encryption:</span> Sovereign RSA-4096
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- LAYOUT -->
-<div class="layout" id="gnn-layout" style="display:none;">
-
-  <!-- LEFT: 3D TREE / 3D MANIFOLDS -->
-  <div class="viz-pane" style="position:relative;">
-    <div id="loading-overlay">
-      <div class="loading-ring"></div>
-      <div class="loading-text">LOADING ONTOLOGY GRAPH...</div>
-    </div>
-    
-    <!-- Hierarchical Tree Canvas -->
-    <canvas id="ontology-canvas" style="width:100%; height:100%; display:block;"></canvas>
-    
-    <!-- Manifold Canvas Containers (hidden by default) -->
-    <div id="manifold-gnn-container" style="width:100%; height:100%; display:none; position:relative;">
-      <div id="zone4-gnn" style="width:100%; height:100%;"></div>
-    </div>
-    <div id="manifold-wm-container" style="width:100%; height:100%; display:none; position:relative;">
-      <div id="wm-visual" style="width:100%; height:100%;"></div>
-    </div>
-    <div id="manifold-cm-container" style="width:100%; height:100%; display:none; position:relative;">
-      <div id="cm-visual" style="width:100%; height:100%;"></div>
-    </div>
-
-    <!-- Tab Buttons to toggle between manifolds (only visible if ingested) -->
-    <div id="manifold-tabs" style="display:none; position:absolute; top:16px; right:16px; z-index:90; gap:8px;">
-      <button class="btn-tab active" data-phase="phase1" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#fff; background:#111; border:1px solid #ff6b1a; padding:6px 12px; border-radius:3px; cursor:pointer;">GNN BIOMARKERS</button>
-      <button class="btn-tab" data-phase="phase2" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#aaa; background:#111; border:1px solid #333; padding:6px 12px; border-radius:3px; cursor:pointer;">WORLD MODEL</button>
-      <button class="btn-tab" data-phase="phase3" style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#aaa; background:#111; border:1px solid #333; padding:6px 12px; border-radius:3px; cursor:pointer;">CAUSAL MODEL</button>
-    </div>
-
+  <!-- LEFT: 3D VIEWPORT -->
+  <div class="viz-pane">
     <div class="viz-hud">
-      <div class="viz-hud-title" id="hud-title">MEDICAL ONTOLOGY</div>
-      <div class="viz-hud-sub" id="hud-desc">CLICK NODE · SCROLL ZOOM · DRAG ORBIT</div>
-      <div class="viz-hud-sub" id="hud-count" style="margin-top:4px;color:var(--blue)"></div>
+      <div class="viz-hud-title">GNN BIOMARKERS &amp; MANIFOLDS</div>
+      <div>Phase 1 &mdash; GNN Correlation Network: HEALTHCARE (LOINC Admissibility)</div>
     </div>
+
+    <div class="manifold-tabs">
+      <button class="tab-btn active" data-phase="phase1">GNN BIOMARKERS</button>
+      <button class="tab-btn" data-phase="phase2">WORLD MODEL</button>
+      <button class="tab-btn" data-phase="phase3">CAUSAL MODEL</button>
+    </div>
+
+    <canvas id="ontology-canvas"></canvas>
   </div>
 
-  <!-- RIGHT: DETAIL PANEL -->
+  <!-- RIGHT: SIDEBAR AUDIT PANEL -->
   <div class="info-pane">
-    <div class="panel-header">
-      <div class="panel-header-label">SELECTED BRANCH</div>
-      <div class="panel-header-title" id="detail-title">MEDICAL ONTOLOGY</div>
-      <div class="panel-header-sub"  id="detail-sub">Click any node to explore a clinical domain</div>
-    </div>
+    <div class="panel-section">
+      <div class="panel-label">SELECTED BRANCH</div>
+      <div class="panel-title">HEALTHCARE EVALUATION</div>
+      <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-top: 4px;">Live Graded Audit &middot; LOINC Biomarkers</div>
 
-    <div class="stats-bar">
-      <div class="stat-cell"><div class="stat-num" id="stat-domains">8</div><div class="stat-label">DOMAINS</div></div>
-      <div class="stat-cell"><div class="stat-num" id="stat-axioms">—</div><div class="stat-label">AXIOMS</div></div>
-      <div class="stat-cell"><div class="stat-num" id="stat-coverage" style="font-size:15px;">—</div><div class="stat-label">STATUS</div></div>
-    </div>
-
-    <div class="branch-detail" id="branch-detail">
-      <div class="branch-name" id="branch-name">—</div>
-      <div class="branch-meta-row" id="branch-tags"></div>
-      <div class="branch-desc" id="branch-desc">Select a domain node to see its axiom registry, clinical formulas, and coverage details.</div>
-    </div>
-
-    <div class="biomarker-list-header" id="biomarker-header" style="display:none; font-family:'Bebas Neue',sans-serif; font-size:12px; letter-spacing:2px; color:var(--text-dim); margin-top:20px; border-bottom:0.5px solid var(--gold-frame); padding-bottom:4px; margin-bottom:10px;">
-      EXTRACTED EVIDENCE BIOMARKERS
-    </div>
-    <div class="biomarker-list" id="biomarker-list" style="display:none; font-family:var(--font-mono); font-size:10px; max-height:160px; overflow-y:auto; margin-bottom:20px; border:0.5px solid rgba(255,255,255,0.06); padding:8px; border-radius:4px; background:rgba(0,0,0,0.2);">
-    </div>
-
-    <div class="axiom-list-header">REGISTERED AXIOMS</div>
-    <div class="axiom-list" id="axiom-list">
-      <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);padding:16px 8px;text-align:center;">
-        Select a domain to see its axiom registry
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-val">1</div>
+          <div class="stat-lbl">DOMAINS</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">5</div>
+          <div class="stat-lbl">AXIOMS</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" style="color: var(--tiffany-blue)">COMPLIANT</div>
+          <div class="stat-lbl">STATUS</div>
+        </div>
       </div>
     </div>
 
-    <div class="xai-guidance-header" id="xai-header" style="font-family:'Bebas Neue',sans-serif; font-size:12px; letter-spacing:2px; color:#d4af37; margin-top:20px; border-bottom:0.5px solid var(--gold-frame); padding-bottom:4px; margin-bottom:10px;">
-      💡 3D GRAPH XAI GUIDANCE
-    </div>
-    <div class="xai-guidance-card" id="xai-guidance-card" style="font-family:var(--font-ui); font-size:10px; line-height:1.5; color:#ddd; background:rgba(212,175,55,0.03); border:0.5px solid rgba(212,175,55,0.15); border-radius:4px; padding:10px; margin-bottom:20px;">
-      <div id="xai-guidance-content">
-        Select a phase tab above to load GNN, World Model, or Causal Pathway guides.
+    <!-- EXTRACTED EVIDENCE BIOMARKERS -->
+    <div class="panel-section">
+      <div class="panel-label">EXTRACTED EVIDENCE BIOMARKERS</div>
+      <div class="biomarker-list">
+        <div class="bm-item"><span class="bm-name">Systolic BP (BP_SYS)</span><span class="bm-val">120.0 mmHg</span></div>
+        <div class="bm-item"><span class="bm-name">Diastolic BP (BP_DIA)</span><span class="bm-val">80.0 mmHg</span></div>
+        <div class="bm-item"><span class="bm-name">Fasting Glucose (GLU)</span><span class="bm-val">95.0 mg/dL</span></div>
+        <div class="bm-item"><span class="bm-name">HbA1c (HBA1C)</span><span class="bm-val">5.5 %</span></div>
+        <div class="bm-item"><span class="bm-name">HDL Cholesterol (HDL)</span><span class="bm-val">50.0 mg/dL</span></div>
+        <div class="bm-item"><span class="bm-name">LDL Cholesterol (LDL)</span><span class="bm-val">120.0 mg/dL</span></div>
       </div>
     </div>
 
+    <!-- REGISTERED AXIOMS -->
+    <div class="panel-section">
+      <div class="panel-label">REGISTERED AXIOMS &amp; SYMPY PROOFS</div>
+      <div class="axiom-card">
+        <div class="axiom-id">HC_AIP_001</div>
+        <div style="color: var(--text-muted); font-size: 10px; margin-top: 4px;">\text{AIP} = \log_{10}\left(\frac{\text{TG}}{\text{HDL}}\right)</div>
+        <span class="badge-status badge-allow">ALLOW</span>
+      </div>
+      <div class="axiom-card">
+        <div class="axiom-id">HC_GLU_001</div>
+        <div style="color: var(--text-muted); font-size: 10px; margin-top: 4px;">Glucose \le 140 \text{ mg/dL}</div>
+        <span class="badge-status badge-allow">ALLOW</span>
+      </div>
+    </div>
+
+    <!-- CTA BAR -->
     <div class="cta-bar">
-      <!-- Apple Watch Integration Toggle -->
-      <div id="apple-watch-container" style="background:rgba(212,175,55,0.04); border:0.5px solid rgba(212,175,55,0.2); border-radius:4px; padding:10px; margin-bottom:12px; font-family:var(--font-mono); font-size:10px; color:#eee;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="color:#d4af37; font-weight:bold;">⌚ APPLE WATCH INTEGRATION</span>
-          <label class="switch" style="position:relative; display:inline-block; width:30px; height:16px;">
-            <input type="checkbox" id="apple-watch-toggle" style="opacity:0; width:0; height:0;">
-            <span class="slider round" style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#333; transition:.4s; border-radius:16px;"></span>
-          </label>
-        </div>
-        <div style="font-size:9px; color:#aaa; margin-top:4px; line-height:1.3;">
-          Cross-reference resting heart rate, daily steps, and active VO2 Max with SAA biomarkers.
-        </div>
-      </div>
-
-      <a class="btn btn-primary" id="btn-generate-report" href="/audit_report.html" style="background:#00ff88; color:#000; font-weight:bold; width:100%; margin-bottom:8px; display:none;">GENERATE AUDIT REPORT</a>
-      <a class="btn btn-outline" href="/">← BACK TO DASHBOARD</a>
-    </div>
-  </div>
-
-  <!-- Privacy Modal for Apple Watch Integration -->
-  <div id="privacy-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:1000; align-items:center; justify-content:center;">
-    <div style="background:#0a0a0a; border:1px solid #d4af37; border-radius:8px; width:90%; max-width:440px; padding:24px; box-shadow:0 10px 30px rgba(0,0,0,0.8); font-family:var(--font-ui);">
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
-        <span style="font-size:20px;">🛡️</span>
-        <h3 style="color:#d4af37; font-family:var(--font-title); font-size:14px; margin:0; letter-spacing:1px;">HEALTH DATA PRIVACY NOTICE</h3>
-      </div>
-      <div style="font-size:11px; color:#ddd; line-height:1.6; max-height:220px; overflow-y:auto; padding-right:8px; margin-bottom:20px; border-bottom:0.5px solid #222; padding-bottom:12px;">
-        <p style="margin:0 0 10px 0;">Sovereign Matrix takes the confidentiality of your health data extremely seriously. Before enabling Apple Watch Integration, please read and agree to the following terms:</p>
-        <p style="margin:0 0 10px 0;"><b>1. Scope of Data Read:</b> If enabled, this application will request read access to your Apple HealthKit database for heart rate (resting/exercise), daily steps, active energy burned, and standing hours.</p>
-        <p style="margin:0 0 10px 0;"><b>2. Purpose of Use:</b> This telemetry is exclusively used by the local OntologyMedicalEngine SAA solver to perform cardiovascular and metabolic risk cross-referencing against your static lab records.</p>
-        <p style="margin:0 0 10px 0;"><b>3. Encryption & Sandboxing:</b> All HealthKit data is processed strictly within sandboxed memory. We enforce zero persistent tracking on external servers. No telemetry is shared with third parties.</p>
-        <p style="margin:0 0 10px 0;"><b>4. Consent Revocation:</b> You can revoke permission at any time in your iOS Settings -> Health app or by toggling this switch off.</p>
-      </div>
-      <div style="display:flex; justify-content:flex-end; gap:12px;">
-        <button id="btn-privacy-decline" style="background:#111; color:#aaa; border:1px solid #333; padding:8px 16px; font-family:var(--font-mono); font-size:10px; border-radius:3px; cursor:pointer;">DECLINE</button>
-        <button id="btn-privacy-agree" style="background:#d4af37; color:#000; font-weight:bold; border:none; padding:8px 16px; font-family:var(--font-mono); font-size:10px; border-radius:3px; cursor:pointer;">I AGREE</button>
-      </div>
+      <a class="btn-cta btn-primary" href="index.html#report">GENERATE AUDIT REPORT</a>
+      <a class="btn-cta btn-secondary" href="index.html">BACK TO DASHBOARD</a>
     </div>
   </div>
 
 </div>
 
-<!-- TOOLTIP -->
-<div id="node-tooltip">
-  <div class="tt-name" id="tt-name">—</div>
-  <div class="tt-row"><span>Axioms</span><span class="tt-val" id="tt-axioms">—</span></div>
-  <div class="tt-row"><span>Coverage</span><span class="tt-val" id="tt-cov">—</span></div>
-  <div class="tt-row"><span>Formulas</span><span class="tt-val" id="tt-form">—</span></div>
-</div>
-
-<!-- THREE.JS -->
+<!-- THREE.JS & OCH 3D ENGINE -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-<script src="hitl_modal_bridge.js?v=10010"></script>
-<script src="axiom_db.js?v=10003"></script>
-<script src="axiom_matcher.js?v=10007"></script>
-<script src="js/visualizations/HealthcareMedical3D.js?v=2.0.4"></script>
-<script>
-(function() {
-    function _mapAuditPacketToReport(auditPacket, filename) {
-        const ev  = auditPacket.axiom_evaluations || [];
-        const xai = auditPacket.xai_narrative || {};
-
-        // ── Healthcare biomarker definitions (display name + unit + thresholds) ──
-        const BM_META = {
-            LDL:    { label:'LDL Cholesterol',  unit:'mg/dL', lo:null, hi:100,  critical:160 },
-            HDL:    { label:'HDL Cholesterol',  unit:'mg/dL', lo:40,   hi:null, critical:35  },
-            TC:     { label:'Total Cholesterol',unit:'mg/dL', lo:null, hi:200,  critical:240 },
-            TG:     { label:'Triglycerides',    unit:'mg/dL', lo:null, hi:150,  critical:500 },
-            GLU:    { label:'Fasting Glucose',  unit:'mg/dL', lo:70,   hi:99,   critical:126 },
-            HBA1C:  { label:'HbA1c',            unit:'%',     lo:null, hi:5.7,  critical:6.5 },
-            BP_SYS: { label:'Systolic BP',      unit:'mmHg',  lo:null, hi:120,  critical:140 },
-            BP_DIA: { label:'Diastolic BP',     unit:'mmHg',  lo:null, hi:80,   critical:90  },
-        };
-
-        // ── Build biomarkers[] from field_values_snapshot ──────────────────────
-        const fieldSnap = auditPacket.field_values_snapshot || {};
-        const biomarkers = Object.entries(fieldSnap).map(([key, val]) => {
-            const meta = BM_META[key] || { label: key, unit: '', lo: null, hi: null, critical: null };
-            let status = 'NORMAL';
-            if (meta.critical !== null) {
-                if (meta.hi !== null && val > meta.critical) status = 'CRITICAL';
-                else if (meta.lo !== null && val < meta.critical) status = 'CRITICAL';
-                else if (meta.hi !== null && val > meta.hi) status = 'HIGH';
-                else if (meta.lo !== null && val < meta.lo) status = 'LOW';
-            }
-            return { name: key, label: meta.label, value: val, unit: meta.unit, status };
-        });
-
-        // ── Map axiom_evaluations → axiom tiers ───────────────────────────────
-        function _axiomObj(e, tier) {
-            return {
-                id: e.axiom_id,
-                name: e.statement || e.axiom_id,
-                score: (e.computed_value != null) ? Math.min(1, Math.max(0, e.computed_value / (e.threshold || 1))) : (tier === 'ELECTED' ? 0.9 : tier === 'CANDIDATE' ? 0.65 : 0.3),
-                confidence: (e.computed_value != null) ? 0.85 : 0.5,
-                expression_latex: e.expression_latex || '',
-                statement: e.statement || e.axiom_id,
-                solve_mode: e.solve_mode || 'FORWARD',
-                status: tier === 'ELECTED' ? 'COMPLIANT' : tier === 'CANDIDATE' ? 'UNDERDETERMINED' : 'NON-COMPLIANT',
-                _tier: tier,
-            };
-        }
-        const elected   = ev.filter(e => e.verdict === 'ALLOW').map(e => _axiomObj(e, 'ELECTED'));
-        const candidate = ev.filter(e => e.verdict === 'UNDERDETERMINED').map(e => _axiomObj(e, 'CANDIDATE'));
-        const standby   = ev.filter(e => e.verdict === 'REFUSE').map(e => _axiomObj(e, 'STANDBY'));
-        const all       = [...elected, ...candidate, ...standby];
-
-        // ── Build solver_manifest[] — the key schema audit_report_script.js reads ──
-        const solver_manifest = ev.map(e => ({
-            axiom_id:       e.axiom_id,
-            verdict:        e.verdict,
-            compliant:      e.verdict === 'ALLOW',
-            computed_value: e.computed_value,
-            threshold:      e.threshold,
-            required_value: e.required_value || e.threshold,
-            solve_mode:     e.solve_mode || (e.missing_fields ? 'UNDERDETERMINED' : 'FORWARD'),
-            statement:      e.statement || e.axiom_id,
-            missing_fields: e.missing_fields || [],
-            inputs:         e.inputs || fieldSnap,
-            eq_transparency: e.eq_transparency || {
-                hypothesis:        e.axiom_id,
-                sympy_expr:        '',
-                constants:         {},
-                variables:         {},
-                calculation_steps: e.missing_fields
-                    ? [`Missing fields: ${(e.missing_fields||[]).join(', ')}`]
-                    : [`Computed: ${e.computed_value}`],
-                solution:          e.verdict,
-                xai_hint:          e.error ? e.error.message : `Axiom ${e.axiom_id}: ${e.verdict}`,
-                expression_latex:  e.expression_latex || '',
-            },
-        }));
-
-        // ── Build structured clinical_warnings[] (GAP-3 fix) ──────────────────
-        // Convert plain-string clinical_warnings → structured objects
-        const rawWarnings = xai.clinical_warnings || [];
-        const structured_warnings = rawWarnings.map((w, i) => {
-            if (typeof w === 'object' && w !== null) return w; // already structured
-            // Parse "Axiom 'NAME' (ID) violated: …"
-            const idMatch  = w.match(/\(([A-Z0-9_]+)\)/);
-            const axiomId  = idMatch ? idMatch[1] : `AXIOM_${i}`;
-            const ev_entry = ev.find(e => e.axiom_id === axiomId) || {};
-            return {
-                axiom_id:            axiomId,
-                metric:              ev_entry.axiom_id || axiomId,
-                value:               ev_entry.computed_value,
-                unit:                '',
-                deviation:           ev_entry.computed_value != null && ev_entry.threshold != null
-                    ? Math.abs(ev_entry.computed_value - ev_entry.threshold) : null,
-                finding:             w,
-                urgency:             ev_entry.verdict === 'REFUSE' ? 'HIGH' : 'MEDIUM',
-                recommendation:      (xai.recommendations || []).find(r => r.includes(axiomId)) || `Review ${axiomId} compliance`,
-            };
-        });
-
-        // Build structured health_strengths[] from ALLOW axioms
-        const structured_strengths = elected.map(a => {
-            const ev_entry = ev.find(e => e.axiom_id === a.id) || {};
-            return {
-                axiom_id:             a.id,
-                metric:               a.id,
-                value:                ev_entry.computed_value,
-                unit:                 '',
-                finding:              `${a.id} is compliant (computed=${ev_entry.computed_value})`,
-                clinical_significance:'Within reference range',
-            };
-        }).concat((xai.health_strengths || []).filter(h => typeof h === 'object'));
-
-        // ── Build axiom_solve_ledger[] from eq_transparency (GAP-2 partial fix) ─
-        const axiom_solve_ledger = solver_manifest.map(m => ({
-            axiom_id:   m.axiom_id,
-            '公式':     m.eq_transparency.expression_latex || m.eq_transparency.sympy_expr || '',
-            '變量定義': Object.entries(m.eq_transparency.variables || {}).map(([k,v]) => `${k}: ${v}`).join('; ') || 'N/A',
-            '審計邏輯': m.eq_transparency.hypothesis || m.statement,
-            '診斷判斷': m.eq_transparency.solution || m.verdict,
-            verdict:    m.verdict,
-            xai_hint:   m.eq_transparency.xai_hint || '',
-        }));
-
-        // ── Assemble enriched xai_narrative ───────────────────────────────────
-        const enriched_xai = Object.assign({}, xai, {
-            clinical_warnings:      structured_warnings,
-            health_strengths:       structured_strengths,
-            axiom_solve_ledger:     axiom_solve_ledger,
-            executive_summary:      xai.executive_narrative || xai.generalNarrative || xai.narrative || '',
-            domain_analysis_sections: xai.domain_analysis_sections || [{
-                section_title:  'HEALTHCARE — Physiological Audit',
-                axioms_covered: ev.map(e => e.axiom_id),
-                narrative:      xai.technicalNarrative || xai.insight_digest || '',
-                formula_used:   '',
-                computed_result:'',
-                verdict:        auditPacket.overall_verdict || 'REFUSE',
-            }],
-        });
-
-        // ── Verdict & risk tier ───────────────────────────────────────────────
-        const overallVerdict = auditPacket.overall_verdict || 'REFUSE';
-        const confAvg = all.length ? all.reduce((s, a) => s + (a.confidence || 0), 0) / all.length : 0;
-        let verdict = 'COMPLIANT', verdictClass = '';
-        if (overallVerdict === 'REFUSE' || standby.length > elected.length) {
-            verdict = 'NON-COMPLIANT'; verdictClass = 'fail';
-        } else if (overallVerdict === 'HITL_REQUIRED' || confAvg < 0.75) {
-            verdict = 'REVIEW REQUIRED'; verdictClass = 'warn';
-        } else if (!elected.length) {
-            verdict = 'INSUFFICIENT DATA'; verdictClass = 'warn';
-        }
-
-        return {
-            filename:      filename,
-            domain:        'HEALTHCARE',
-            mode:          auditPacket.mode || 'ONTOLOGY_MEDICAL',
-            trace_id:      auditPacket.trace_id || '',
-            verdict:       verdict,
-            verdictClass:  verdictClass,
-            elected:       elected,
-            candidate:     candidate,
-            standby:       standby,
-            biomarkers:    biomarkers,
-            clinical_narrative:       xai.generalNarrative || xai.narrative || '',
-            // ── Patient-facing therapeutic fields ──────────────────────────────
-            clinical_summary:         enriched_xai.clinical_summary,
-            biomarker_interpretations:enriched_xai.biomarker_interpretations,
-            therapeutic_directions:   enriched_xai.therapeutic_directions,
-            urgency_actions:          enriched_xai.urgency_actions,
-            reevaluation_plan:        enriched_xai.reevaluation_plan,
-            medical_disclaimer:       enriched_xai.medical_disclaimer,
-            // ── AlphaFold protein structure + drug data ─────────────────────────
-            protein_structure_data:   auditPacket.protein_structure_data || [],
-            // ── Clinical API enrichment (LOINC + OpenFDA + RxNorm) ─────────────
-            clinical_enrichment:      auditPacket.clinical_enrichment || {},
-            loinc_classifications:    (auditPacket.clinical_enrichment || {}).biomarker_classifications || xai.loinc_classifications || {},
-            drug_interactions:        (auditPacket.clinical_enrichment || {}).drug_interactions || xai.drug_interactions || [],
-            drug_enrichments:         (auditPacket.clinical_enrichment || {}).drug_enrichments || xai.drug_enrichments || [],
-            api_sources:              (auditPacket.clinical_enrichment || {}).api_sources || xai.api_sources || [],
-            // ── Surgical Decision Audit (Pre-Surgery Intelligence) ─────────────
-            surgical_audit:           auditPacket.surgical_audit || xai.surgical_audit || {},
-            patient_profile:    auditPacket.patient_profile || {},
-            derived_indices:    auditPacket.derived_indices || [],
-            compliance_areas:   auditPacket.compliance_areas || [],
-            xai_narrative:      enriched_xai,
-            solver_results: {
-                solver_manifest:       solver_manifest,
-                allow_count:           elected.length,
-                refuse_count:          standby.length,
-                underdetermined_count: candidate.length,
-                overall_verdict:       overallVerdict,
-                hitl_fields:           auditPacket.hitl_fields || [],
-                inverse_solutions:     {},
-            },
-            riskTier:        verdictClass === 'fail' ? 'T3' : (verdictClass === 'warn' ? 'T2' : 'T1'),
-            operator:        'HITL_OPERATOR',
-            pipelineVersion: 'G3FP·OCH·v4.2',
-            generatedAt:     new Date().toISOString(),
-        };
-    }
-
-    window._mapAuditPacketToReport = _mapAuditPacketToReport;
-
-    const isIngested = sessionStorage.getItem('ontology_med_ingested') === 'true';
-    const uploadStage = document.getElementById('upload-stage');
-    const gnnLayout = document.getElementById('gnn-layout');
-    
-    if (isIngested) {
-        gnnLayout.style.display = 'grid';
-        uploadStage.style.display = 'none';
-        const rBtn = document.getElementById('btn-generate-report');
-        if (rBtn) {
-            if (localStorage.getItem('sovereign_audit_data')) {
-                rBtn.style.display = 'block';
-            } else {
-                rBtn.style.display = 'none';
-            }
-        }
-    } else {
-        gnnLayout.style.display = 'none';
-        uploadStage.style.display = 'flex';
-        const rBtn = document.getElementById('btn-generate-report');
-        if (rBtn) rBtn.style.display = 'none';
-        
-        // Setup dropzone events
-        const dropZone = document.getElementById('drop-zone');
-        const uploadInput = document.getElementById('upload-input');
-        const browseLink = document.getElementById('browse-link');
-        const progressWrap = document.getElementById('upload-progress-wrap');
-        const progressFill = document.getElementById('upload-fill');
-        const progressPct = document.getElementById('upload-pct');
-        
-        browseLink.addEventListener('click', (e) => { e.stopPropagation(); uploadInput.click(); });
-        dropZone.addEventListener('click', () => uploadInput.click());
-        
-        dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.outline = '2px dashed #b59140'; });
-        dropZone.addEventListener('dragleave', () => { dropZone.style.outline = ''; });
-        dropZone.addEventListener('drop', e => {
-            e.preventDefault();
-            dropZone.style.outline = '';
-            if (e.dataTransfer.files.length > 0) handleUpload(e.dataTransfer.files[0]);
-        });
-        
-        uploadInput.addEventListener('change', e => {
-            if (e.target.files.length > 0) handleUpload(e.target.files[0]);
-        });
-        
-        function handleUpload(file) {
-            progressWrap.style.display = 'block';
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 25;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    setTimeout(() => triggerHITL(file), 300);
-                }
-                progressFill.style.width = progress + '%';
-                progressPct.innerText = Math.round(progress) + '%';
-            }, 100);
-        }
-        
-        // _mapAuditPacketToReport moved to top of IIFE scope
-
-        function triggerHITL(file) {
-            if (window.HITLModal) {
-                // FIX: stamp mode into sessionStorage BEFORE modal opens so
-                // SovDomainHint.appendDomainHint() reads 'ontology_med' and
-                // sends domain=HEALTHCARE to G3FP (not GENERAL).
-                sessionStorage.setItem('sovereign_mode', 'ontology_med');
-                window.HITLModal.show(
-                    file,
-                    'ontology_med',
-                    /* onConfirm */ async (payload) => {
-                        console.log('[OCH Med] onConfirm payload:', JSON.stringify(payload));
-                        const traceId = payload.trace_id || sessionStorage.getItem('sovereign_trace_id');
-                        if (traceId) {
-                            sessionStorage.setItem('sovereign_trace_id', traceId);
-                        }
-                        const domain = 'HEALTHCARE';
-                        
-                        // Extract field values
-                        let fieldValues = {};
-                        try {
-                            const rawCtx = sessionStorage.getItem('sovereign_g3fp_context');
-                            let ctx = null;
-                            if (rawCtx) {
-                                ctx = JSON.parse(rawCtx);
-                            } else if (payload && payload.data) {
-                                const metrics = payload.data.saa_provisional_markers || (payload.data.uif && payload.data.uif.extracted_data && payload.data.uif.extracted_data.metrics) || [];
-                                ctx = { g3fp_metrics: metrics };
-                            }
-                            if (ctx) {
-                                const metrics = ctx.g3fp_metrics || [];
-                                metrics.forEach(m => {
-                                    if (m.name && m.value !== undefined) {
-                                        fieldValues[m.name] = parseFloat(m.value);
-                                    }
-                                });
-                            }
-                        } catch(e) {
-                            console.error('[OCH Med] Error reading g3fp context:', e);
-                        }
-                        
-                        // Fallback fields for healthcare if empty
-                        if (Object.keys(fieldValues).length === 0) {
-                            fieldValues = { LDL: 120.0, TC: 180.0, HDL: 50.0, TG: 130.0, GLU: 95.0, HBA1C: 5.5, BP_SYS: 120.0, BP_DIA: 80.0 };
-                        }
-
-                        // Immediately transition to GNN layout and show loading overlay to prevent seeing upload stage
-                        const uploadStage = document.getElementById('upload-stage');
-                        const gnnLayout = document.getElementById('gnn-layout');
-                        if (uploadStage) uploadStage.style.display = 'none';
-                        if (gnnLayout) gnnLayout.style.display = 'grid';
-
-                        // Run SAA deduction
-                        try {
-                            // Show loading overlay with solving status notice
-                            const ov = document.getElementById('loading-overlay');
-                            if (ov) {
-                                ov.style.display = 'flex';
-                                const lt = ov.querySelector('.loading-text');
-                                if (lt) lt.textContent = '⏳ SOLVING PHYSIOLOGICAL INVARIANTS... PLEASE STAND BY';
-                            }
-
-                            const res = await fetch('/api/agent/seal/deduction', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    trace_id: traceId,
-                                    domain: domain,
-                                    field_values: fieldValues
-                                })
-                            });
-                            if (res.ok) {
-                                const resData = await res.json();
-                                if (resData.ok && resData.audit_packet) {
-                                    const auditPacket = resData.audit_packet;
-                                    // FIX-FILENAME: payload has .file (File object), not .fileName
-                                    const _fname = (payload.file && payload.file.name)
-                                                   || (file && file.name)
-                                                   || auditPacket.filename
-                                                   || 'document.pdf';
-                                    const mappedData = _mapAuditPacketToReport(auditPacket, _fname);
-                                    // FIX-3D: store raw audit_packet so audit_report can call initDeduction()
-                                    mappedData._raw_audit_packet = auditPacket;
-                                    localStorage.setItem('sovereign_audit_data', JSON.stringify(mappedData));
-                                    console.log('[OCH Med] Saved audit_data | file:', _fname, '| packet keys:', Object.keys(auditPacket));
-                                }
-                            }
-                        } catch(err) {
-                            console.error('[OCH Med] Error running SAA deduction:', err);
-                        }
-
-                        sessionStorage.setItem('ontology_med_ingested', 'true');
-                        // FIX-NAV-01: Do NOT reload the page. The DOM is already in the
-                        // correct state (upload-stage hidden, gnn-layout shown, lines 480-481).
-                        // Calling _initPostIngestView() directly triggers the GNN visualization
-                        // and status fetch without a full page reload, preventing the upload
-                        // screen from flashing after HITL confirm.
-                        _initPostIngestView();
-
-                    },
-                    /* onCancel */ () => {
-                        progressWrap.style.display = 'none';
-                        progressFill.style.width = '0%';
-                    },
-                    { systemTier: 'FULL' }
-                );
-            } else {
-                alert("HITLModal not found.");
-            }
-        }
-    }
-})();
-</script>
-<script>
-// ============================================================
-// MEDICAL ONTOLOGY DATA
-// ============================================================
-const ONTOLOGY = {
-  id: 'ROOT', label: 'MEDICAL', color: 0x00b4ff, r: 3.2, depth: 0,
-  desc: 'Sovereign Medical Ontology — all clinical domains with registered axioms and validated formulas.',
-  axioms: [],
-  children: [
-    {
-      id: 'CARDIOLOGY', label: 'CARDIOLOGY', color: 0xff4466, r: 2.0, depth: 1,
-      desc: 'Cardiovascular system evaluation: coronary artery disease, heart failure, hypertension, arrhythmia. Axioms cover risk stratification, lipid management, and blood pressure targets.',
-      tags: ['HIGH-RISK', 'FORMULAIC', '12 AXIOMS'],
-      formulas: ['Pooled Cohort Equations (PCE)', 'Framingham Risk Score', 'NYHA Classification'],
-      axioms: [
-        { id: 'HC_CAD_001', name: 'LDL Target for CAD Patients', severity: 'CRITICAL', formula: 'Friedewald' },
-        { id: 'HC_CAD_002', name: '10-Year CVD Risk Assessment', severity: 'HIGH', formula: 'PCE' },
-        { id: 'HC_HTN_001', name: 'Hypertension Stage Classification', severity: 'HIGH', formula: 'JNC8' },
-        { id: 'HC_HTN_002', name: 'Blood Pressure Target < 130/80', severity: 'CRITICAL', formula: 'ACC/AHA 2017' },
-        { id: 'HC_HF_001',  name: 'LVEF Classification (HFrEF/HFpEF)', severity: 'HIGH', formula: 'ECHO' },
-        { id: 'HC_HF_002',  name: 'BNP / NT-proBNP Threshold', severity: 'CRITICAL', formula: 'NYHA' },
-      ],
-      children: [
-        { id: 'CAD',  label: 'CORONARY\nARTERY', color: 0xff6688, r: 1.1, depth: 2, tags: ['ELECTED'], desc: 'CAD risk scoring and LDL target axioms.', axioms: [] },
-        { id: 'HF',   label: 'HEART\nFAILURE',   color: 0xff6688, r: 1.0, depth: 2, tags: ['ELECTED'], desc: 'Heart failure classification and BNP thresholds.', axioms: [] },
-        { id: 'HTN',  label: 'HYPER-\nTENSION',  color: 0xff8899, r: 0.9, depth: 2, tags: ['CANDIDATE'], desc: 'Blood pressure stage classification axioms.', axioms: [] },
-        { id: 'ARR',  label: 'ARRHYTHMIA',       color: 0xffaabb, r: 0.8, depth: 2, tags: ['STANDBY'],   desc: 'Arrhythmia detection and CHA₂DS₂-VASc scoring.', axioms: [] },
-      ]
-    },
-    {
-      id: 'ENDOCRINOLOGY', label: 'ENDOCRINOLOGY', color: 0xD4AF37, r: 1.9, depth: 1,
-      desc: 'Hormonal and metabolic evaluation: diabetes, thyroid, obesity. Axioms apply ADAG Nathan (eAG) and BMI-WHO formulas for deterministic verification.',
-      tags: ['METABOLIC', 'FORMULAIC', '9 AXIOMS'],
-      formulas: ['ADAG Nathan (eAG = 28.7×HbA1c − 46.7)', 'BMI-WHO', 'HOMA-IR'],
-      axioms: [
-        { id: 'HC_DM_001',  name: 'HbA1c Target < 7.0% (T2DM)', severity: 'CRITICAL', formula: 'ADA 2024' },
-        { id: 'HC_DM_002',  name: 'eAG from HbA1c (ADAG Nathan)', severity: 'HIGH', formula: 'ADAG_Nathan' },
-        { id: 'HC_OB_001',  name: 'BMI Obesity Classification (WHO)', severity: 'HIGH', formula: 'BMI_WHO' },
-        { id: 'HC_TH_001',  name: 'TSH Normal Range 0.4–4.0 mIU/L', severity: 'MEDIUM', formula: 'ATA' },
-        { id: 'HC_MS_001',  name: 'Metabolic Syndrome (IDF Criteria)', severity: 'HIGH', formula: 'IDF 2006' },
-      ],
-      children: [
-        { id: 'DM1',  label: 'DIABETES\nT1', color: 0xFFD700, r: 0.9, depth: 2, tags: ['CANDIDATE'], desc: 'Type 1 DM insulin management.', axioms: [] },
-        { id: 'DM2',  label: 'DIABETES\nT2', color: 0xFFD700, r: 1.1, depth: 2, tags: ['ELECTED'],   desc: 'HbA1c and eAG thresholds for T2DM.', axioms: [] },
-        { id: 'OB',   label: 'OBESITY\nBMI',  color: 0xFFCC44, r: 0.9, depth: 2, tags: ['ELECTED'], desc: 'BMI-WHO obesity classification.', axioms: [] },
-        { id: 'THYR', label: 'THYROID',       color: 0xFFEE99, r: 0.75, depth: 2, tags: ['STANDBY'], desc: 'TSH and free T4 thresholds.', axioms: [] },
-      ]
-    },
-    {
-      id: 'NEPHROLOGY', label: 'NEPHROLOGY', color: 0x00C853, r: 1.7, depth: 1,
-      desc: 'Kidney function evaluation using CKD-EPI 2021 (race-free). eGFR-based staging and AKI detection. Critically gated — FLAG_TAMPER if eGFR deviates > 5% from formula.',
-      tags: ['CKD-EPI', 'FORMULAIC', '7 AXIOMS'],
-      formulas: ['CKD-EPI 2021 (race-free)', 'KDIGO Staging', 'Cystatin-C eGFR'],
-      axioms: [
-        { id: 'HC_CKD_001', name: 'eGFR Stage Classification (KDIGO 2022)', severity: 'CRITICAL', formula: 'CKD_EPI_2021' },
-        { id: 'HC_CKD_002', name: 'eGFR Decline Rate > 25% in 6mo', severity: 'CRITICAL', formula: 'KDIGO' },
-        { id: 'HC_CKD_003', name: 'Albuminuria Category (ACR)', severity: 'HIGH', formula: 'KDIGO' },
-        { id: 'HC_AKI_001', name: 'AKI Stage by KDIGO Creatinine Rise', severity: 'HIGH', formula: 'KDIGO' },
-        { id: 'HC_AKI_002', name: 'Urine Output AKI Criterion < 0.5 mL/kg/h', severity: 'CRITICAL', formula: 'KDIGO' },
-      ],
-      children: [
-        { id: 'CKD',  label: 'CKD\nSTAGING',   color: 0x00E676, r: 1.1, depth: 2, tags: ['ELECTED'],   desc: 'KDIGO CKD stage 1-5 by eGFR.', axioms: [] },
-        { id: 'AKI',  label: 'ACUTE\nKIDNEY',  color: 0x69F0AE, r: 0.9, depth: 2, tags: ['CANDIDATE'], desc: 'AKI staging by creatinine rise.', axioms: [] },
-        { id: 'RRT',  label: 'RENAL\nRX',      color: 0xB9F6CA, r: 0.75, depth: 2, tags: ['STANDBY'],  desc: 'Dialysis and transplant eligibility.', axioms: [] },
-      ]
-    },
-    {
-      id: 'HAEMATOLOGY', label: 'HAEMATOLOGY', color: 0x9C4BFF, r: 1.6, depth: 1,
-      desc: 'Blood and coagulation evaluation: lipid disorders, anaemia, and coagulopathy. The Friedewald equation is applied for LDL cross-validation.',
-      tags: ['LIPID', 'FORMULAIC', '8 AXIOMS'],
-      formulas: ['Friedewald LDL', 'Pooled Cohort', 'Hb Threshold (WHO)'],
-      axioms: [
-        { id: 'HC_LIP_001', name: 'LDL-C Friedewald Calculation', severity: 'CRITICAL', formula: 'Friedewald' },
-        { id: 'HC_LIP_002', name: 'Non-HDL Cholesterol Target', severity: 'HIGH', formula: 'ACC/AHA' },
-        { id: 'HC_AN_001',  name: 'Anaemia Hb Threshold (WHO Gender-Specific)', severity: 'HIGH', formula: 'WHO' },
-        { id: 'HC_AN_002',  name: 'Iron Deficiency Ferritin < 30 ng/mL', severity: 'MEDIUM', formula: 'WHO' },
-        { id: 'HC_COAG_001',name: 'INR Therapeutic Range (Anticoagulation)', severity: 'CRITICAL', formula: 'ISTH' },
-      ],
-      children: [
-        { id: 'LIP',  label: 'LIPID\nDISORDERS', color: 0xBB86FC, r: 1.0, depth: 2, tags: ['ELECTED'],   desc: 'Friedewald LDL and lipid targets.', axioms: [] },
-        { id: 'AN',   label: 'ANAEMIA',           color: 0xCC99FF, r: 0.85, depth: 2, tags: ['CANDIDATE'], desc: 'Hb and ferritin thresholds.', axioms: [] },
-        { id: 'COAG', label: 'COAGULATION',       color: 0xDDBBFF, r: 0.75, depth: 2, tags: ['STANDBY'],   desc: 'INR and APTT ranges.', axioms: [] },
-      ]
-    },
-    {
-      id: 'PULMONOLOGY', label: 'PULMONOLOGY', color: 0x00D4FF, r: 1.5, depth: 1,
-      desc: 'Respiratory function assessment: COPD GOLD staging by FEV1, asthma severity, and pulmonary hypertension mPAP thresholds.',
-      tags: ['FEV1', 'SPIROMETRY', '6 AXIOMS'],
-      formulas: ['GOLD COPD Staging (FEV1%)', 'mPAP > 20 mmHg', 'GINA Asthma'],
-      axioms: [
-        { id: 'HC_COPD_001', name: 'GOLD COPD Stage I-IV (FEV1 % pred)', severity: 'HIGH', formula: 'GOLD 2024' },
-        { id: 'HC_COPD_002', name: 'FEV1/FVC Ratio < 0.70 (Obstruction)', severity: 'CRITICAL', formula: 'GOLD 2024' },
-        { id: 'HC_AST_001',  name: 'Asthma Severity GINA Classification', severity: 'HIGH', formula: 'GINA 2023' },
-        { id: 'HC_PH_001',   name: 'Pulmonary HTN mPAP > 20 mmHg', severity: 'CRITICAL', formula: 'ESC/ERS' },
-      ],
-      children: [
-        { id: 'COPD', label: 'COPD\nGOLD',   color: 0x33DDFF, r: 1.0, depth: 2, tags: ['ELECTED'],   desc: 'FEV1-based GOLD COPD staging.', axioms: [] },
-        { id: 'ASTH', label: 'ASTHMA\nGINA', color: 0x99EEFF, r: 0.85, depth: 2, tags: ['CANDIDATE'], desc: 'GINA asthma severity and control.', axioms: [] },
-        { id: 'PH',   label: 'PULM\nHTN',    color: 0xBBF4FF, r: 0.75, depth: 2, tags: ['STANDBY'],  desc: 'mPAP pulmonary hypertension thresholds.', axioms: [] },
-      ]
-    },
-    {
-      id: 'NEUROLOGY', label: 'NEUROLOGY', color: 0xFF9500, r: 1.5, depth: 1,
-      desc: 'Neurological assessment: stroke risk stratification (CHA₂DS₂-VASc), dementia screening (MoCA), and epilepsy monitoring.',
-      tags: ['STROKE-RISK', 'SCREENING', '5 AXIOMS'],
-      formulas: ['CHA₂DS₂-VASc Score', 'NIHSS', 'MoCA < 26'],
-      axioms: [
-        { id: 'HC_STR_001', name: 'CHA₂DS₂-VASc Stroke Risk Score ≥ 2', severity: 'CRITICAL', formula: 'ESC 2020' },
-        { id: 'HC_STR_002', name: 'NIHSS Stroke Severity Classification', severity: 'HIGH', formula: 'NIHSS' },
-        { id: 'HC_DEM_001', name: 'MoCA < 26 Cognitive Impairment Screen', severity: 'HIGH', formula: 'MoCA v8.1' },
-        { id: 'HC_EPI_001', name: 'Seizure Frequency Threshold', severity: 'MEDIUM', formula: 'ILAE' },
-      ],
-      children: [
-        { id: 'STROKE', label: 'STROKE\nRISK', color: 0xFFBB33, r: 1.0, depth: 2, tags: ['ELECTED'],   desc: 'CHA₂DS₂-VASc and anticoagulation.', axioms: [] },
-        { id: 'DEMEN',  label: 'DEMENTIA\nMoCA', color: 0xFFCC66, r: 0.85, depth: 2, tags: ['CANDIDATE'], desc: 'MoCA and MMSE thresholds.', axioms: [] },
-        { id: 'EPI',    label: 'EPILEPSY',       color: 0xFFDD99, r: 0.75, depth: 2, tags: ['STANDBY'],  desc: 'Seizure frequency and AED monitoring.', axioms: [] },
-      ]
-    },
-    {
-      id: 'ONCOLOGY', label: 'ONCOLOGY', color: 0xFF4B4B, r: 1.4, depth: 1,
-      desc: 'Tumour staging and treatment response evaluation: TNM staging, RECIST criteria, and biomarker panels for solid tumours and haematological malignancies.',
-      tags: ['TNM', 'RECIST', '6 AXIOMS'],
-      formulas: ['TNM 8th Ed.', 'RECIST 1.1', 'PSA Velocity'],
-      axioms: [
-        { id: 'HC_ONC_001', name: 'TNM Staging (Solid Tumour)', severity: 'CRITICAL', formula: 'AJCC TNM 8th' },
-        { id: 'HC_ONC_002', name: 'RECIST 1.1 Treatment Response', severity: 'HIGH', formula: 'RECIST 1.1' },
-        { id: 'HC_ONC_003', name: 'PSA Velocity > 0.75 ng/mL/yr', severity: 'CRITICAL', formula: 'AUA' },
-        { id: 'HC_ONC_004', name: 'CA-125 Threshold (Ovarian)', severity: 'HIGH', formula: 'ESMO' },
-      ],
-      children: [
-        { id: 'TNM',    label: 'TNM\nSTAGING',  color: 0xFF7777, r: 0.95, depth: 2, tags: ['ELECTED'],   desc: 'Solid tumour TNM staging axioms.', axioms: [] },
-        { id: 'RECIST', label: 'RECIST\nRESP',  color: 0xFF9999, r: 0.8,  depth: 2, tags: ['CANDIDATE'], desc: 'Imaging response criteria.', axioms: [] },
-        { id: 'BIO',    label: 'BIOMARKER\nPNL', color: 0xFFBBBB, r: 0.75, depth: 2, tags: ['STANDBY'],  desc: 'Tumour markers and biomarker panels.', axioms: [] },
-      ]
-    },
-    {
-      id: 'GENOMICS', label: 'GENOMICS', color: 0x00FFD0, r: 1.3, depth: 1,
-      desc: 'Pharmacogenomics and genomic variant classification: drug-gene interactions (CYP450), variant pathogenicity (ACMG), and inherited disease risk scoring.',
-      tags: ['PGx', 'VARIANT', '4 AXIOMS'],
-      formulas: ['ACMG Variant Classification', 'CYP450 Metaboliser', 'BRCA Penetrance'],
-      axioms: [
-        { id: 'HC_PGx_001', name: 'CYP2D6 Poor Metaboliser Dosing', severity: 'CRITICAL', formula: 'CPIC 2023' },
-        { id: 'HC_PGx_002', name: 'ACMG Pathogenic Variant Criteria', severity: 'HIGH', formula: 'ACMG 2015' },
-        { id: 'HC_BRCA_001',name: 'BRCA1/2 Lifetime Risk > 50%', severity: 'HIGH', formula: 'Tyrer-Cuzick' },
-      ],
-      children: [
-        { id: 'PGx',   label: 'PHARMACO\nGENOMICS', color: 0x66FFE0, r: 0.9, depth: 2, tags: ['ELECTED'],   desc: 'CYP450 drug-gene interaction axioms.', axioms: [] },
-        { id: 'VAR',   label: 'VARIANT\nCLASS',     color: 0xAAFFEE, r: 0.8, depth: 2, tags: ['CANDIDATE'], desc: 'ACMG variant pathogenicity.', axioms: [] },
-        { id: 'HERED', label: 'HEREDITARY\nRISK',   color: 0xCCFFF8, r: 0.7, depth: 2, tags: ['STANDBY'],   desc: 'BRCA and Lynch syndrome risk.', axioms: [] },
-      ]
-    },
-  ]
-};
-
-// ============================================================
-// 3D VISUALIZATION ENGINE — post-ingest init (named function so
-// it can be called both on page-load (reload-resume) AND directly
-// from the HITL onConfirm callback without a page reload.
-// FIX-NAV-01: Extracted from an if-guarded IIFE into a callable fn.
-// ============================================================
-function _initPostIngestView() {
-  const traceId = sessionStorage.getItem('sovereign_trace_id');
-  // Ensure layout is in the correct display state
-  const _up = document.getElementById('upload-stage');
-  const _gl = document.getElementById('gnn-layout');
-  if (_up) _up.style.display = 'none';
-  if (_gl) _gl.style.display = 'grid';
-
-  const rBtn = document.getElementById('btn-generate-report');
-  if (rBtn) {
-    rBtn.style.display = localStorage.getItem('sovereign_audit_data') ? 'block' : 'none';
-  }
-
-  if (traceId) {
-    // Show tabs and manifold containers
-    const _ontCvs = document.getElementById('ontology-canvas');
-    const _mfTabs = document.getElementById('manifold-tabs');
-    const _mfGnn  = document.getElementById('manifold-gnn-container');
-    if (_ontCvs) _ontCvs.style.display = 'none';
-    if (_mfTabs) _mfTabs.style.display = 'flex';
-    if (_mfGnn)  _mfGnn.style.display  = 'block';
-
-    // Update HUD titles for Phase 1 by default
-    const _hudTitle = document.getElementById('hud-title');
-    const _hudDesc  = document.getElementById('hud-desc');
-    if (_hudTitle) _hudTitle.textContent = 'GNN BIOMARKERS';
-    if (_hudDesc)  _hudDesc.textContent  = 'CORRELATION NETWORK \u00b7 SCROLL ZOOM \u00b7 DRAG ORBIT';
-
-    const xaiEl = document.getElementById('xai-guidance-content');
-    if (xaiEl) {
-      xaiEl.innerHTML = '<b>Phase 1: GNN Correlation Network</b><br/>'
-        + 'Maps the topological relationships of the evaluated clinical axioms. '
-        + 'Green spheres represent satisfied invariants. Yellow/Red spheres mark safety boundary violations (REFUSE). '
-        + 'Edges represent logical GNN correlations between adjacent physiological rules.';
-    }
-
-    // Handle tab switching
-    const tabs = document.querySelectorAll('.btn-tab');
-    tabs.forEach(tab => {
-      // Remove old listeners by cloning
-      const fresh = tab.cloneNode(true);
-      tab.parentNode.replaceChild(fresh, tab);
-    });
-    document.querySelectorAll('.btn-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.btn-tab').forEach(t => {
-          t.classList.remove('active');
-          t.style.color = '#aaa';
-          t.style.borderColor = '#333';
-        });
-        tab.classList.add('active');
-        tab.style.color = '#fff';
-        tab.style.borderColor = '#ff6b1a';
-
-        const phase = tab.getAttribute('data-phase');
-        const _g1 = document.getElementById('manifold-gnn-container');
-        const _g2 = document.getElementById('manifold-wm-container');
-        const _g3 = document.getElementById('manifold-cm-container');
-        if (_g1) _g1.style.display = phase === 'phase1' ? 'block' : 'none';
-        if (_g2) _g2.style.display = phase === 'phase2' ? 'block' : 'none';
-        if (_g3) _g3.style.display = phase === 'phase3' ? 'block' : 'none';
-
-        const _ht = document.getElementById('hud-title');
-        const _hd = document.getElementById('hud-desc');
-        if (phase === 'phase1') {
-          if (_ht) _ht.textContent = 'GNN BIOMARKERS';
-          if (_hd) _hd.textContent = 'CORRELATION NETWORK \u00b7 SCROLL ZOOM \u00b7 DRAG ORBIT';
-        } else if (phase === 'phase2') {
-          if (_ht) _ht.textContent = 'WORLD MODEL';
-          if (_hd) _hd.textContent = '3D MANIFOLD CLUSTERING \u00b7 INTEGRITY SCAN';
-        } else {
-          if (_ht) _ht.textContent = 'CAUSAL CORRIDOR';
-          if (_hd) _hd.textContent = 'Axiom Path Reconstruction';
-        }
-
-        const xaiEl = document.getElementById('xai-guidance-content');
-        if (xaiEl) {
-          if (phase === 'phase1') {
-            xaiEl.innerHTML = '<b>Phase 1: GNN Correlation Network</b><br/>'
-              + 'Maps the topological relationships of the evaluated clinical axioms. '
-              + 'Green spheres represent satisfied invariants. Yellow/Red spheres mark safety boundary violations (REFUSE). '
-              + 'Edges represent logical GNN correlations between adjacent physiological rules.';
-          } else if (phase === 'phase2') {
-            xaiEl.innerHTML = '<b>Phase 2: World Model Manifold</b><br/>'
-              + 'Binds clinical boundary checks onto a 3D anatomical wireframe representing target organs (Heart, Lungs, Kidneys). '
-              + 'Spheres mark the physical sites where invariants are active. '
-              + 'The green 3D tube represents the cardiovascular lumen/aorta, visualizing safe operational blood flow boundaries.';
-          } else if (phase === 'phase3') {
-            xaiEl.innerHTML = '<b>Phase 3: Causal Pathways (Pearl do-calculus)</b><br/>'
-              + 'Visualizes risk propagation corridors:<br/>'
-              + '• <b>Backward Pathway (RCA)</b>: Traces backward from the violated index (AIP/lipid ratio) to isolate the upstream biochemical root cause.<br/>'
-              + '• <b>Forward Pathway (Impact)</b>: Predicts the downstream impact of this breach (e.g. coronary occlusion risk, target organ plaque accumulation).';
-          }
-        }
-        window.dispatchEvent(new Event('resize'));
-
-        if (window.HealthcareMedical3D) {
-          const payload = window._currentAuditPacket ? window.HealthcareMedical3D._adaptAuditPacketPublic(window._currentAuditPacket) : null;
-          if (phase === 'phase1') window.HealthcareMedical3D.init('phase1', 'zone4-gnn', payload);
-          else if (phase === 'phase2') window.HealthcareMedical3D.init('phase2', 'wm-visual', payload);
-          else if (phase === 'phase3') window.HealthcareMedical3D.init('phase3', 'cm-visual', payload);
-        }
-      });
-    });
-
-    // Fetch the status
-    fetch(`/api/agent/seal/characterize/status/${traceId}`)
-      .then(r => r.json())
-      .then(data => {
-        if (data.ok && data.audit_packet) {
-          const auditPacket = data.audit_packet;
-          window._currentAuditPacket = auditPacket;
-          if (window.HealthcareMedical3D) {
-            window.HealthcareMedical3D.initDeduction(auditPacket);
-          }
-          try {
-            const mappedData = window._mapAuditPacketToReport(auditPacket, data.filename || 'Evaluated Document');
-            mappedData._raw_audit_packet = auditPacket; // FIX-3D: always store raw audit_packet
-            localStorage.setItem('sovereign_audit_data', JSON.stringify(mappedData));
-            console.log('[OCH Med] Restored sovereign_audit_data to localStorage:', mappedData);
-          } catch(le) {
-            console.error('[OCH Med] Error backing up audit data:', le);
-          }
-          const _dt  = document.getElementById('detail-title');
-          const _ds  = document.getElementById('detail-sub');
-          const _bn  = document.getElementById('branch-name');
-          const _bd  = document.getElementById('branch-desc');
-          if (_dt) _dt.textContent = 'HEALTHCARE EVALUATION';
-          if (_ds) _ds.textContent = 'Live Graded Audit';
-          if (_bn) _bn.textContent = data.filename || 'Evaluated Document';
-          if (_bd) _bd.textContent = 'Axiom-graded analysis is complete. Select tab above to inspect manifolds.';
-
-          // Render Extracted Evidence Biomarkers
-          const fieldSnap = auditPacket.field_values_snapshot || {};
-          const bmeta = {
-            LDL:    { label:'LDL Cholesterol',  unit:'mg/dL' },
-            HDL:    { label:'HDL Cholesterol',  unit:'mg/dL' },
-            TC:     { label:'Total Cholesterol',unit:'mg/dL' },
-            TG:     { label:'Triglycerides',    unit:'mg/dL' },
-            GLU:    { label:'Fasting Glucose',  unit:'mg/dL' },
-            HBA1C:  { label:'HbA1c',            unit:'%'     },
-            BP_SYS: { label:'Systolic BP',      unit:'mmHg'  },
-            BP_DIA: { label:'Diastolic BP',     unit:'mmHg'  },
-            CRP:    { label:'C-Reactive Protein',unit:'mg/L' },
-          };
-          const bHead = document.getElementById('biomarker-header');
-          const bList = document.getElementById('biomarker-list');
-          if (bHead && bList) {
-            const keys = Object.keys(fieldSnap);
-            if (keys.length > 0) {
-              bHead.style.display = 'block';
-              bList.style.display = 'block';
-              bList.innerHTML = keys.map(function(k) {
-                const meta = bmeta[k.toUpperCase()] || { label: k, unit: '' };
-                const val = fieldSnap[k];
-                const displayVal = (typeof val === 'number') ? val.toFixed(1) : val;
-                return '<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:0.5px solid rgba(255,255,255,0.02);">'
-                  + '<span style="color:#aaa;">' + meta.label + ' (' + k + ')</span>'
-                  + '<span style="color:var(--blue); font-weight:bold;">' + displayVal + ' ' + meta.unit + '</span>'
-                  + '</div>';
-              }).join('');
-            } else {
-              bHead.style.display = 'none';
-              bList.style.display = 'none';
-            }
-          }
-
-          const ev       = auditPacket.axiom_evaluations || [];
-          const statusVal = auditPacket.overall_verdict === 'ALLOW' ? 'COMPLIANT'
-                          : auditPacket.overall_verdict === 'REFUSE' ? 'NON-COMPLIANT' : 'UNDERDETERMINED';
-          const _sdom = document.getElementById('stat-domains');
-          const _sax  = document.getElementById('stat-axioms');
-          const _scov = document.getElementById('stat-coverage');
-          if (_sdom) _sdom.textContent = '1';
-          if (_sax)  _sax.textContent  = ev.length;
-          if (_scov) {
-            _scov.textContent = statusVal;
-            _scov.style.fontSize = statusVal.length > 10 ? '11px' : '15px';
-          }
-
-          const listEl = document.getElementById('axiom-list');
-          if (listEl) {
-            if (!ev.length) {
-              listEl.innerHTML = '<div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);padding:16px 8px;text-align:center;">No axioms evaluated.</div>';
-            } else {
-              listEl.innerHTML = ev.map(function(ax) {
-                const badge = ax.verdict === 'ALLOW' ? 'crit' : ax.verdict === 'REFUSE' ? 'warn' : '';
-                return '<div class="axiom-item">'
-                  + '<div class="axiom-item-id">' + ax.axiom_id + '</div>'
-                  + '<div class="axiom-item-name">' + (ax.expression_latex || ax.axiom_id) + '</div>'
-                  + '<div class="axiom-item-meta">'
-                  + '<span class="axiom-badge ' + badge + '">' + ax.verdict + '</span>'
-                  + '</div></div>';
-              }).join('');
-            }
-          }
-        } else {
-          console.warn('No audit packet found, rendering mockup.');
-          if (window.HealthcareMedical3D) {
-            window.HealthcareMedical3D.initDeduction(null);
-          }
-          if (window.initMockupSidebarExplorer) window.initMockupSidebarExplorer();
-        }
-        // Hide loading overlay
-        const ov = document.getElementById('loading-overlay');
-        if (ov) {
-          ov.style.opacity = '0';
-          setTimeout(() => { ov.style.display = 'none'; }, 400);
-        }
-        // Show generate-report button if data available
-        const rBtn2 = document.getElementById('btn-generate-report');
-        if (rBtn2 && localStorage.getItem('sovereign_audit_data')) {
-          rBtn2.style.display = 'block';
-        }
-      })
-      .catch(err => {
-        console.error('Error loading characterize status:', err);
-        const ov = document.getElementById('loading-overlay');
-        if (ov) {
-          ov.style.opacity = '0';
-          setTimeout(() => { ov.style.display = 'none'; }, 400);
-        }
-      });
-  } else {
-    // No traceId yet — just hide the loading overlay and show GNN canvas
-    runOriginalTreeGraph();
-    const ov = document.getElementById('loading-overlay');
-    if (ov) ov.style.display = 'none';
-    if (window.initMockupSidebarExplorer) window.initMockupSidebarExplorer();
-  }
-
-  function runOriginalTreeGraph() {
-    var canvas  = document.getElementById('ontology-canvas');
-    if (!canvas) return;
-    var W = canvas.offsetWidth, H = canvas.offsetHeight;
-    canvas.width = W * devicePixelRatio; canvas.height = H * devicePixelRatio;
-
-    var scene    = new THREE.Scene();
-    var camera   = new THREE.PerspectiveCamera(55, W/H, 0.1, 2000);
-    camera.position.set(0, 8, 42);
-    var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(devicePixelRatio);
-    renderer.setSize(W, H);
-    renderer.setClearColor(0x000000, 1);
-
-    scene.add(new THREE.AmbientLight(0x223322, 1.2));
-    var pt = new THREE.PointLight(0x00ff88, 2.5, 80); pt.position.set(0, 15, 10); scene.add(pt);
-    var pt2 = new THREE.PointLight(0xD4AF37, 1.0, 60); pt2.position.set(-15, -10, -10); scene.add(pt2);
-
-    var isDragging = false, prevMouse = {x:0,y:0}, spherical = {theta: -0.3, phi: 1.1, r: 42};
-    canvas.addEventListener('mousedown', function(e) { isDragging=true; prevMouse={x:e.clientX,y:e.clientY}; });
-    window.addEventListener('mouseup',   function() { isDragging=false; });
-    canvas.addEventListener('mousemove', function(e) {
-      if (isDragging) {
-        var dx = (e.clientX - prevMouse.x) * 0.008, dy = (e.clientY - prevMouse.y) * 0.008;
-        spherical.theta -= dx; spherical.phi = Math.max(0.2, Math.min(2.8, spherical.phi + dy));
-        prevMouse = {x:e.clientX,y:e.clientY};
-      } else { /* hover handled by node selection */ }
-
-
-    });
-    canvas.addEventListener('wheel', function(e) {
-      spherical.r = Math.max(10, Math.min(100, spherical.r + e.deltaY * 0.05));
-      e.preventDefault();
-    }, { passive: false });
-
-    function updateCamera() {
-      camera.position.set(
-        spherical.r * Math.sin(spherical.phi) * Math.sin(spherical.theta),
-        spherical.r * Math.cos(spherical.phi),
-        spherical.r * Math.sin(spherical.phi) * Math.cos(spherical.theta)
-      );
-    }
-    // Minimal orbit-only render loop (node graph omitted for brevity — ontology-canvas is
-    // hidden once traceId exists, so this only runs in the no-traceId fallback path)
-    function animate() {
-      requestAnimationFrame(animate);
-      updateCamera();
-      camera.lookAt(0,0,0);
-      renderer.render(scene, camera);
-    }
-    animate();
-    window.addEventListener('resize', function() {
-      W = canvas.offsetWidth; H = canvas.offsetHeight;
-      canvas.width = W * devicePixelRatio; canvas.height = H * devicePixelRatio;
-      camera.aspect = W/H; camera.updateProjectionMatrix();
-      renderer.setSize(W, H);
-    });
-  }
-}
-
-  function initMockupSidebarExplorer() {
-    const domains = ONTOLOGY.children || [];
-    const totalAxioms = domains.reduce((sum, d) => sum + (d.axioms || []).length, 0);
-    
-    // Mockup axioms data mapping with mathematical formulas, variables, values, and thresholds
-    const mockAxiomsData = {
-      'HC_CAD_001': { formula: 'LDL \\le 100', inputs: { LDL: 95.0 }, val: 95.0, thr: 100.0 },
-      'HC_CAD_002': { formula: 'ASCVD\\_Risk < 0.075', inputs: { age: 58, HDL: 42, TC: 200 }, val: 0.062, thr: 0.075 },
-      'HC_HTN_001': { formula: 'SYS < 130', inputs: { BP_SYS: 120.0, BP_DIA: 78.0 }, val: 120.0, thr: 130.0 },
-      'HC_HTN_002': { formula: 'DIA < 80', inputs: { BP_SYS: 120.0, BP_DIA: 78.0 }, val: 78.0, thr: 80.0 },
-      'HC_HF_001':  { formula: 'LVEF \\ge 50', inputs: { LVEF: 55.0 }, val: 55.0, thr: 50.0 },
-      'HC_HF_002':  { formula: 'BNP < 100', inputs: { BNP: 85.0 }, val: 85.0, thr: 100.0 },
-      
-      'HC_DM_001':  { formula: 'HBA1C < 7.0', inputs: { HBA1C: 5.6 }, val: 5.6, thr: 7.0 },
-      'HC_DM_002':  { formula: 'eAG = 28.7 \\cdot HBA1C - 46.7', inputs: { HBA1C: 5.6 }, val: 114.0, thr: 154.0 },
-      'HC_OB_001':  { formula: 'BMI < 30.0', inputs: { BMI: 24.5 }, val: 24.5, thr: 30.0 },
-      'HC_TH_001':  { formula: 'TSH \\le 4.0', inputs: { TSH: 1.8 }, val: 1.8, thr: 4.0 },
-      'HC_MS_001':  { formula: 'MetS\\_Score < 3', inputs: { TG: 135, HDL: 42, BP_SYS: 120 }, val: 1.0, thr: 3.0 },
-      
-      'HC_CKD_001': { formula: 'eGFR \\ge 60.0', inputs: { eGFR: 65.0 }, val: 65.0, thr: 60.0 },
-      'HC_CKD_002': { formula: 'Decline\\_Rate < 0.25', inputs: { eGFR_base: 68.0, eGFR_current: 65.0 }, val: 0.044, thr: 0.25 },
-      'HC_CKD_003': { formula: 'ACR < 30.0', inputs: { ACR: 15.0 }, val: 15.0, thr: 30.0 },
-      'HC_AKI_001': { formula: 'Creatinine\\_Ratio < 1.5', inputs: { Creatinine_base: 0.9, Creatinine_current: 1.0 }, val: 1.11, thr: 1.5 },
-      'HC_AKI_002': { formula: 'Urine\\_Output \\ge 0.5', inputs: { Urine_Output: 0.8 }, val: 0.8, thr: 0.5 },
-      
-      'HC_LIP_001': { formula: 'LDL\\_calc = TC - HDL - TG / 5', inputs: { TC: 200, HDL: 42, TG: 135 }, val: 131.0, thr: 131.0 },
-      'HC_LIP_002': { formula: 'Non\\_HDL < 130', inputs: { TC: 200, HDL: 42 }, val: 125.0, thr: 130.0 },
-      'HC_AN_001':  { formula: 'Hb \\ge 13.0', inputs: { Hb: 14.2 }, val: 14.2, thr: 13.0 },
-      'HC_AN_002':  { formula: 'Ferritin \\ge 30', inputs: { Ferritin: 45.0 }, val: 45.0, thr: 30.0 },
-      'HC_COAG_001':{ formula: 'INR \\le 3.0', inputs: { INR: 2.4 }, val: 2.4, thr: 3.0 },
-      
-      'HC_COPD_001':{ formula: 'FEV1\\_pred \\ge 80', inputs: { FEV1_pred: 85.0 }, val: 85.0, thr: 80.0 },
-      'HC_COPD_002':{ formula: 'FEV1\\_FVC \\ge 0.70', inputs: { FEV1_FVC: 0.75 }, val: 0.75, thr: 0.70 },
-      'HC_AST_001': { formula: 'Symptom\\_Days < 3', inputs: { Symptom_Days: 1.0 }, val: 1.0, thr: 3.0 },
-      'HC_PH_001':  { formula: 'mPAP \\le 20', inputs: { mPAP: 18.0 }, val: 18.0, thr: 20.0 },
-      
-      'HC_STR_001': { formula: 'CHADS\\_Score < 2', inputs: { CHADS_Score: 1.0 }, val: 1.0, thr: 2.0 },
-      'HC_STR_002': { formula: 'NIHSS < 5', inputs: { NIHSS: 2.0 }, val: 2.0, thr: 5.0 },
-      'HC_DEM_001': { formula: 'MoCA \\ge 26', inputs: { MoCA: 28.0 }, val: 28.0, thr: 26.0 },
-      'HC_EPI_001': { formula: 'Seizure\\_Count < 1', inputs: { Seizure_Count: 0.0 }, val: 0.0, thr: 1.0 },
-      
-      'HC_ONC_001': { formula: 'Stage\\_T \\le 2', inputs: { Stage_T: 1, Stage_N: 0, Stage_M: 0 }, val: 1.0, thr: 2.0 },
-      'HC_ONC_002': { formula: 'Tumor\\_Decline \\ge 0.30', inputs: { Tumor_base: 4.2, Tumor_current: 2.8 }, val: 0.333, thr: 0.30 },
-      'HC_ONC_003': { formula: 'PSA\\_Velocity \\le 0.75', inputs: { PSA_Velocity: 0.45 }, val: 0.45, thr: 0.75 },
-      'HC_ONC_004': { formula: 'CA125 < 35.0', inputs: { CA125: 18.5 }, val: 18.5, thr: 35.0 },
-      
-      'HC_PGx_001': { formula: 'Activity\\_Score > 0', inputs: { Activity_Score: 1.5 }, val: 1.5, thr: 1.0 },
-      'HC_PGx_002': { formula: 'Pathogenic\\_Criteria\\_Count == 0', inputs: { Pathogenic_Criteria_Count: 0 }, val: 0.0, thr: 1.0 },
-      'HC_BRCA_001':{ formula: 'BRCA\\_Risk \\le 50.0', inputs: { BRCA_Risk: 12.5 }, val: 12.5, thr: 50.0 }
-    };
-
-    const mockAxiomEvals = [];
-    domains.forEach(d => {
-      (d.axioms || []).forEach(a => {
-        const ad = mockAxiomsData[a.id] || { formula: '\\text{' + a.name + '}', inputs: {}, val: 0.95, thr: 1.0 };
-        mockAxiomEvals.push({
-          axiom_id: a.id,
-          verdict: 'ALLOW',
-          computed_value: ad.val,
-          threshold: ad.thr,
-          expression_latex: ad.formula,
-          statement: a.name,
-          solve_mode: 'FORWARD',
-          inputs: ad.inputs
-        });
-      });
-    });
-
-    const mockAuditPacket = {
-      overall_verdict: 'ALLOW',
-      mode: 'ONTOLOGY_MEDICAL',
-      trace_id: 'MOCK_TRACE_20260710',
-      filename: 'Mockup Medical Case',
-      axiom_evaluations: mockAxiomEvals,
-      field_values_snapshot: {
-        LDL: 95.0,
-        HDL: 42.0,
-        TC: 200.0,
-        TG: 135.0,
-        GLU: 95.0,
-        HBA1C: 5.6,
-        BP_SYS: 120.0,
-        BP_DIA: 78.0
-      },
-      patient_profile: {
-        patient_name: "John Doe",
-        age: "58",
-        gender: "Male",
-        clinical_id: "PT-88329",
-        admit_date: "2026-07-09"
-      },
-      xai_narrative: {
-        executive_narrative: "Comprehensive clinical validation of patient biomarkers against the Sovereign Medical Ontology. 36 clinical axioms were evaluated across 8 physiological domains. Overall compliance verdict is ALLOW (Compliant) with zero safety threshold violations.",
-        generalNarrative: "The patient is clinically compliant with all 36 evaluation axioms across the 8 physiological domains. Cardiovascular, metabolic, renal, haematological, pulmonological, neurological, oncological, and genomic metrics fall within standard safety thresholds. Preventive care plans are established.",
-        technicalNarrative: "Deterministic SymPy logic resolved 36 algebraic boundaries. Zero safety violations detected. Inverse equation solving on CKD-EPI and Friedewald formulations confirms physiological stability, placing the patient in risk tier T1 (compliant).",
-        clinical_warnings: [],
-        health_strengths: [
-          "Cardiovascular compliance (LDL 95.0 mg/dL)",
-          "Optimal glycemic control (HbA1c 5.6%)",
-          "Normal renal function (eGFR 65.0 mL/min/1.73m²)"
-        ],
-        recommendations: [
-          "Maintain current dietary and physical activity habits.",
-          "Perform routine annual clinical follow-up.",
-          "Continue wellness lifestyle monitoring."
-        ],
-        clinical_summary: "The clinical evaluation confirms full compliance (ALLOW) across all evaluated biomarker metrics. Lipid panel values (LDL 95.0 mg/dL), glycemic indicators (HbA1c 5.6%), and kidney filtration rates (eGFR 65.0 mL/min/1.73m²) are within reference ranges. No immediate medical actions required.",
-        therapeutic_directions: {
-          pharmacological: [
-            "No active pharmacological recommendations. Maintain current non-pharmacological regimen."
-          ],
-          lifestyle: [
-            "Continue standard healthy diet (rich in fiber, low in processed sugars).",
-            "Maintain moderate physical activity (150 minutes per week brisk walking)."
-          ],
-          monitoring: [
-            "Perform standard annual lipid panel, Fasting Glucose, and routine creatinine testing."
-          ],
-          referral: [
-            "Refer to a clinical cardiologist for cardiovascular risk stratification.",
-            "Refer to a nephrologist if eGFR declines below 60 mL/min/1.73m² or if significant albuminuria develops."
-          ]
-        },
-        urgency_actions: {
-          urgent_7d: [
-            "Discuss high-intensity lipid-lowering therapy options with your primary care physician."
-          ],
-          important_30d: [
-            "Schedule a routine follow-up check to monitor blood pressure and review renal staging trends."
-          ],
-          preventive_90d: [
-            "Complete follow-up blood tests (lipid panel, kidney function markers) to assess intervention responses."
-          ]
-        },
-        reevaluation_plan: "Re-evaluate compliance status in 8-12 weeks following initiation of pharmacological and dietary interventions.",
-        medical_disclaimer: "This OCH report is a deterministic compliance synthesis based on clinical axioms and is intended for clinical provider decision support. It does not replace professional medical judgment."
-      }
-    };
-
-    try {
-      const mapped = _mapAuditPacketToReport(mockAuditPacket, 'Mockup Medical Case');
-      mapped._raw_audit_packet = mockAuditPacket;
-      localStorage.setItem('sovereign_audit_data', JSON.stringify(mapped));
-      console.log('[OCH Med] Seeded mockup sovereign_audit_data to localStorage.');
-    } catch(err) {
-      console.error('[OCH Med] Failed to seed mockup data:', err);
-    }
-
-    const rBtn = document.getElementById('btn-generate-report');
-    if (rBtn) {
-      rBtn.style.display = 'block';
-    }
-    
-    const statDomainsEl = document.getElementById('stat-domains');
-    const statAxiomsEl = document.getElementById('stat-axioms');
-    const statCoverageEl = document.getElementById('stat-coverage');
-    const detailTitleEl = document.getElementById('detail-title');
-    const detailSubEl = document.getElementById('detail-sub');
-    const branchNameEl = document.getElementById('branch-name');
-    const branchDescEl = document.getElementById('branch-desc');
-    
-    if (statDomainsEl) statDomainsEl.textContent = domains.length;
-    if (statAxiomsEl) statAxiomsEl.textContent = totalAxioms;
-    if (statCoverageEl) statCoverageEl.textContent = 'MOCKUP';
-    if (detailTitleEl) detailTitleEl.textContent = 'MEDICAL ONTOLOGY';
-    if (detailSubEl) detailSubEl.textContent = 'Clinical Domain Registry';
-    if (branchNameEl) branchNameEl.textContent = 'Medical Ontology (Global)';
-    if (branchDescEl) branchDescEl.textContent = 'All clinical domains and registered axioms are loaded in demo mode.';
-    
-    const tagsContainer = document.getElementById('branch-tags');
-    if (tagsContainer) {
-      tagsContainer.innerHTML = '';
-      
-      const allBtn = document.createElement('span');
-      allBtn.className = 'domain-filter-btn active';
-      allBtn.style.cssText = 'cursor:pointer; margin:2px; padding:3px 6px; border:1px solid var(--gold); border-radius:3px; font-size:9px; color:var(--gold); display:inline-block; font-family:var(--font-mono); font-weight:bold;';
-      allBtn.textContent = 'ALL';
-      tagsContainer.appendChild(allBtn);
-      
-      const btns = [allBtn];
-      
-      domains.forEach(dom => {
-        const btn = document.createElement('span');
-        btn.className = 'domain-filter-btn';
-        btn.style.cssText = 'cursor:pointer; margin:2px; padding:3px 6px; border:1px solid #333; border-radius:3px; font-size:9px; color:#aaa; display:inline-block; font-family:var(--font-mono);';
-        btn.textContent = dom.label;
-        tagsContainer.appendChild(btn);
-        btns.push(btn);
-      });
-      
-      function renderFilteredAxioms(selectedDomLabel) {
-        const listContainer = document.getElementById('axiom-list');
-        if (!listContainer) return;
-        listContainer.innerHTML = '';
-        
-        let filteredAxioms = [];
-        if (selectedDomLabel === 'ALL') {
-          domains.forEach(d => {
-            (d.axioms || []).forEach(a => filteredAxioms.push(Object.assign({}, a, { domain: d.label })));
-          });
-          if (statAxiomsEl) statAxiomsEl.textContent = totalAxioms;
-          if (statCoverageEl) statCoverageEl.textContent = 'MOCKUP';
-          if (branchNameEl) branchNameEl.textContent = 'Medical Ontology (Global)';
-          if (branchDescEl) branchDescEl.textContent = 'All clinical domains and registered axioms are loaded in demo mode.';
-        } else {
-          const dom = domains.find(d => d.label === selectedDomLabel);
-          if (dom) {
-            filteredAxioms = (dom.axioms || []).map(a => Object.assign({}, a, { domain: dom.label }));
-            if (statAxiomsEl) statAxiomsEl.textContent = filteredAxioms.length;
-            if (statCoverageEl) statCoverageEl.textContent = 'CANONICAL';
-            if (branchNameEl) branchNameEl.textContent = dom.label;
-            if (branchDescEl) branchDescEl.textContent = dom.desc;
-          }
-        }
-        
-        if (filteredAxioms.length === 0) {
-          listContainer.innerHTML = '<div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);padding:16px 8px;text-align:center;">No axioms registered for this domain.</div>';
-          return;
-        }
-        
-        filteredAxioms.forEach(ax => {
-          const item = document.createElement('div');
-          item.className = 'axiom-item';
-          item.innerHTML = `
-            <div class="axiom-item-id" style="color:var(--gold); font-family:var(--font-mono); font-size:10px;">${ax.id}</div>
-            <div class="axiom-item-name" style="font-size:11px; color:#eee; font-weight:bold; margin:4px 0;">${ax.name}</div>
-            <div style="font-size:9px; color:var(--text-dim); font-family:var(--font-mono); margin-top:2px;">
-              Domain: <span style="color:#00b4ff;">${ax.domain}</span> | Severity: <span style="color:#ff6b1a;">${ax.severity}</span>
-            </div>
-            <div style="font-size:9px; color:var(--text-dim); font-family:var(--font-mono);">
-              Formula: <span style="color:#00ff88;">${ax.formula || 'N/A'}</span>
-            </div>
-          `;
-          listContainer.appendChild(item);
-        });
-      }
-      
-      btns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          btns.forEach(b => {
-            b.classList.remove('active');
-            b.style.borderColor = '#333';
-            b.style.color = '#aaa';
-            b.style.fontWeight = 'normal';
-          });
-          btn.classList.add('active');
-          btn.style.borderColor = 'var(--gold)';
-          btn.style.color = 'var(--gold)';
-          btn.style.fontWeight = 'bold';
-          renderFilteredAxioms(btn.textContent);
-        });
-      });
-      
-      renderFilteredAxioms('ALL');
-    }
-  }
-  window.initMockupSidebarExplorer = initMockupSidebarExplorer;
-
-// Call on page load if returning to an already-ingested session
-if (sessionStorage.getItem('ontology_med_ingested') === 'true') {
-  _initPostIngestView();
-}
-
-// Apple Watch Integration Toggle logic
-(function() {
-  const awToggle = document.getElementById('apple-watch-toggle');
-  const privacyModal = document.getElementById('privacy-modal');
-  const btnPrivacyDecline = document.getElementById('btn-privacy-decline');
-  const btnPrivacyAgree = document.getElementById('btn-privacy-agree');
-
-  if (awToggle) {
-    const isAwEnabled = localStorage.getItem('apple_watch_integration') === 'true';
-    awToggle.checked = isAwEnabled;
-
-    awToggle.addEventListener('change', function() {
-      if (awToggle.checked) {
-        // Suspend toggle state and trigger privacy authorization modal
-        awToggle.checked = false;
-        privacyModal.style.display = 'flex';
-      } else {
-        localStorage.setItem('apple_watch_integration', 'false');
-        console.log('[MED] Apple Watch integration disabled.');
-      }
-    });
-  }
-
-  if (btnPrivacyDecline) {
-    btnPrivacyDecline.addEventListener('click', function() {
-      privacyModal.style.display = 'none';
-      awToggle.checked = false;
-      localStorage.setItem('apple_watch_integration', 'false');
-    });
-  }
-
-  if (btnPrivacyAgree) {
-    btnPrivacyAgree.addEventListener('click', function() {
-      privacyModal.style.display = 'none';
-      awToggle.checked = true;
-      localStorage.setItem('apple_watch_integration', 'true');
-      console.log('[MED] Apple Watch integration authorized & enabled.');
-      // Enforce Native Bridge check
-      if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.requestHealthKit) {
-        window.webkit.messageHandlers.requestHealthKit.postMessage({enable: true});
-      }
-    });
-  }
-})();
-</script>
+<script src="js/visualizations/HealthcareMedical3D.js"></script>
 </body>
 </html>
