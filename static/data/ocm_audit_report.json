@@ -1,0 +1,303 @@
+{
+  "ocm_audit_report": {
+    "document_metadata": {
+      "authentication_state": "GENERAL",
+      "header": {
+        "logo_url": "/static/img/aichip_logo.svg",
+        "product_name": "ONTOLOGY COMPLIANCE MATRIX",
+        "company_name": "AIChip Corporation",
+        "sso_owner_name": null,
+        "sso_owner_id": null
+      },
+      "footer": {
+        "custom_text": "Sovereign Matrix — Automated OCM Audit Report | Confidential — Internal Distribution Only",
+        "timestamp": "2026-05-05T08:16:25Z",
+        "page_numbering": true
+      },
+      "seal": {
+        "type": "CORPORATE_GENERAL",
+        "signature_text": "Certified by AIChip Corporation Sovereign OCM Engine v4.1 | Axiom Registry: healthcare_vascular.json + aerospace_composite.json | Trace ID: 20260505_081625_b7c4"
+      }
+    },
+    "executive_summary": {
+      "compliance_score": 0.87,
+      "critical_violations": 2,
+      "cost_impact_summary": "2 architectural defects patched (GNN3D namespace collision E2E-2I, DOM pruning race condition E2E-2D). Estimated 34% reduction in unplanned HITL escalation cycles. Cloud AI compute allocation: 68% (Gemini Flash contextualisation, axiom semantic matching via LanceDB). Edge processing allocation: 32% (local GNN shape deformation detection, DOM event routing). Net risk-adjusted compute cost delta: -18% vs baseline. HITL unlock triggered at N7 (SaO2 confidence below 0.60 threshold): 1 synchronous human review cycle consumed. Axiom contradiction VASC_LDL_001 ↔ VASC_HB_003 resolved via L5 contextualization (arbitration favoured VASC_LDL_001 at weight 0.85 vs 0.60 observed SaO2 confidence)."
+    },
+    "translation_pair": {
+      "technical_analysis": "GNN scout (gnn_scout_v1) processed a 10-node vascular biomarker graph. Ideal shape sourced from VASC_LDL_001/VASC_AIP_002/VASC_HB_003 axiom library via World Model. Per-node deviation scores computed via detect_3d_shape_drift(). Node N7 (SaO2) registered the maximum deviation score of 0.31 against the ideal position — exceeding the drift_threshold of 0.15 — triggering drift_detected=true. Drift magnitude: 0.31. HITL unlock condition met (node confidence at N7 = 0.58 < 0.60 gate). Time axis rotated BACKWARD (10 cycles): root_cause_chain traced as [N3(TG), N5(VascularResistance), N7(SaO2)]. Root cause entry point: N3. Axiom contradiction detected between VASC_LDL_001 (HIGH spatial_tension: LDL raises vascular resistance) and VASC_HB_003 (HIGH spatial_tension: elevated Hb masks obstruction symptoms via O2 compensation). L5 arbitration resolved contradiction by weighting VASC_LDL_001 evidence chain at 0.85 confidence floor vs observed SaO2 confidence of 0.58. L5 state output: DRIFT_CONFIRMED, escalation tier HITL_REQUIRED. Two E2E architectural defects (GNN3D.initEvidenceStream namespace destruction on ES module import; non-atomic DOM removeChild race in hitl_modal.js OCM terminal prune loop) resolved via namespace safe-recovery patch and ChildNode.remove() atomicity upgrade respectively. Post-patch pipeline compliance score: 0.87.",
+      "general_comprehension": "Think of the Sovereign system as an automated blood test interpreter with a built-in safety referee. When it analysed the patient's vascular data, it found that the blood oxygen readings (Node N7) looked reassuringly normal — but this was masking a hidden problem upstream. Like a smoke detector going off in the basement while the fire actually started in the garage, the system traced the real source back to elevated triglyceride levels (Node N3) quietly raising artery resistance (Node N5) before the oxygen sensors could show the damage. Because the system was uncertain about the oxygen readings (confidence below its safety threshold), it automatically paused and requested a human expert to review — this 'safety pause' is exactly the HITL gate working as designed. Two internal software bugs that could have caused the safety pause mechanism itself to crash have now been fixed. Overall, the system is operating at 87% compliance, the two bugs are resolved, and the AI correctly flagged a real health risk that a simple oxygen reading might have hidden."
+    },
+    "visualizations": {
+      "render_engine": "threejs",
+      "gnn_phase_1": {
+        "camera": {
+          "fov": 75,
+          "position": { "x": 15, "y": 15, "z": 15 }
+        },
+        "axes": {
+          "visible": true,
+          "color": "#FFD700",
+          "scale": 1.0
+        },
+        "nodes": [
+          {
+            "id": "N1",
+            "label": "LDL-C",
+            "axiom_ref": "VASC_LDL_001",
+            "position": { "x": -3, "y": 0, "z": -3 },
+            "volume": 1.1,
+            "color": "#39FF14",
+            "confidence": 0.91,
+            "deviation_score": 0.04,
+            "drift": false
+          },
+          {
+            "id": "N2",
+            "label": "HDL-C",
+            "axiom_ref": "VASC_AIP_002",
+            "position": { "x": 3, "y": 0, "z": -3 },
+            "volume": 0.9,
+            "color": "#39FF14",
+            "confidence": 0.88,
+            "deviation_score": 0.03,
+            "drift": false
+          },
+          {
+            "id": "N3",
+            "label": "Triglycerides (TG)",
+            "axiom_ref": "VASC_AIP_002",
+            "position": { "x": 0, "y": 0, "z": -3 },
+            "volume": 1.3,
+            "color": "#39FF14",
+            "confidence": 0.83,
+            "deviation_score": 0.09,
+            "drift": false,
+            "root_cause_entry": true
+          },
+          {
+            "id": "N4",
+            "label": "AIP Index",
+            "axiom_ref": "VASC_AIP_002",
+            "position": { "x": 0, "y": 3, "z": 0 },
+            "volume": 1.0,
+            "color": "#39FF14",
+            "confidence": 0.86,
+            "deviation_score": 0.05,
+            "drift": false
+          },
+          {
+            "id": "N5",
+            "label": "Vascular Resistance",
+            "axiom_ref": "VASC_LDL_001",
+            "position": { "x": -3, "y": 3, "z": 0 },
+            "volume": 1.4,
+            "color": "#39FF14",
+            "confidence": 0.80,
+            "deviation_score": 0.12,
+            "drift": false
+          },
+          {
+            "id": "N6",
+            "label": "Hemoglobin (Hb)",
+            "axiom_ref": "VASC_HB_003",
+            "position": { "x": 3, "y": 3, "z": 0 },
+            "volume": 1.1,
+            "color": "#39FF14",
+            "confidence": 0.85,
+            "deviation_score": 0.06,
+            "drift": false
+          },
+          {
+            "id": "N7",
+            "label": "SaO2 (O2 Saturation)",
+            "axiom_ref": "VASC_HB_003",
+            "position": { "x": 1.8, "y": 6.2, "z": 3.1 },
+            "ideal_position": { "x": 0, "y": 5, "z": 2 },
+            "volume": 2.8,
+            "color": "#FF4500",
+            "confidence": 0.58,
+            "deviation_score": 0.31,
+            "drift": true,
+            "hitl_trigger": "conf_below_threshold",
+            "note": "DRIFT DETECTED — SaO2 masking vascular obstruction via O2 compensation (VASC_HB_003 contradiction with VASC_LDL_001)"
+          },
+          {
+            "id": "N8",
+            "label": "Flow Velocity",
+            "axiom_ref": "VASC_LDL_001",
+            "position": { "x": -3, "y": 5, "z": 2 },
+            "volume": 0.9,
+            "color": "#39FF14",
+            "confidence": 0.82,
+            "deviation_score": 0.07,
+            "drift": false
+          },
+          {
+            "id": "N9",
+            "label": "Risk Stratification",
+            "axiom_ref": "VASC_AIP_002",
+            "position": { "x": 0, "y": 7, "z": 0 },
+            "volume": 1.5,
+            "color": "#39FF14",
+            "confidence": 0.79,
+            "deviation_score": 0.08,
+            "drift": false
+          },
+          {
+            "id": "N10",
+            "label": "L5 Compliance Output",
+            "axiom_ref": null,
+            "position": { "x": 0, "y": 9, "z": 0 },
+            "volume": 1.5,
+            "color": "#39FF14",
+            "confidence": 0.87,
+            "deviation_score": 0.02,
+            "drift": false
+          }
+        ],
+        "edges": [
+          { "source": "N1", "target": "N5", "weight": 0.85, "color": "#39FF14", "label": "LDL→VascularResistance (VASC_LDL_001)" },
+          { "source": "N2", "target": "N4", "weight": 0.80, "color": "#39FF14", "label": "HDL→AIP (VASC_AIP_002)" },
+          { "source": "N3", "target": "N4", "weight": 0.80, "color": "#39FF14", "label": "TG→AIP (VASC_AIP_002)" },
+          { "source": "N3", "target": "N5", "weight": 0.75, "color": "#FF6600", "label": "TG→VascularResistance [ROOT CAUSE PATH]" },
+          { "source": "N4", "target": "N9", "weight": 0.78, "color": "#39FF14", "label": "AIP→RiskStratification" },
+          { "source": "N5", "target": "N7", "weight": 0.68, "color": "#FF4500", "label": "VascularResistance→SaO2 [DRIFT PATH]" },
+          { "source": "N5", "target": "N8", "weight": 0.72, "color": "#39FF14", "label": "VascularResistance→FlowVelocity" },
+          { "source": "N6", "target": "N7", "weight": 0.85, "color": "#39FF14", "label": "Hb→SaO2 (VASC_HB_003)" },
+          { "source": "N7", "target": "N9", "weight": 0.58, "color": "#FF4500", "label": "SaO2→RiskStratification [CONFIDENCE DEGRADED]" },
+          { "source": "N8", "target": "N9", "weight": 0.74, "color": "#39FF14", "label": "FlowVelocity→RiskStratification" },
+          { "source": "N9", "target": "N10", "weight": 0.87, "color": "#39FF14", "label": "RiskStratification→L5Output" }
+        ],
+        "drift_summary": {
+          "drift_detected": true,
+          "drift_location": "N7",
+          "drift_magnitude": 0.31,
+          "root_cause": "N3",
+          "root_cause_chain": ["N3", "N5", "N7"],
+          "cycles_to_failure": 14,
+          "prediction": "If TG-driven vascular resistance propagation continues at current rate, SaO2 masking effect will collapse within 14 forward cycles, exposing critical stenosis risk at N9 (Risk Stratification threshold breach).",
+          "confidence": 0.87,
+          "scout_score": 0.89
+        }
+      },
+      "world_phase_2": {
+        "environment_mesh": {
+          "type": "wireframe",
+          "dimensions": { "w": 100, "h": 100, "d": 100 },
+          "domain": "HEALTHCARE — Vascular Hemodynamics",
+          "mesh_color": "#1A3A5C",
+          "opacity": 0.35
+        },
+        "temporal_state": "BACKWARD — Root Cause Trace Active (rotate_cycles: 10)",
+        "time_axis_direction": "BACKWARD",
+        "rotate_cycles": 10,
+        "projected_nodes": [
+          {
+            "id": "N3",
+            "label": "Triglycerides (TG) — Root Cause Entry",
+            "ideal_position": { "x": 0, "y": 0, "z": -3 },
+            "actual_position": { "x": 0, "y": 0, "z": -3 },
+            "world_annotation": "Earliest deviation origin: TG elevation preceded N5 resistance buildup by 6 backward cycles.",
+            "highlight_color": "#FF6600"
+          },
+          {
+            "id": "N5",
+            "label": "Vascular Resistance — Propagation Node",
+            "ideal_position": { "x": -3, "y": 3, "z": 0 },
+            "actual_position": { "x": -3.4, "y": 3.2, "z": 0.3 },
+            "world_annotation": "Resistance buildup confirmed at backward cycle 4. Deviation score 0.12 approaching threshold.",
+            "highlight_color": "#FF9900"
+          },
+          {
+            "id": "N7",
+            "label": "SaO2 — Primary Drift Node",
+            "ideal_position": { "x": 0, "y": 5, "z": 2 },
+            "actual_position": { "x": 1.8, "y": 6.2, "z": 3.1 },
+            "world_annotation": "Maximum structural deformation 0.31. Hb compensation masking real stenosis. HITL gate triggered.",
+            "highlight_color": "#FF0000"
+          }
+        ],
+        "world_model_verdict": {
+          "is_real_anomaly": true,
+          "confirmation_basis": "Ideal shape sourced from VASC_LDL_001/VASC_HB_003 axiom library shows no positional deviation at N7 coordinates — actual deviation confirmed as genuine structural anomaly, not measurement noise.",
+          "noise_probability": 0.04
+        }
+      },
+      "causal_phase_3": {
+        "axioms_applied": [
+          "VASC_LDL_001 — LDL Flow Obstruction Index: R_vascular ∝ LDL/r⁴ | Z = exp(LDL_normalized) − ln(flow_velocity + 1e-5) | confidence_floor: 0.85 | spatial_tension: HIGH | explains: [PLAQUE_FORMATION, VASCULAR_STENOSIS]",
+          "VASC_AIP_002 — Atherogenic Index of Plasma: AIP = log₁₀(TG/HDL-C) | Z = exp(TG_normalized) − ln(HDL + 1e-5) | confidence_floor: 0.80 | spatial_tension: MEDIUM | explains: [LIPID_PARTICLE_RISK, CARDIOVASCULAR_RISK_STRATIFICATION]",
+          "VASC_HB_003 — Hemoglobin O2 Carrying Capacity: O2 = Hb × 1.34 × SaO2 | Z = exp(Hb_normalized) − ln(vascular_resistance + 1e-5) | confidence_floor: 0.85 | spatial_tension: HIGH | explains: [TISSUE_OXYGENATION, EXERCISE_TOLERANCE] | contradicts: VASC_LDL_001"
+        ],
+        "axiom_contradiction_resolution": {
+          "contradiction_pair": ["VASC_LDL_001", "VASC_HB_003"],
+          "resolution_method": "L5 confidence-weighted arbitration",
+          "winner": "VASC_LDL_001",
+          "winner_confidence": 0.85,
+          "loser_observed_confidence": 0.58,
+          "arbitration_rationale": "VASC_HB_003 prediction (O2 compensation adequacy) contradicted by N7 positional drift and confidence collapse to 0.58. VASC_LDL_001 resistance propagation model confirmed by N3→N5→N7 root cause chain. Arbitration weight 0.85 vs 0.58."
+        },
+        "causal_pathways": [
+          {
+            "axiom_ref": "VASC_LDL_001",
+            "label": "LDL Obstruction → Vascular Resistance → Risk Elevation",
+            "flow_sequence": ["N1", "N5", "N9"],
+            "pulse_color": "#FFD700",
+            "intensity": 0.85,
+            "direction": "FORWARD",
+            "mathematical_expression": "R_vascular ∝ LDL / r⁴",
+            "description": "Elevated LDL-C at N1 drives atherogenic particle deposition, reducing effective lumen radius (r). Per Poiseuille's Law, resistance scales as r⁴, producing exponential flow restriction fed into risk stratification at N9."
+          },
+          {
+            "axiom_ref": "VASC_AIP_002",
+            "label": "TG/HDL Ratio → AIP Index → Risk Stratification",
+            "flow_sequence": ["N3", "N2", "N4", "N9"],
+            "pulse_color": "#00CFFF",
+            "intensity": 0.78,
+            "direction": "FORWARD",
+            "mathematical_expression": "AIP = log₁₀(TG / HDL-C)",
+            "description": "Triglyceride elevation at N3 combined with HDL-C input at N2 computes AIP at N4. Positive AIP indicates pro-atherogenic lipid particle distribution feeding an additive risk signal into N9."
+          },
+          {
+            "axiom_ref": "VASC_HB_003",
+            "label": "Hb O2 Compensation → SaO2 Masking (DRIFT PATH)",
+            "flow_sequence": ["N6", "N7", "N9"],
+            "pulse_color": "#FF4500",
+            "intensity": 1.0,
+            "direction": "FORWARD",
+            "mathematical_expression": "O₂ = Hb × 1.34 × SaO₂",
+            "description": "HIGH Hb at N6 elevates O2 carrying capacity, maintaining SaO2 readings within normal range at N7 despite increasing vascular resistance. This masking effect suppresses the true risk signal, causing N7 drift and HITL trigger. Contradicts VASC_LDL_001 — arbitration overrides."
+          },
+          {
+            "axiom_ref": "ROOT_CAUSE_CHAIN",
+            "label": "Root Cause Backward Trace: TG → Resistance → SaO2 Drift",
+            "flow_sequence": ["N3", "N5", "N7"],
+            "pulse_color": "#FF0000",
+            "intensity": 1.0,
+            "direction": "BACKWARD",
+            "mathematical_expression": "drift_magnitude(N7) = 0.31 | deviation_origin: N3 (cycle −6)",
+            "description": "Time-axis BACKWARD rotation (10 cycles) identified N3 (TG) as the earliest deviation origin at cycle −6. N5 (VascularResistance) became sub-threshold at cycle −4. N7 (SaO2) breached drift_threshold=0.15 at cycle −2. Root cause chain confirmed: [N3, N5, N7]."
+          }
+        ]
+      },
+      "print_out_version": {
+        "print_directive": "Trigger canvas.toDataURL('image/png') prior to window.print() or PDF export. Capture all three phase canvases sequentially: gnn_phase_1_canvas → world_phase_2_canvas → causal_phase_3_canvas. Inject captured PNG data URIs into print-layout <img> placeholders before window.print() fires.",
+        "phase_1_caption": "GNN Phase 1 — Vascular Biomarker Topology (10 Nodes, 11 Edges). Drift confirmed at Node N7 (SaO2, deviation 0.31). Root cause chain: N3 → N5 → N7. Node volume proportional to deviation magnitude. Axes: X=LDL-pathway, Y=risk-elevation, Z=temporal-drift. Gold axes (#FFD700), neon-green nominal nodes (#39FF14), alert-orange drift node (#FF4500).",
+        "phase_2_caption": "World Phase 2 — Vascular Hemodynamics Spatial Model (100×100×100 wireframe). Temporal state: BACKWARD (root cause trace, 10 cycles). Ideal shape (axiom library) vs actual deformed shape overlay. N7 ideal position (0,5,2) vs actual (1.8,6.2,3.1) — 0.31 magnitude structural anomaly confirmed as real (noise probability: 4%). Domain: HEALTHCARE — Vascular Hemodynamics.",
+        "phase_3_caption": "Causal Phase 3 — Axiom-Driven Causal Pathways. 3 axioms applied: VASC_LDL_001 (LDL obstruction), VASC_AIP_002 (AIP lipid risk), VASC_HB_003 (Hb O2 masking). Contradiction: VASC_LDL_001 ↔ VASC_HB_003 resolved by L5 confidence arbitration (0.85 vs 0.58). Red pulse flow = drift/root-cause path. Gold pulse = LDL obstruction chain. Cyan pulse = AIP risk chain. Cycles to failure: 14.",
+        "high_contrast_theme": true,
+        "print_overrides": {
+          "background": "#000000",
+          "node_color": "#39FF14",
+          "drift_node_color": "#FF4500",
+          "edge_color": "#FFFFFF",
+          "axis_color": "#FFD700",
+          "font_family": "Calibri, sans-serif",
+          "font_size_pt": 10,
+          "causal_pulse_color": "#FF0000"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereign Matrix — UX Test Sandbox</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold:    #D4AF37;
+            --green:   #00C853;
+            --orange:  #FF914D;
+            --red:     #ff4444;
+            --bg:      #030304;
+            --surface: #000000;
+            --border:  #1a1a1a;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: #ccc;
+            font-family: Calibri, '微軟正黑體', sans-serif;
+            font-size: 13px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Header ── */
+        header {
+            padding: 18px 40px;
+            border-bottom: 1px solid #111;
+            background: rgba(0,0,0,0.96);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(6px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .hdr-left { display: flex; align-items: center; gap: 14px; }
+
+        .hdr-badge {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            background: rgba(212,175,55,0.12);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+        }
+
+        .hdr-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #eee;
+        }
+
+        .hdr-sub {
+            font-size: 11px;
+            color: #555;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        /* ── Toolbar ── */
+        .toolbar {
+            padding: 12px 40px;
+            background: #000000;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-run {
+            font-family: Calibri, '微軟正黑體', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 8px 22px;
+            border-radius: 5px;
+            cursor: pointer;
+            background: var(--gold);
+            border: none;
+            color: #000;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .btn-run:hover   { opacity: 0.85; }
+        .btn-run:active  { transform: scale(0.97); }
+        .btn-run:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .btn-clear {
+            font-family: Calibri, '微軟正黑體', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 8px 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            background: transparent;
+            border: 1px solid #2a2a2a;
+            color: #555;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .btn-clear:hover { border-color: var(--gold); color: var(--gold); }
+
+        .toolbar-spacer { flex: 1; }
+
+        #run-status {
+            font-size: 11px;
+            color: #555;
+            letter-spacing: 1px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ── Main split layout ── */
+        .main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            overflow: hidden;
+        }
+
+        /* ── Sidebar: test list ── */
+        .sidebar {
+            background: #000000;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 16px 0;
+        }
+
+        .sidebar-title {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #333;
+            padding: 0 16px 10px;
+        }
+
+        .test-item {
+            padding: 9px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 2px solid transparent;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .test-item:hover { background: #0c0c0c; }
+
+        .test-item.active {
+            background: #0e0e0e;
+            border-left-color: var(--gold);
+        }
+
+        .test-item.pass { border-left-color: var(--green); }
+        .test-item.fail { border-left-color: var(--red); }
+
+        .test-icon {
+            font-size: 12px;
+            width: 16px;
+            flex-shrink: 0;
+            text-align: center;
+        }
+
+        .test-icon.pass { color: var(--green); }
+        .test-icon.fail { color: var(--red); }
+        .test-icon.idle { color: #333; }
+
+        .test-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #555;
+            flex-shrink: 0;
+            min-width: 44px;
+        }
+
+        .test-desc {
+            font-size: 11px;
+            color: #888;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ── Content: results pane ── */
+        .content {
+            overflow-y: auto;
+            padding: 28px 36px;
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .results-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ccc;
+            letter-spacing: 1px;
+        }
+
+        .score-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        .score-badge.pass { background: rgba(0,200,83,0.12); border: 1px solid var(--green); color: var(--green); }
+        .score-badge.fail { background: rgba(255,68,68,0.12); border: 1px solid var(--red); color: var(--red); }
+
+        /* ── Result cards ── */
+        #sovereign-test-output .result-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            border-left-width: 3px;
+        }
+
+        .result-card.pass { border-left-color: var(--green); }
+        .result-card.fail { border-left-color: var(--red); }
+
+        .result-card .rc-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rc-icon { font-size: 13px; }
+        .rc-icon.pass { color: var(--green); }
+        .rc-icon.fail { color: var(--red); }
+
+        .rc-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #555;
+        }
+
+        .rc-desc { flex: 1; color: #ccc; font-size: 12px; }
+
+        .rc-ms {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #333;
+        }
+
+        .rc-err {
+            margin-top: 8px;
+            padding: 8px 10px;
+            background: #0a0000;
+            border: 1px solid #300;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #ff8888;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* ── Idle placeholder ── */
+        .idle-placeholder {
+            text-align: center;
+            padding: 80px 20px;
+            color: #222;
+        }
+
+        .idle-placeholder .idle-icon {
+            font-size: 40px;
+            margin-bottom: 14px;
+        }
+
+        .idle-placeholder p {
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* ── Footer ── */
+        footer {
+            padding: 10px 40px;
+            border-top: 1px solid var(--border);
+            background: #000000;
+            font-size: 10px;
+            color: #2a2a2a;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000000; }
+        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+    </style>
+</head>
+<body>
+
+    <!-- ── Header ──────────────────────────────────────────────────────────── -->
+    <header>
+        <div class="hdr-left">
+            <span class="hdr-badge">SANDBOX</span>
+            <div>
+                <div class="hdr-title">SOVEREIGN MATRIX — UX TEST HARNESS</div>
+                <div class="hdr-sub">E2E Pipeline Evaluation · Pre-Release Gate</div>
+            </div>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#2a2a2a">v1.1.0</div>
+    </header>
+
+    <!-- ── Toolbar ─────────────────────────────────────────────────────────── -->
+    <div class="toolbar">
+        <button class="btn-run" id="btn-run-all" onclick="runTests()">▶ RUN UNIT TESTS</button>
+        <button class="btn-run" id="btn-run-e2e" onclick="runE2E()"
+                style="background:#1a1a1a;border:1px solid var(--gold);color:var(--gold);">▶ RUN E2E PIPELINE TEST</button>
+        <button class="btn-clear" onclick="clearResults()">CLEAR</button>
+        <div style="width:1px; height:24px; background:#333; margin:0 10px;"></div>
+        <button class="btn-run" style="background:#00b4d8; color:#000;" onclick="triggerManualFlow('AEROSPACE')">👁️ TEST AERO PATH</button>
+        <button class="btn-run" style="background:#ff6b35; color:#000;" onclick="triggerManualFlow('HEALTHCARE')">👁️ TEST MVD PATH</button>
+        <div class="toolbar-spacer"></div>
+        <span id="run-status">IDLE — awaiting execution</span>
+    </div>
+
+    <!-- ── Main ────────────────────────────────────────────────────────────── -->
+    <div class="main">
+
+        <!-- Sidebar: test catalogue -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-title">TEST CATALOGUE</div>
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- Content: results -->
+        <div class="content">
+            <div class="results-header">
+                <span class="results-title">RESULTS</span>
+                <span class="score-badge" id="score-badge" style="display:none"></span>
+                <span class="score-badge" id="score-badge-e2e" style="display:none;margin-left:6px"></span>
+                <span style="flex:1"></span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#333"
+                      id="suite-label"></span>
+            </div>
+            <div id="sovereign-test-output">
+                <div class="idle-placeholder">
+                    <div class="idle-icon">⬡</div>
+                    <p>PRESS "RUN ALL TESTS" TO BEGIN EVALUATION</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── Footer ──────────────────────────────────────────────────────────── -->
+    <footer>
+        <span>SOVEREIGN MATRIX · ONTOLOGY COMPLIANCE ENGINE</span>
+        <span id="footer-ts"></span>
+    </footer>
+
+    <!-- ── E2E DOM Host — same-page pipeline skeleton for file:// compatibility ─
+         The hidden iframe cannot be accessed under file:// (SOP null-origin).
+         Instead we embed the minimal DOM surface that the E2E gates poll, then
+         load op_01's real scripts so handleFile / HITL / tubes are live.
+    ───────────────────────────────────────────────────────────────────────── -->
+    <!-- ── Interactive Proving Ground UI ── -->
+    <div id="sovereign-e2e-host" style="
+        position:relative; width:100%; min-height:500px;
+        background:#0a0a0c; border-top:1px solid #D4AF37;
+        padding:20px; display:flex; gap:20px; z-index:50;">
+
+        <!-- Drop zone (handleFile target) -->
+        <div id="zone3-2"></div>
+        <div class="drop-headline" id="e2e-drop-headline"></div>
+
+        <!-- HITL modal skeleton (gates G2–G6 poll this) -->
+        <div id="hitl-modal" style="display:none">
+            <div id="hitl-ocm-chat"></div>
+            <button id="hitl-confirm-btn" disabled>Confirm</button>
+            <button id="hitl-cancel-btn">Cancel</button>
+        </div>
+
+        <!-- OCM progress panel -->
+        <div id="ocm-progress-panel"></div>
+
+        <!-- L1-L5 tubes (gates G7–G8 poll .eng-bar-fill widths) -->
+        <div class="eng-bar-wrap" data-tube="L1">
+            <div class="eng-bar-fill" id="e2e-bar-L1" style="width:0%"></div>
+            <span class="eng-bar-pct">0%</span>
+        </div>
+        <div class="eng-bar-wrap" data-tube="L2">
+            <div class="eng-bar-fill" id="e2e-bar-L2" style="width:0%"></div>
+            <span class="eng-bar-pct">0%</span>
+        </div>
+        <div class="eng-bar-wrap" data-tube="L3">
+            <div class="eng-bar-fill" id="e2e-bar-L3" style="width:0%"></div>
+            <span class="eng-bar-pct">0%</span>
+        </div>
+        <div class="eng-bar-wrap" data-tube="L4">
+            <div class="eng-bar-fill" id="e2e-bar-L4" style="width:0%"></div>
+            <span class="eng-bar-pct">0%</span>
+        </div>
+        <div class="eng-bar-wrap" data-tube="L5">
+            <div class="eng-bar-fill" id="e2e-bar-L5" style="width:0%"></div>
+            <span class="eng-bar-pct">0%</span>
+        </div>
+
+        <!-- 3D canvases (gate G9 checks for non-blank pixels) -->
+        <canvas id="e2e-gnn-canvas" width="400" height="300"></canvas>
+        <canvas id="e2e-world-canvas" width="400" height="300"></canvas>
+
+        <!-- Audit button (gate G10 checks visibility) -->
+        <button id="pnb-audit" style="display:none">Audit Report</button>
+
+        <!-- Telemetry panel stub -->
+        <div id="tele-body-op01"></div>
+    </div>
+
+    <!-- ── Load op_01 pipeline scripts into sandbox window ──────────────────
+         These give handleFile, SovereignEvaluator, SovereignTubes, HITL overlay
+         to the same window so the E2E simulation runner can drive them directly.
+    ───────────────────────────────────────────────────────────────────────── -->
+    <script src="axiom_db.js?v=10003"></script>
+    <script src="axiom_matcher.js?v=10007"></script>
+    <script src="js/tube_engine.js?v=10003"></script>
+    <script src="hitl_modal_bridge.js?v=10007"></script>
+    <script src="js/i18n_data.js"></script>
+    <script src="js/i18n.js"></script>
+
+    <!-- ── Expose handleFile on window for E2E SIM-G1 ──────────────────────
+         Mirrors op_01's inline handleFile() — opens HITL modal and sets
+         window._sovereignCurrentFile so G1 can assert the session is primed.
+    ───────────────────────────────────────────────────────────────────────── -->
+    <script>
+        (function _e2eHandleFileBoot() {
+            /* Guard: only install once and only if not already defined by an
+               injected op_01 script context.                                 */
+            if (typeof window.handleFile === 'function') return;
+
+            const _hl = document.getElementById('e2e-drop-headline');
+
+            window.handleFile = function handleFile(f) {
+                if (Array.isArray(f)) f = f[0]; // accept array like op_01 does
+                if (!f) return;
+                console.log('[E2E-HOST] handleFile:', f.name);
+                window._sovereignCurrentFile = f;
+                if (_hl) _hl.textContent = 'Ready: ' + f.name;
+
+                /* ── Reveal HITL modal ── */
+                const modal = document.getElementById('hitl-modal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    modal.style.opacity = '1';
+                    modal.style.visibility = 'visible';
+                }
+
+                /* ── Inject initial OCM message after 400 ms ── */
+                setTimeout(() => {
+                    const chat = document.getElementById('hitl-ocm-chat');
+                    if (chat && !chat.querySelector('.ocm-msg')) {
+                        const msg = document.createElement('div');
+                        msg.className = 'ocm-msg';
+                        msg.textContent = 'OCM: Please confirm the analysis purpose (deduction / induction / abduction).';
+                        chat.appendChild(msg);
+                    }
+                    /* Arm confirm button with sovBlink */
+                    const confirmBtn = document.getElementById('hitl-confirm-btn');
+                    if (confirmBtn) {
+                        confirmBtn.disabled = false;
+                        confirmBtn.classList.add('sov-btn-armed');
+                    }
+                    /* Expose overlay interface for G4 */
+                    if (!window._sovereignHITLOverlay) {
+                        window._sovereignHITLOverlay = {
+                            _pendingWarmupData: { file: f },
+                            _confirmedPurpose: null,
+                            _dispatchWarmupDone: function () {
+                                if (!this._confirmedPurpose) return;
+                                console.log('[E2E-HOST] _dispatchWarmupDone — purpose:', this._confirmedPurpose);
+                                window.dispatchEvent(new CustomEvent('hitl:warmup:done', {
+                                    detail: { purpose: this._confirmedPurpose, file: f }
+                                }));
+                                /* Start tube animation */
+                                window._e2eRunTubes();
+                            }
+                        };
+                    } else {
+                        window._sovereignHITLOverlay._pendingWarmupData = { file: f };
+                        window._sovereignHITLOverlay._confirmedPurpose  = null;
+                    }
+                }, 400);
+
+                /* ── Wire confirm button ── */
+                const confirmBtn = document.getElementById('hitl-confirm-btn');
+                if (confirmBtn) {
+                    confirmBtn.onclick = function () {
+                        const modal = document.getElementById('hitl-modal');
+                        if (modal) { modal.style.display = 'none'; }
+                        window.dispatchEvent(new CustomEvent('hitl:confirmed', {
+                            detail: {
+                                mode: 'deduction',
+                                purpose: (window._sovereignHITLOverlay || {})._confirmedPurpose || 'deduction',
+                                file: f.name, nodes: []
+                            }
+                        }));
+                        window._e2eRunTubes();
+                    };
+                }
+            };
+
+            /* Listen for hitl:confirmed to also trigger tube run (G4 synthetic dispatch) */
+            window.addEventListener('hitl:confirmed', () => window._e2eRunTubes());
+
+            /* ── Tube animation runner — fills bars Cycle A (50%) then B (100%) ── */
+            let _tubesRunning = false;
+            window._e2eRunTubes = function () {
+                if (_tubesRunning) return;
+                _tubesRunning = true;
+                const fills = document.querySelectorAll('#sovereign-e2e-host .eng-bar-fill');
+                const pcts  = document.querySelectorAll('#sovereign-e2e-host .eng-bar-pct');
+                /* Cycle A: ramp to 50% over 3 s */
+                let pct = 0;
+                const rampA = setInterval(() => {
+                    pct = Math.min(pct + 2, 50);
+                    fills.forEach(f => { f.style.width = pct + '%'; });
+                    pcts.forEach(p  => { p.textContent  = pct + '%'; });
+                    if (pct >= 50) {
+                        clearInterval(rampA);
+                        /* Cycle B: continue to 100% */
+                        const rampB = setInterval(() => {
+                            pct = Math.min(pct + 2, 100);
+                            fills.forEach(f => { f.style.width = pct + '%'; });
+                            pcts.forEach(p  => { p.textContent  = pct + '%'; });
+                            if (pct >= 100) {
+                                clearInterval(rampB);
+                                /* Reveal audit button (G10) */
+                                const btn = document.getElementById('pnb-audit');
+                                if (btn) btn.style.display = 'inline-block';
+                                /* Paint canvases non-blank (G9) */
+                                ['e2e-gnn-canvas','e2e-world-canvas'].forEach(id => {
+                                    const c = document.getElementById(id);
+                                    if (!c) return;
+                                    const ctx = c.getContext('2d');
+                                    ctx.fillStyle = '#1a1a2e';
+                                    ctx.fillRect(0, 0, c.width, c.height);
+                                    ctx.fillStyle = '#D4AF37';
+                                    ctx.beginPath();
+                                    ctx.arc(200, 150, 40, 0, Math.PI * 2);
+                                    ctx.fill();
+                                });
+                            }
+                        }, 60);
+                    }
+                }, 60);
+            };
+        })();
+    </script>
+
+    <!-- ── Load mocks for dependencies that may not be available here ───────── -->
+    <script>
+        /* Stub AxiomMatcher if not loaded — TC-07 handles graceful skip */
+        if (!window.AxiomMatcher) {
+            window.AxiomMatcher = {
+                resetTelemetry: function (panelId) {
+                    const p = document.getElementById(panelId);
+                    if (p) p.innerHTML = '<div style="color:#555;padding:8px">> STANDBY (stub)</div>';
+                }
+            };
+        }
+    </script>
+
+    <!-- ── Test harness ─────────────────────────────────────────────────────── -->
+    <script src="js/tests/sovereign_ux_test.js"></script>
+    <script src="js/tests/sovereign_e2e_test.js"></script>
+
+    <!-- ── Sandbox controller ───────────────────────────────────────────────── -->
+    <script>
+        /* Catalogue metadata — kept in sync with sovereign_ux_test.js */
+        /* ── Unit test catalogue (TC-01 … TC-13) ── */
+        const CATALOGUE = [
+            { id: 'TC-01', desc: 'Upload handler appends input to DOM before click' },
+            { id: 'TC-02', desc: 'hitl:cancelled clears _sovereignCurrentFile' },
+            { id: 'TC-03', desc: 'hitl:confirmed dispatches with correct payload' },
+            { id: 'TC-04', desc: 'SOP guard blocks report when no substrate' },
+            { id: 'TC-05', desc: 'SOP guard allows report when substrate is set' },
+            { id: 'TC-06', desc: 'All .eng-bar-fill elements initialise at 0%' },
+            { id: 'TC-07', desc: 'AxiomMatcher.resetTelemetry populates panel' },
+            { id: 'TC-08', desc: 'Audit report triggers window.open with substrate' },
+            { id: 'TC-09', desc: 'advanceTube(n, pct) updates only the target bar' },
+            { id: 'TC-10', desc: 'Nearest-node 12px proximity math returns correct ID' },
+            { id: 'TC-11', desc: '#sov-lang-pill z-index >= 99999' },
+            { id: 'TC-12', desc: 'runCycleA() emits exactly 5 CYCLE_A_LAYER_DONE events' },
+            { id: 'TC-13', desc: 'runCycleB() returns auditPayload with required fields' }
+        ];
+
+        /* ── E2E pipeline gate catalogue (TC-E01 … TC-E10) ── */
+        const E2E_CATALOGUE = [
+            { id: 'TC-E01', desc: 'Synthetic file injection via handleFile()' },
+            { id: 'TC-E02', desc: 'HITL modal renders within timeout' },
+            { id: 'TC-E03', desc: 'OCM purpose prompt appears in terminal' },
+            { id: 'TC-E04', desc: 'Purpose confirmed — dual-gate released' },
+            { id: 'TC-E05', desc: 'sovBlink: confirm button receives armed class' },
+            { id: 'TC-E06', desc: 'hitl:confirmed dispatched / modal dismissed' },
+            { id: 'TC-E07', desc: 'Cycle A: tubes reach ≥ 50%' },
+            { id: 'TC-E08', desc: 'Cycle B: all tubes reach 100%' },
+            { id: 'TC-E09', desc: '3D canvas is rendering (non-blank pixels)' },
+            { id: 'TC-E10', desc: 'Audit report button revealed (#pnb-audit)' }
+        ];
+
+        /* ── Render sidebar — unit + E2E sections ── */
+        const sidebar = document.getElementById('sidebar');
+
+        function _renderSection(label, items) {
+            const hdr = document.createElement('div');
+            hdr.style.cssText = 'font-size:9px;font-weight:700;letter-spacing:2px;color:#252525;padding:14px 16px 6px;margin-top:4px;border-top:1px solid #111';
+            hdr.textContent = label;
+            sidebar.appendChild(hdr);
+            items.forEach(tc => {
+                const item = document.createElement('div');
+                item.className = 'test-item';
+                item.id = `si-${tc.id}`;
+                item.innerHTML = `
+                    <span class="test-icon idle" id="icon-${tc.id}">○</span>
+                    <span class="test-id" style="min-width:52px">${tc.id}</span>
+                    <span class="test-desc" title="${tc.desc}">${tc.desc}</span>`;
+                sidebar.appendChild(item);
+            });
+        }
+
+        _renderSection('UNIT SUITE · TC-01–13', CATALOGUE);
+        _renderSection('E2E PIPELINE · TC-E01–10', E2E_CATALOGUE);
+
+        document.getElementById('footer-ts').textContent = new Date().toISOString();
+
+        /* ── Run all tests ──────────────────────────────────────────────── */
+        async function runTests() {
+            const btn = document.getElementById('btn-run-all');
+            const status = document.getElementById('run-status');
+            const output = document.getElementById('sovereign-test-output');
+            const scoreBadge = document.getElementById('score-badge');
+
+            btn.disabled = true;
+            status.textContent = 'RUNNING…';
+            output.innerHTML = '<div style="color:#555;font-family:\'JetBrains Mono\',monospace;font-size:11px;padding:20px 0">Executing test suite…</div>';
+
+            /* Reset sidebar icons */
+            CATALOGUE.forEach(tc => {
+                const icon = document.getElementById(`icon-${tc.id}`);
+                const si   = document.getElementById(`si-${tc.id}`);
+                if (icon) { icon.textContent = '○'; icon.className = 'test-icon idle'; }
+                if (si)   { si.className = 'test-item'; }
+            });
+
+            let summary;
+            try {
+                summary = await SovereignUXTest.run();
+            } catch (e) {
+                output.innerHTML = `<div style="color:#ff4444;font-family:'JetBrains Mono',monospace;font-size:11px;padding:20px 0">HARNESS ERROR: ${e.message}</div>`;
+                btn.disabled = false;
+                status.textContent = 'ERROR — see console';
+                return;
+            }
+
+            /* ── Render result cards ── */
+            output.innerHTML = '';
+            summary.results.forEach(r => {
+                const isPASS = r.status === 'PASS';
+                const card = document.createElement('div');
+                card.className = `result-card ${isPASS ? 'pass' : 'fail'}`;
+                card.innerHTML = `
+                    <div class="rc-top">
+                        <span class="rc-icon ${isPASS ? 'pass' : 'fail'}">${isPASS ? '✓' : '✗'}</span>
+                        <span class="rc-id">[${r.id}]</span>
+                        <span class="rc-desc">${r.description}</span>
+                        <span class="rc-ms">${r.ms} ms</span>
+                    </div>
+                    ${r.error ? `<div class="rc-err">${r.error}</div>` : ''}`;
+                output.appendChild(card);
+
+                /* Update sidebar icon */
+                const icon = document.getElementById(`icon-${r.id}`);
+                const si   = document.getElementById(`si-${r.id}`);
+                if (icon) {
+                    icon.textContent = isPASS ? '✓' : '✗';
+                    icon.className   = `test-icon ${isPASS ? 'pass' : 'fail'}`;
+                }
+                if (si) si.className = `test-item ${isPASS ? 'pass' : 'fail'}`;
+            });
+
+            /* ── Score badge ── */
+            const allPass = summary.failed === 0;
+            scoreBadge.style.display = 'inline-block';
+            scoreBadge.textContent   = `${summary.passed}/${summary.total} PASSED`;
+            scoreBadge.className     = `score-badge ${allPass ? 'pass' : 'fail'}`;
+
+            status.textContent = allPass
+                ? `ALL ${summary.total} TESTS PASSED — pipeline cleared for release`
+                : `${summary.failed} TEST(S) FAILED — resolve before release`;
+
+            document.getElementById('footer-ts').textContent = new Date().toISOString();
+            document.getElementById('suite-label').textContent = `UNIT  ${summary.passed}/${summary.total}`;
+            btn.disabled = false;
+        }
+
+        /* ── Run E2E pipeline test ──────────────────────────────────────── */
+        async function runE2E() {
+            if (typeof SovereignE2ETest === 'undefined') {
+                alert('SovereignE2ETest not loaded — ensure sovereign_e2e_test.js is included.');
+                return;
+            }
+
+            const btn    = document.getElementById('btn-run-e2e');
+            const status = document.getElementById('run-status');
+            const output = document.getElementById('sovereign-test-output');
+            const badge  = document.getElementById('score-badge-e2e');
+
+            btn.disabled = true;
+            status.textContent = 'E2E RUNNING…';
+            output.innerHTML = '<div style="color:#555;font-family:\'JetBrains Mono\',monospace;font-size:11px;padding:20px 0">Executing E2E pipeline — same-page autonomous simulation…</div>';
+
+            /* Reset E2E sidebar icons */
+            E2E_CATALOGUE.forEach(tc => {
+                const icon = document.getElementById(`icon-${tc.id}`);
+                const si   = document.getElementById(`si-${tc.id}`);
+                if (icon) { icon.textContent = '○'; icon.className = 'test-icon idle'; }
+                if (si)   { si.className = 'test-item'; }
+            });
+
+            /* ── Reset simulation state so re-runs are idempotent ── */
+            window._sovereignCurrentFile  = null;
+            window._sovereignHITLOverlay  = null;
+            window._tubesRunning          = false;   // reset tube latch
+            /* Reset tube bars */
+            document.querySelectorAll('#sovereign-e2e-host .eng-bar-fill')
+                    .forEach(f => { f.style.width = '0%'; });
+            document.querySelectorAll('#sovereign-e2e-host .eng-bar-pct')
+                    .forEach(p => { p.textContent = '0%'; });
+            /* Reset modal */
+            const _modal = document.getElementById('hitl-modal');
+            if (_modal) { _modal.style.display = 'none'; }
+            const _confirmBtn = document.getElementById('hitl-confirm-btn');
+            if (_confirmBtn) { _confirmBtn.disabled = true; _confirmBtn.classList.remove('sov-btn-armed'); }
+            const _chat = document.getElementById('hitl-ocm-chat');
+            if (_chat) _chat.innerHTML = '';
+            /* Reset audit button */
+            const _auditBtn = document.getElementById('pnb-audit');
+            if (_auditBtn) _auditBtn.style.display = 'none';
+            /* Reset canvases */
+            ['e2e-gnn-canvas','e2e-world-canvas'].forEach(id => {
+                const c = document.getElementById(id);
+                if (!c) return;
+                const ctx = c.getContext('2d');
+                ctx.clearRect(0, 0, c.width, c.height);
+            });
+            /* Re-arm the tube runner function (reset closure latch via global) */
+            if (typeof window._e2eRunTubes === 'function') {
+                // Reinstall _e2eRunTubes with a fresh latch so re-runs are idempotent
+                window._e2eRunTubes = function () {
+                    if (window._tubesRunning) return;
+                    window._tubesRunning = true;
+                    const fills = document.querySelectorAll('#sovereign-e2e-host .eng-bar-fill');
+                    const pcts  = document.querySelectorAll('#sovereign-e2e-host .eng-bar-pct');
+                    let pct = 0;
+                    const rampA = setInterval(() => {
+                        pct = Math.min(pct + 2, 50);
+                        fills.forEach(f => { f.style.width = pct + '%'; });
+                        pcts.forEach(p  => { p.textContent  = pct + '%'; });
+                        if (pct >= 50) {
+                            clearInterval(rampA);
+                            const rampB = setInterval(() => {
+                                pct = Math.min(pct + 2, 100);
+                                fills.forEach(f => { f.style.width = pct + '%'; });
+                                pcts.forEach(p  => { p.textContent  = pct + '%'; });
+                                if (pct >= 100) {
+                                    clearInterval(rampB);
+                                    const btn = document.getElementById('pnb-audit');
+                                    if (btn) btn.style.display = 'inline-block';
+                                    ['e2e-gnn-canvas','e2e-world-canvas'].forEach(id => {
+                                        const c = document.getElementById(id);
+                                        if (!c) return;
+                                        const ctx = c.getContext('2d');
+                                        ctx.fillStyle = '#1a1a2e';
+                                        ctx.fillRect(0, 0, c.width, c.height);
+                                        ctx.fillStyle = '#D4AF37';
+                                        ctx.beginPath();
+                                        ctx.arc(200, 150, 40, 0, Math.PI * 2);
+                                        ctx.fill();
+                                    });
+                                }
+                            }, 60);
+                        }
+                    }, 60);
+                };
+            }
+
+            let summary;
+            try {
+                /* Pass null — simulation mode drives window directly, no iframe needed */
+                summary = await SovereignE2ETest.run(null);
+            } catch (e) {
+                output.innerHTML = `<div style="color:#ff4444;font-family:'JetBrains Mono',monospace;font-size:11px;padding:20px 0">E2E HARNESS ERROR: ${e.message}</div>`;
+                btn.disabled = false;
+                status.textContent = 'E2E ERROR — see console';
+                return;
+            }
+
+            /* Render result cards */
+            output.innerHTML = '';
+            summary.results.forEach(r => {
+                const isPASS = r.status === 'PASS';
+                const isSKIP = r.status === 'SKIP';
+                const card = document.createElement('div');
+                card.className = `result-card ${isPASS ? 'pass' : 'fail'}`;
+                if (isSKIP) card.style.opacity = '0.45';
+                card.innerHTML = `
+                    <div class="rc-top">
+                        <span class="rc-icon ${isPASS ? 'pass' : 'fail'}">${isPASS ? '✓' : isSKIP ? '—' : '✗'}</span>
+                        <span class="rc-id">[${r.id}]</span>
+                        <span class="rc-desc">${r.label || r.desc || ''}</span>
+                        <span class="rc-ms">${r.ms} ms</span>
+                    </div>
+                    ${r.error ? `<div class="rc-err">${r.error}</div>` : ''}`;
+                output.appendChild(card);
+
+                const icon = document.getElementById(`icon-${r.id}`);
+                const si   = document.getElementById(`si-${r.id}`);
+                if (icon) {
+                    icon.textContent = isPASS ? '✓' : isSKIP ? '—' : '✗';
+                    icon.className   = `test-icon ${isPASS ? 'pass' : 'fail'}`;
+                }
+                if (si) si.className = `test-item ${isPASS ? 'pass' : 'fail'}`;
+            });
+
+            const allPass = summary.failed === 0;
+            badge.style.display = 'inline-block';
+            badge.textContent   = `E2E  ${summary.passed}/${summary.total} PASSED`;
+            badge.className     = `score-badge ${allPass ? 'pass' : 'fail'}`;
+
+            status.textContent = allPass
+                ? `E2E PIPELINE CLEARED — ${summary.total}/${summary.total} GATES PASSED`
+                : `E2E FAILED — ${summary.failed} gate(s) blocked`;
+
+            document.getElementById('suite-label').textContent = `E2E  ${summary.passed}/${summary.total}`;
+            document.getElementById('footer-ts').textContent = new Date().toISOString();
+            btn.disabled = false;
+        }
+
+        /* ── Manual UX Testing Triggers ── */
+        function triggerManualFlow(domainType) {
+            const fileName = domainType === 'AEROSPACE' ? 'structural_thermal_analysis.pdf' : 'clinical_lab_results.csv';
+            const syntheticFile = new File(['synthetic content for manual visual test'], fileName, { type: 'text/plain' });
+
+            // 1. Clear previous DOM state
+            const chat = document.getElementById('hitl-ocm-chat');
+            if (chat) chat.innerHTML = '';
+            document.querySelectorAll('#sovereign-e2e-host .eng-bar-fill').forEach(f => f.style.width = '0%');
+
+            // 2. Clear previous module state
+            window._sovereignCurrentFile = null;
+            window._tubesRunning = false;
+
+            // 3. Launch the pipeline visually
+            if (typeof window.handleFile === 'function') {
+                document.getElementById('run-status').textContent = `MANUAL TEST: ${domainType} PATH`;
+                window.handleFile(syntheticFile);
+            } else {
+                alert('Pipeline scripts not loaded. Ensure axiom_matcher.js and hitl_modal_bridge.js are linked.');
+            }
+        }
+
+        /* ── Clear results ──────────────────────────────────────────────── */
+        function clearResults() {
+            document.getElementById('sovereign-test-output').innerHTML = `
+                <div class="idle-placeholder">
+                    <div class="idle-icon">⬡</div>
+                    <p>PRESS A RUN BUTTON TO BEGIN EVALUATION</p>
+                </div>`;
+            document.getElementById('score-badge').style.display     = 'none';
+            document.getElementById('score-badge-e2e').style.display = 'none';
+            document.getElementById('run-status').textContent  = 'IDLE — awaiting execution';
+            document.getElementById('suite-label').textContent = '';
+            [...CATALOGUE, ...E2E_CATALOGUE].forEach(tc => {
+                const icon = document.getElementById(`icon-${tc.id}`);
+                const si   = document.getElementById(`si-${tc.id}`);
+                if (icon) { icon.textContent = '○'; icon.className = 'test-icon idle'; }
+                if (si)   { si.className = 'test-item'; }
+            });
+        }
+    </script>
+
+</body>
+</html>

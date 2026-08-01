@@ -1,0 +1,1 @@
+{"id":"DET_001","name":"Deterministic Output","type":"D","level":"L3","statement":"Same input must produce same output","severity":"HIGH"}

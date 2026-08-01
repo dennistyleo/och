@@ -1,0 +1,1 @@
+{"id":"CAUSAL_004","name":"Recoverability","type":"D","level":"L3","statement":"System must recover to coherent state after stress","severity":"HIGH"}

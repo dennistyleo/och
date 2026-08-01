@@ -1,0 +1,392 @@
+[
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "DEDUCT_STAB_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "GENERAL",
+    "subdomain": "Sovereign Stability Triad",
+    "name": "Normalized Stability Index",
+    "description": "Computes the weighted stability index Φ* across three orthogonal dimensions: Generator (G*), Regulator (R*), and Mediator (M*). Each dimension is clip-normalized to [0,1]. The weighted sum must meet the domain-specific threshold for ALLOW.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.88,
+    "hallucination_lock": true,
+    "expression_latex": "\\Phi^* = w_G \\cdot G^* + w_R \\cdot R^* + w_M \\cdot M^*",
+    "derivation_formula": {
+      "sympy_expr": "wG * G_star + wR * R_star + wM * M_star",
+      "variables": {
+        "wG": {
+          "maps_to_field": "weight_generator",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            1.0
+          ]
+        },
+        "wR": {
+          "maps_to_field": "weight_regulator",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            1.0
+          ]
+        },
+        "wM": {
+          "maps_to_field": "weight_mediator",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            1.0
+          ]
+        },
+        "G_star": {
+          "maps_to_field": "generator_normalized",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            1.0
+          ]
+        },
+        "R_star": {
+          "maps_to_field": "regulator_normalized",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            1.0
+          ]
+        },
+        "M_star": {
+          "maps_to_field": "mediator_normalized",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            1.0
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "expr": "wG + wR + wM - 1",
+          "condition": "== 0",
+          "label": "weight_sum_constraint"
+        }
+      ],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value_field": "phi_star_threshold"
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value_field": "phi_star_threshold"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "weight_generator",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "field": "weight_regulator",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "field": "weight_mediator",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "field": "generator_normalized",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "field": "regulator_normalized",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "field": "mediator_normalized",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "field": "phi_star_threshold",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          1.0
+        ]
+      }
+    ],
+    "optional_fields": [],
+    "semantic_fingerprint": "stability index weighted triad generator regulator mediator normalized composite score",
+    "contradiction_axioms": [
+      "DEDUCT_STAB_002"
+    ],
+    "spatial_tension": "MEDIUM",
+    "layer_2_summary": {
+      "explains": [
+        "SYSTEM_STABILITY_SCORE",
+        "TRIAD_BALANCE"
+      ],
+      "fails_to_explain": [
+        "INDIVIDUAL_COMPONENT_FAILURE"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "stability_index",
+      "threshold_op": "gt",
+      "threshold_val": 0.65,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "STABILITY_ANALYSIS",
+      "semantic_label": "Sovereign Stability Index",
+      "reasoning_chain": [
+        "Compute Φ* from G*, R*, M* dimensions",
+        "Verify weighted sum ≥ 0.65",
+        "Flag VIOLATION if below threshold"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "DEDUCT_STAB_002",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "GENERAL",
+    "subdomain": "Sovereign Stability Triad",
+    "name": "Propositional Stability (E_prop)",
+    "description": "Verifies that the evidence scalar E exceeds the model/constraint scalar M. A negative propositional surplus indicates the model over-constrains the available evidence — a physically inadmissible state.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.9,
+    "hallucination_lock": true,
+    "expression_latex": "E_{prop} = E - M \\geq 0",
+    "derivation_formula": {
+      "sympy_expr": "E_evidence - M_model",
+      "variables": {
+        "E_evidence": {
+          "maps_to_field": "evidence_scalar",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            null
+          ]
+        },
+        "M_model": {
+          "maps_to_field": "model_scalar",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            null
+          ]
+        }
+      },
+      "constraints": [],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "evidence_scalar",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          null
+        ]
+      },
+      {
+        "field": "model_scalar",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          null
+        ]
+      }
+    ],
+    "optional_fields": [],
+    "semantic_fingerprint": "evidence surplus propositional stability over-constrained model admissibility physical",
+    "contradiction_axioms": [
+      "DEDUCT_STAB_001"
+    ],
+    "spatial_tension": "HIGH",
+    "layer_2_summary": {
+      "explains": [
+        "EVIDENCE_SUFFICIENCY",
+        "MODEL_OVERCONSTRAIN_RISK"
+      ],
+      "fails_to_explain": [
+        "TEMPORAL_DRIFT_RATE"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "stability_index",
+      "threshold_op": "gt",
+      "threshold_val": 0.65,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "STABILITY_ANALYSIS",
+      "semantic_label": "Sovereign Stability Index",
+      "reasoning_chain": [
+        "Compute Φ* from G*, R*, M* dimensions",
+        "Verify weighted sum ≥ 0.65",
+        "Flag VIOLATION if below threshold"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "DEDUCT_STAB_003",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "GENERAL",
+    "subdomain": "Sovereign Stability Triad",
+    "name": "Regime Coordinate Compliance",
+    "description": "Computes the regime coordinate ε = M/E ∈ [0,1]. When ε exceeds the domain-critical threshold ε_crit, the system has entered an over-regulated regime where model constraints outpace evidence, indicating structural instability.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.88,
+    "hallucination_lock": true,
+    "expression_latex": "\\varepsilon = \\frac{M}{E}, \\quad \\varepsilon \\in [0, 1]",
+    "derivation_formula": {
+      "sympy_expr": "M_model / E_evidence",
+      "variables": {
+        "M_model": {
+          "maps_to_field": "model_scalar",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            null
+          ]
+        },
+        "E_evidence": {
+          "maps_to_field": "evidence_scalar",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0001,
+            null
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "expr": "E_evidence",
+          "condition": "> 0",
+          "label": "division_guard"
+        }
+      ],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value_field": "epsilon_crit"
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value_field": "epsilon_crit"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null or E_evidence == 0"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "model_scalar",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          null
+        ]
+      },
+      {
+        "field": "evidence_scalar",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0001,
+          null
+        ]
+      },
+      {
+        "field": "epsilon_crit",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          1.0
+        ]
+      }
+    ],
+    "optional_fields": [],
+    "semantic_fingerprint": "regime coordinate epsilon stability threshold over-regulated model evidence ratio",
+    "contradiction_axioms": [],
+    "spatial_tension": "HIGH",
+    "layer_2_summary": {
+      "explains": [
+        "REGIME_TRANSITION_RISK",
+        "STABILITY_MARGIN"
+      ],
+      "fails_to_explain": [
+        "CAUSAL_CHAIN_ORIGIN"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "stability_index",
+      "threshold_op": "gt",
+      "threshold_val": 0.65,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "STABILITY_ANALYSIS",
+      "semantic_label": "Sovereign Stability Index",
+      "reasoning_chain": [
+        "Compute Φ* from G*, R*, M* dimensions",
+        "Verify weighted sum ≥ 0.65",
+        "Flag VIOLATION if below threshold"
+      ]
+    }
+  }
+]

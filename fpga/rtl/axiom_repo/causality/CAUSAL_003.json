@@ -1,0 +1,1 @@
+{"id":"CAUSAL_003","name":"Bounded Propagation","type":"D","level":"L3","statement":"Faults must not propagate beyond bounded scope","severity":"CRITICAL"}

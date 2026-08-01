@@ -1,0 +1,51 @@
+{
+  "version": "3.0",
+  "total_axioms": 33,
+  "categories": [
+    {
+      "name": "Causality",
+      "path": "causality",
+      "axiom_count": 4
+    },
+    {
+      "name": "Determinism",
+      "path": "determinism",
+      "axiom_count": 3
+    },
+    {
+      "name": "Resource Integrity",
+      "path": "resource_integrity",
+      "axiom_count": 4
+    },
+    {
+      "name": "Data Integrity",
+      "path": "data_integrity",
+      "axiom_count": 4
+    },
+    {
+      "name": "Control Flow",
+      "path": "control_flow",
+      "axiom_count": 4
+    },
+    {
+      "name": "Concurrency",
+      "path": "concurrency",
+      "axiom_count": 3
+    },
+    {
+      "name": "Security",
+      "path": "security",
+      "axiom_count": 3
+    },
+    {
+      "name": "Firmware",
+      "path": "firmware",
+      "axiom_count": 4
+    },
+    {
+      "name": "Common Sense",
+      "path": "common_sense",
+      "axiom_count": 4
+    }
+  ]
+}

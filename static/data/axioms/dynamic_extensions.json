@@ -1,0 +1,15 @@
+[
+  {
+    "axiom_id": "HC_CARDIO_LDL_001",
+    "name": "LDL Cholesterol Threshold Compliance",
+    "domain": "HEALTHCARE",
+    "req_fields": [
+      "ldl"
+    ],
+    "sympy_equation": "ldl >= 130",
+    "semantic_fingerprint": "Evaluates whether the patient's Low-Density Lipoprotein (LDL) cholesterol level exceeds the clinical threshold of 130 mg/dL, indicating a potential risk for cardiovascular disease and non-compliance with standard lipid management guidelines.",
+    "arxiv_category": "q-bio.QM",
+    "ocg_evidence": "Based on the American Heart Association (AHA) and American College of Cardiology (ACC) guidelines for the management of blood cholesterol. LDL levels above 130 mg/dL are categorized as borderline high or high, necessitating lifestyle or pharmacological intervention to mitigate atherosclerotic cardiovascular disease (ASCVD) risk. Source: Grundy SM, et al. (2018) AHA/ACC/AACVPR/AAPA/ABC/ACPM/ADA/AGS/APhA/ASPC/NLA/PCNA Guideline on the Management of Blood Cholesterol.",
+    "xai_narrator_hint": "The patient's LDL cholesterol level is 130 mg/dL or higher, which exceeds the recommended threshold for cardiovascular health. It is recommended to review the patient's diet, exercise regimen, or consider statin therapy according to ASCVD risk scores."
+  }
+]

@@ -1,0 +1,1 @@
+{"id":"ELEC_001","name":"CDC Synchronization","type":"D","level":"L8","statement":"Every signal crossing a clock domain boundary must use a proper synchronizer (at least 2 FF stages)","severity":"CRITICAL"}

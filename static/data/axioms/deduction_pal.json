@@ -1,0 +1,375 @@
+[
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "DEDUCT_PAL_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "GENERAL",
+    "subdomain": "Physical Admissibility Layer",
+    "name": "Global Hazard Integration",
+    "description": "Computes the integrated hazard h(t) over the evaluation window by summing domain-specific hazard contributions H(domain, t). The result must remain below the domain-defined ceiling h_max for physical admissibility. A null result (missing telemetry) triggers UNDERDETERMINED rather than a false ADMIT.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.92,
+    "hallucination_lock": true,
+    "expression_latex": "h(t) = \\int H(\\text{domain}, t)\\, dt",
+    "derivation_formula": {
+      "sympy_expr": "sum(h_contributions) * delta_t",
+      "variables": {
+        "h_contributions": {
+          "maps_to_field": "hazard_samples",
+          "unit": "hazard_units",
+          "bounds": [
+            0.0,
+            null
+          ]
+        },
+        "delta_t": {
+          "maps_to_field": "sampling_interval",
+          "unit": "seconds",
+          "bounds": [
+            0.0,
+            null
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "expr": "len(h_contributions)",
+          "condition": "> 0",
+          "label": "non_empty_telemetry_guard"
+        }
+      ],
+      "verdict_threshold": {
+        "ADMIT": {
+          "operator": "<",
+          "value_field": "h_max"
+        },
+        "REJECT": {
+          "operator": ">=",
+          "value_field": "h_max"
+        },
+        "UNDERDETERMINED": {
+          "condition": "h_contributions is null or empty"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "hazard_samples",
+        "unit": "hazard_units",
+        "bounds": [
+          0.0,
+          null
+        ]
+      },
+      {
+        "field": "sampling_interval",
+        "unit": "seconds",
+        "bounds": [
+          0.0001,
+          null
+        ]
+      },
+      {
+        "field": "h_max",
+        "unit": "hazard_units",
+        "bounds": [
+          0.0,
+          null
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "evaluation_window_start",
+        "unit": "ISO8601",
+        "bounds": []
+      },
+      {
+        "field": "evaluation_window_end",
+        "unit": "ISO8601",
+        "bounds": []
+      }
+    ],
+    "semantic_fingerprint": "hazard integration physical admissibility telemetry window domain safety ceiling reject",
+    "contradiction_axioms": [],
+    "spatial_tension": "HIGH",
+    "layer_2_summary": {
+      "explains": [
+        "PHYSICAL_HAZARD_LEVEL",
+        "DOMAIN_SAFETY_MARGIN"
+      ],
+      "fails_to_explain": [
+        "ROOT_CAUSE_OF_HAZARD_SPIKE"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "pal_score",
+      "threshold_op": "gt",
+      "threshold_val": 0.7,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "PAL_ANALYSIS",
+      "semantic_label": "PAL Deduction Axiom",
+      "reasoning_chain": [
+        "Compute PAL constraint metric",
+        "Verify score ≥ 0.70",
+        "Flag VIOLATION if constraint violated"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "DEDUCT_PAL_002",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "GENERAL",
+    "subdomain": "Physical Admissibility Layer",
+    "name": "Deterministic Fixed-Point Admissibility",
+    "description": "Verifies that the system reaches a stable fixed-point Φ_fp within N_max iterations. Divergence or exceeding N_max indicates a physically non-admissible system state. This gate enforces determinism — stochastic non-convergence is a REJECT condition.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.9,
+    "hallucination_lock": true,
+    "expression_latex": "\\exists\\, N \\leq N_{max} : \\|\\Phi_{N+1} - \\Phi_N\\| < \\delta_{fp}",
+    "derivation_formula": {
+      "sympy_expr": "Abs(phi_final - phi_prev) - delta_fp",
+      "variables": {
+        "phi_final": {
+          "maps_to_field": "stability_value_final",
+          "unit": "dimensionless",
+          "bounds": [
+            null,
+            null
+          ]
+        },
+        "phi_prev": {
+          "maps_to_field": "stability_value_previous",
+          "unit": "dimensionless",
+          "bounds": [
+            null,
+            null
+          ]
+        },
+        "delta_fp": {
+          "maps_to_field": "convergence_tolerance",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            null
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "expr": "iteration_count",
+          "condition": "<= N_max",
+          "label": "iteration_ceiling_guard"
+        }
+      ],
+      "verdict_threshold": {
+        "ADMIT": {
+          "operator": "<=",
+          "value": 0,
+          "note": "Abs(phi_final - phi_prev) <= delta_fp means converged"
+        },
+        "REJECT": {
+          "operator": ">",
+          "value": 0,
+          "note": "Diverged or iteration_count > N_max"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "stability_value_final",
+        "unit": "dimensionless",
+        "bounds": [
+          null,
+          null
+        ]
+      },
+      {
+        "field": "stability_value_previous",
+        "unit": "dimensionless",
+        "bounds": [
+          null,
+          null
+        ]
+      },
+      {
+        "field": "convergence_tolerance",
+        "unit": "dimensionless",
+        "bounds": [
+          1e-10,
+          1.0
+        ]
+      },
+      {
+        "field": "iteration_count",
+        "unit": "integer",
+        "bounds": [
+          1,
+          null
+        ]
+      },
+      {
+        "field": "N_max",
+        "unit": "integer",
+        "bounds": [
+          1,
+          null
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "convergence_history",
+        "unit": "array_float",
+        "bounds": []
+      }
+    ],
+    "semantic_fingerprint": "fixed point convergence deterministic stability iteration admissibility divergence physical",
+    "contradiction_axioms": [],
+    "spatial_tension": "MEDIUM",
+    "layer_2_summary": {
+      "explains": [
+        "CONVERGENCE_STATUS",
+        "DETERMINISM_ASSURANCE"
+      ],
+      "fails_to_explain": [
+        "RATE_OF_CONVERGENCE_DEGRADATION"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "pal_score",
+      "threshold_op": "gt",
+      "threshold_val": 0.7,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "PAL_ANALYSIS",
+      "semantic_label": "PAL Deduction Axiom",
+      "reasoning_chain": [
+        "Compute PAL constraint metric",
+        "Verify score ≥ 0.70",
+        "Flag VIOLATION if constraint violated"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "DEDUCT_PAL_003",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "GENERAL",
+    "subdomain": "Physical Admissibility Layer",
+    "name": "Non-Bypassable Enforcement Gate",
+    "description": "A meta-axiom that verifies all upstream PAL gates (DEDUCT_PAL_001 and DEDUCT_PAL_002) were evaluated before issuing a final verdict. Any skipped gate is recorded as a pipeline integrity failure (E007). This axiom has no formula — it is a structural compliance check.",
+    "status": "CANONICAL",
+    "confidence_floor": 1.0,
+    "hallucination_lock": true,
+    "expression_latex": "\\forall g \\in \\mathcal{G}_{PAL} : \\text{evaluated}(g) = \\text{true}",
+    "derivation_formula": {
+      "sympy_expr": "gates_evaluated - gates_required",
+      "variables": {
+        "gates_evaluated": {
+          "maps_to_field": "pal_gates_completed_count",
+          "unit": "integer",
+          "bounds": [
+            0,
+            null
+          ]
+        },
+        "gates_required": {
+          "maps_to_field": "pal_gates_required_count",
+          "unit": "integer",
+          "bounds": [
+            1,
+            null
+          ]
+        }
+      },
+      "constraints": [],
+      "verdict_threshold": {
+        "ADMIT": {
+          "operator": "==",
+          "value": 0,
+          "note": "All required gates completed — no gap"
+        },
+        "REJECT": {
+          "operator": "<",
+          "value": 0,
+          "note": "gates_evaluated < gates_required — E007 triggered"
+        },
+        "UNDERDETERMINED": {
+          "condition": "either count field is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "pal_gates_completed_count",
+        "unit": "integer",
+        "bounds": [
+          0,
+          null
+        ]
+      },
+      {
+        "field": "pal_gates_required_count",
+        "unit": "integer",
+        "bounds": [
+          1,
+          null
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "skipped_gate_ids",
+        "unit": "array_string",
+        "bounds": []
+      }
+    ],
+    "semantic_fingerprint": "gate enforcement non-bypassable pipeline integrity compliance structural meta-axiom PAL",
+    "contradiction_axioms": [],
+    "spatial_tension": "HIGH",
+    "layer_2_summary": {
+      "explains": [
+        "PIPELINE_GATE_INTEGRITY",
+        "BYPASS_PREVENTION"
+      ],
+      "fails_to_explain": [
+        "INDIVIDUAL_GATE_FAILURE_CAUSE"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "pal_score",
+      "threshold_op": "gt",
+      "threshold_val": 0.7,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "PAL_ANALYSIS",
+      "semantic_label": "PAL Deduction Axiom",
+      "reasoning_chain": [
+        "Compute PAL constraint metric",
+        "Verify score ≥ 0.70",
+        "Flag VIOLATION if constraint violated"
+      ]
+    }
+  }
+]

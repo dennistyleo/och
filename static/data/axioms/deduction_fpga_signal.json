@@ -1,0 +1,510 @@
+[
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "FPGA_SI_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "FPGA",
+    "subdomain": "Signal Integrity",
+    "name": "Signal Integrity Eye-Aperture Gate",
+    "description": "Validates that the differential eye aperture at the receiver exceeds the minimum threshold for BER < 1e-12. Collapse of eye aperture below the threshold constitutes a REFUSE verdict — the channel fails to maintain reliable bit transfer.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.91,
+    "hallucination_lock": true,
+    "expression_latex": "V_{eye} \\geq V_{th,min},\\quad BER < 10^{-12}",
+    "derivation_formula": {
+      "sympy_expr": "V_eye - V_threshold",
+      "variables": {
+        "V_eye": {
+          "maps_to_field": "eye_aperture_mv",
+          "unit": "mV",
+          "bounds": [
+            0,
+            1200
+          ]
+        },
+        "V_threshold": {
+          "maps_to_field": "eye_threshold_mv",
+          "unit": "mV",
+          "bounds": [
+            50,
+            400
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value_field": "eye_threshold_mv"
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value_field": "eye_threshold_mv"
+        },
+        "UNDERDETERMINED": {
+          "condition": "eye_aperture_mv is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "eye_aperture_mv",
+        "unit": "mV",
+        "bounds": [
+          0,
+          1200
+        ]
+      },
+      {
+        "field": "eye_threshold_mv",
+        "unit": "mV",
+        "bounds": [
+          50,
+          400
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "ber_measured",
+        "unit": "dimensionless"
+      },
+      {
+        "field": "jitter_rms_ps",
+        "unit": "ps"
+      }
+    ],
+    "semantic_fingerprint": "signal integrity eye aperture BER jitter receiver margin FPGA SerDes",
+    "entity_keywords": [
+      "eye diagram",
+      "eye aperture",
+      "bit error rate",
+      "BER",
+      "signal integrity",
+      "SerDes",
+      "jitter",
+      "differential pair",
+      "receiver margin"
+    ],
+    "contradiction_axioms": [],
+    "spatial_tension": "HIGH",
+    "cascade_to": [
+      "FPGA_PC_001",
+      "FPGA_TH_001"
+    ],
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "score",
+      "threshold_op": "gt",
+      "threshold_val": 0.0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "DEDUCTION",
+      "semantic_label": "FPGA_SI_001",
+      "reasoning_chain": [
+        "Evaluate deduction constraint",
+        "Check threshold compliance",
+        "Flag VIOLATION if not met"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "FPGA_PC_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "FPGA",
+    "subdomain": "Power Consumption",
+    "name": "Dynamic Power Budget Gate",
+    "description": "Verifies that total dynamic power P_dyn = α·C·V²·f remains within the allocated power budget. A violation forces load redistribution or clock gating and yields a REFUSE verdict at the power rail audit layer.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.88,
+    "hallucination_lock": true,
+    "expression_latex": "P_{dyn} = \\alpha \\cdot C \\cdot V^2 \\cdot f \\leq P_{budget}",
+    "derivation_formula": {
+      "sympy_expr": "alpha * C_load * V_dd**2 * f_clock - P_budget",
+      "variables": {
+        "alpha": {
+          "maps_to_field": "activity_factor",
+          "unit": "dimensionless",
+          "bounds": [
+            0,
+            1
+          ]
+        },
+        "C_load": {
+          "maps_to_field": "capacitance_pf",
+          "unit": "pF",
+          "bounds": [
+            0,
+            1000000.0
+          ]
+        },
+        "V_dd": {
+          "maps_to_field": "supply_voltage_v",
+          "unit": "V",
+          "bounds": [
+            0.6,
+            1.8
+          ]
+        },
+        "f_clock": {
+          "maps_to_field": "clock_freq_mhz",
+          "unit": "MHz",
+          "bounds": [
+            1,
+            3000
+          ]
+        },
+        "P_budget": {
+          "maps_to_field": "power_budget_mw",
+          "unit": "mW",
+          "bounds": [
+            0,
+            50000
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value_field": "power_budget_mw"
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value_field": "power_budget_mw"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "activity_factor",
+        "unit": "dimensionless",
+        "bounds": [
+          0,
+          1
+        ]
+      },
+      {
+        "field": "capacitance_pf",
+        "unit": "pF",
+        "bounds": [
+          0,
+          1000000.0
+        ]
+      },
+      {
+        "field": "supply_voltage_v",
+        "unit": "V",
+        "bounds": [
+          0.6,
+          1.8
+        ]
+      },
+      {
+        "field": "clock_freq_mhz",
+        "unit": "MHz",
+        "bounds": [
+          1,
+          3000
+        ]
+      },
+      {
+        "field": "power_budget_mw",
+        "unit": "mW",
+        "bounds": [
+          0,
+          50000
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "static_power_mw",
+        "unit": "mW"
+      },
+      {
+        "field": "clock_gating_ratio",
+        "unit": "dimensionless"
+      }
+    ],
+    "semantic_fingerprint": "power consumption dynamic power budget FPGA clock frequency voltage activity factor",
+    "entity_keywords": [
+      "dynamic power",
+      "P_dyn",
+      "power budget",
+      "clock gating",
+      "supply voltage",
+      "activity factor",
+      "FPGA power"
+    ],
+    "contradiction_axioms": [],
+    "spatial_tension": "MEDIUM",
+    "cascade_to": [
+      "FPGA_TH_001"
+    ],
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "score",
+      "threshold_op": "gt",
+      "threshold_val": 0.0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "DEDUCTION",
+      "semantic_label": "FPGA_PC_001",
+      "reasoning_chain": [
+        "Evaluate deduction constraint",
+        "Check threshold compliance",
+        "Flag VIOLATION if not met"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "FPGA_TH_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "FPGA",
+    "subdomain": "Thermal Budget",
+    "name": "Junction Temperature Thermal Budget Gate",
+    "description": "Ensures junction temperature T_j = T_a + P_total·θ_ja does not exceed the JEDEC safe-operating limit. Violations cascade from power excess (FPGA_PC_001) into thermal runaway risk and constitute a REFUSE at the reliability gate.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.93,
+    "hallucination_lock": true,
+    "expression_latex": "T_j = T_a + P_{total} \\cdot \\theta_{JA} \\leq T_{j,max}",
+    "derivation_formula": {
+      "sympy_expr": "T_ambient + P_total * theta_JA - T_j_max",
+      "variables": {
+        "T_ambient": {
+          "maps_to_field": "ambient_temp_c",
+          "unit": "°C",
+          "bounds": [
+            -40,
+            85
+          ]
+        },
+        "P_total": {
+          "maps_to_field": "total_power_mw",
+          "unit": "mW",
+          "bounds": [
+            0,
+            50000
+          ]
+        },
+        "theta_JA": {
+          "maps_to_field": "theta_ja_c_per_w",
+          "unit": "°C/W",
+          "bounds": [
+            0,
+            100
+          ]
+        },
+        "T_j_max": {
+          "maps_to_field": "t_junction_max_c",
+          "unit": "°C",
+          "bounds": [
+            85,
+            125
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value_field": "t_junction_max_c"
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value_field": "t_junction_max_c"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "ambient_temp_c",
+        "unit": "°C",
+        "bounds": [
+          -40,
+          85
+        ]
+      },
+      {
+        "field": "total_power_mw",
+        "unit": "mW",
+        "bounds": [
+          0,
+          50000
+        ]
+      },
+      {
+        "field": "theta_ja_c_per_w",
+        "unit": "°C/W",
+        "bounds": [
+          0,
+          100
+        ]
+      },
+      {
+        "field": "t_junction_max_c",
+        "unit": "°C",
+        "bounds": [
+          85,
+          125
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "heatsink_effectiveness",
+        "unit": "dimensionless"
+      },
+      {
+        "field": "airflow_lfm",
+        "unit": "LFM"
+      }
+    ],
+    "semantic_fingerprint": "thermal budget junction temperature theta JA FPGA power dissipation heat sink reliability JEDEC",
+    "entity_keywords": [
+      "thermal budget",
+      "junction temperature",
+      "T_j",
+      "theta_JA",
+      "thermal resistance",
+      "heat dissipation",
+      "safe operating area",
+      "JEDEC",
+      "thermal runaway"
+    ],
+    "contradiction_axioms": [],
+    "spatial_tension": "HIGH",
+    "cascade_to": [],
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "score",
+      "threshold_op": "gt",
+      "threshold_val": 0.0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "DEDUCTION",
+      "semantic_label": "FPGA_TH_001",
+      "reasoning_chain": [
+        "Evaluate deduction constraint",
+        "Check threshold compliance",
+        "Flag VIOLATION if not met"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "FPGA_TS_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "FPGA",
+    "subdomain": "Timing Closure",
+    "name": "Setup-Time Slack Gate (WNS)",
+    "description": "Verifies that the Worst Negative Slack (WNS) across all timing paths meets or exceeds zero. A negative WNS indicates setup-time violations — the critical path exceeds the clock period and must be redesigned or re-floorplanned.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "expression_latex": "WNS = \\min_i(T_{clk} - T_{path,i} - T_{setup}) \\geq 0",
+    "derivation_formula": {
+      "sympy_expr": "WNS_ps",
+      "variables": {
+        "WNS_ps": {
+          "maps_to_field": "wns_ps",
+          "unit": "ps",
+          "bounds": [
+            -10000,
+            10000
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0
+        },
+        "UNDERDETERMINED": {
+          "condition": "wns_ps is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "wns_ps",
+        "unit": "ps",
+        "bounds": [
+          -10000,
+          10000
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "tns_ns",
+        "unit": "ns"
+      },
+      {
+        "field": "failing_paths",
+        "unit": "integer"
+      },
+      {
+        "field": "critical_path_ns",
+        "unit": "ns"
+      }
+    ],
+    "semantic_fingerprint": "timing closure WNS worst negative slack setup time FPGA critical path synthesis place route",
+    "entity_keywords": [
+      "timing closure",
+      "WNS",
+      "worst negative slack",
+      "setup time",
+      "critical path",
+      "clock period",
+      "place and route",
+      "TNS"
+    ],
+    "contradiction_axioms": [],
+    "spatial_tension": "HIGH",
+    "cascade_to": [
+      "FPGA_SI_001"
+    ],
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "score",
+      "threshold_op": "gt",
+      "threshold_val": 0.0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "DEDUCTION",
+      "semantic_label": "FPGA_TS_001",
+      "reasoning_chain": [
+        "Evaluate deduction constraint",
+        "Check threshold compliance",
+        "Flag VIOLATION if not met"
+      ]
+    }
+  }
+]

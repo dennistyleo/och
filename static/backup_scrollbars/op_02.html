@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920">
+    <title>Sovereign OCM · OP-02 Compliance Analysis</title>
+    <meta name="description" content="Sovereign OCM OP-02 — Manual Ontology Selection">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/sovereign_scrollbar.css?v=1780000013">
+    <link rel="stylesheet" href="css/sovereign-header.css?v=20260501">
+    <link rel="stylesheet" href="css/sovereign-header-fixes.css?v=4">
+    <style>
+        /* OP-02 shares identical header architecture with OP-01.
+       Nav buttons and body structure differ. */
+        :root {
+            --gold: #D4AF37;
+            --gold-lt: #f0d060;
+            --gold-dk: #7a5c10;
+            --orange: #ff914d;
+            --green: #39FF14;
+            --green2: #00bf63;
+            --black: #000000;
+            --bg: #f2f2f2;
+            --breathe: 15%;
+            --wing-w: 220px;
+            --wing-h: 212px;
+            --eng-h: 150px;
+            --nav-h: 62px;
+            --bridge-h: 72px;
+            --hdr-h: 284px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            width: 1920px;
+            background: var(--bg);
+            overflow-y: hidden;
+        }
+
+        body {
+            width: 1920px;
+            min-height: 1080px;
+            background: var(--bg);
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-size: 12px;
+            overflow-x: hidden;
+        }
+
+        /* ── SCROLLBAR: native hidden — DOM gold rails injected by sovereign_scrollbar.js v16 ── */
+        .scroll-zone {
+            overflow-y: auto;
+        }
+
+        /* ── Universal media placeholder auto-fit ── */
+        .z42-body,
+        .model-visual,
+        .gnn-visual {
+            overflow: hidden;
+            background: #ffffff;
+            /* White background per design spec */
+            border-radius: 15px;
+            /* 15px corners per spec */
+        }
+
+        .z42-body>img,
+        .z42-body>video,
+        .model-visual>img,
+        .model-visual>video,
+        .gnn-visual>img,
+        .gnn-visual>video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 15px;
+            /* radius on media element for full clip */
+        }
+
+        .zone3-1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .zone3-1>img,
+        .zone3-1>video {
+            max-width: 90%;
+            max-height: 90%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* ── HEADER ── */
+        .sm-header {
+            position: relative;
+            width: 100%;
+            height: var(--hdr-h);
+            background: var(--black);
+            flex-shrink: 0;
+        }
+
+        .hdr-wing {
+            position: absolute;
+            top: 0;
+            width: var(--wing-w);
+            height: var(--wing-h);
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .hdr-wing.left {
+            left: 0;
+        }
+
+        .hdr-wing.right {
+            right: 0;
+        }
+
+        .hdr-wing video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Engine zone — geometry governed by sovereign-header.css §3.
+           ONLY position/dimensions locked here; flex layout deferred to sovereign-header.css. */
+        .hdr-engines {
+            position: absolute;
+            left: var(--wing-w);
+            right: var(--wing-w);
+            top: 0;
+            height: 218px;
+            justify-content: center; /* safety fallback — sovereign-header.css overrides */
+        }
+
+        /* .eng-bars / .eng-bar-col / .eng-bar-track / .eng-bar-fill fully governed by sovereign-header.css */
+
+        /* All .eng-bar-col, .eng-bar-track, .eng-bar-fill, .eng-bar-top, .eng-bar-pct rules
+           are governed exclusively by sovereign-header.css §3 (pill geometry, spectral gradients).
+           DO NOT redeclare these here — it will override the !important sovereign rules. */
+
+        .eng-descs {
+            display: flex;
+            flex: 1;
+        }
+
+        .eng-desc-col {
+            flex: 1;
+            border-left: 1px solid #1a1a1a;
+            padding: 8px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .eng-desc-col:last-child {
+            border-right: 1px solid #1a1a1a;
+        }
+
+        .eng-desc-id {
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: #6dd;
+            text-transform: uppercase;
+        }
+
+        .eng-desc-body {
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-size: 12px;
+            color: #888;
+            line-height: 1.4;
+            max-height: 60px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 5px;
+            max-height: 80px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        /* end .eng-desc-body */
+
+        /* OP-02 bottom: logo | 2 wide green buttons */
+        .hdr-bottom {
+            position: absolute;
+            left: var(--wing-w);
+            right: var(--wing-w);
+            top: 218px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 90px;
+            gap: 20px;
+            z-index: 25;
+        }
+
+        .hdr-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .hdr-logo {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .hdr-brand-text {
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-weight: 900;
+            font-size: 20px;
+            letter-spacing: 3px;
+            color: var(--gold);
+            white-space: nowrap;
+        }
+
+        .hdr-nav {
+            display: flex;
+            gap: 12px;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .hdr-btn {
+            background: transparent;
+            border: 1.5px solid var(--green);
+            color: var(--green);
+            padding: 5px 10px;
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 5px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 1;
+            min-width: 0;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .hdr-btn:hover,
+        .hdr-btn.active {
+            background: var(--green);
+            color: #000;
+        }
+
+        /* TONGUE white cutout overlay — same geometry as OP-01 */
+        .hdr-tongue {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--bridge-h);
+            z-index: 20;
+            pointer-events: none;
+            line-height: 0;
+            font-size: 0;
+        }
+
+        .hdr-tongue svg {
+            display: block;
+            width: 100%;
+            height: 72px;
+        }
+
+        /* ── OPERATION STAGE ── */
+        .op-stage {
+            width: 100%;
+            padding: 16px var(--breathe) 24px;
+            background: var(--bg);
+            height: calc(1080px - var(--hdr-h) - 42px);
+            display: flex;
+            gap: 14px;
+            align-items: stretch;
+            overflow: hidden;
+        }
+
+        /* Zone 1: telemetry sidebar */
+        .zone1 {
+            flex: 0 0 280px;
+            border: 2px solid var(--gold);
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000000;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .zone1-hdr {
+            background: #000;
+            color: var(--gold);
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 9px 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #222;
+            flex-shrink: 0;
+        }
+
+        .zone1-body {
+            flex: 1;
+            min-height: 0;
+            padding: 4px 0 4px 4px;
+            overflow-y: scroll;
+        }
+
+        .tele-section {
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--orange);
+            padding: 6px 6px 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .tele-sub {
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: #9aff9a;
+            padding: 2px 4px 2px 14px;
+        }
+
+        .tele-list {
+            list-style: none;
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-size: 12px;
+            color: #888;
+            line-height: 1.7;
+            padding: 0 4px 0 12px;
+        }
+
+        .tele-list li {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tele-list .tag {
+            color: #66aaff;
+        }
+
+        /* zone-right: the two-row column that fills remaining space */
+        .zone-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* model-row: no outer border — bug 4 fix */
+        .model-row {
+            flex: 1;
+            display: flex;
+            gap: 0;
+            min-height: 0;
+            border: none;
+            border-radius: 15px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        /* axiom-inner: clips inner content — model-row is the sole scroll host */
+        .axiom-inner {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        /* axiom-body: padding wrapper inside axiom-inner */
+        .axiom-body {
+            padding: 12px 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* model-visual: 2px gold border + margins match banner exactly for pixel-perfect alignment */
+        .model-visual {
+            border: none !important; /* bug 4 */
+            flex: 1;
+            min-height: 0;
+            overflow: hidden !important;
+            position: relative;
+            background: #ffffff !important;
+            border-radius: 15px !important;
+            /* border removed - bug 4 */ border: none !important;
+            margin: 0 10px 10px;
+        }
+
+        .model-visual video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 13px;
+        }
+
+        .model-caption {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-size: 12px;
+            color: #ccc;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 2px 7px;
+            border-radius: 3px;
+        }
+
+        /* Gold panels (R=15px) — NO internal divider lines between sub-panels */
+        .gold-panel {
+            border: none;
+            border-radius: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            min-height: 0;
+        }
+
+        /* Framed banner tab — reference spec: 4-corner 15px radius, own gold border */
+        .gold-panel-tab {
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: #111;
+            padding: 9px 18px;
+            text-align: center;
+            letter-spacing: 1px;
+            background: #fff;
+            flex-shrink: 0;
+            border: 2px solid var(--gold);
+            border-radius: 15px;
+            margin: 10px 10px 6px;
+        }
+
+        /* Dark framed banner tab for model panels */
+        .panel-model .gold-panel-tab {
+            background: #fff !important;
+            color: #111 !important;
+        }
+
+        /* panel-axiom: flex column, clips its axiom-inner scroll child */
+        .panel-axiom {
+            flex: 0 0 42%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        /* panel-model: flex column, clips model-visual */
+        .panel-model {
+            flex: 1;
+            background: #fff !important;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .math-formula {
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #111;
+            text-align: center;
+            padding: 6px 0;
+        }
+
+        .math-sub {
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .math-sub p {
+            margin-bottom: 3px;
+        }
+
+        /* QA-03: Zone 5 descriptions scrollbars */
+        /* ── T-XYZ Legend ── */
+        .txyz-legend {
+            border-top: 1px solid #ddd;
+            margin-top: 10px;
+            padding-top: 8px;
+        }
+
+        .txyz-legend-title {
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .txyz-row {
+            display: flex;
+            gap: 6px;
+            align-items: baseline;
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-size: 12px;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .txyz-axis {
+            font-weight: 700;
+            color: #111;
+            min-width: 14px;
+        }
+
+        .txyz-sep {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* ── OCG Status Row ── */
+        .ocg-status-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 10px;
+            background: #0a0a0a;
+            border-top: 1px solid var(--gold);
+            flex-shrink: 0;
+        }
+
+        .ocg-chip {
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 3px;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            background: #1a1200;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .ocg-arrow {
+            color: var(--gold);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .zone-5-container,
+        .description-container,
+        [id$="-desc"],
+        .content-panel {
+            overflow-y: auto !important;
+            /* max-height ensures no collision with bottom tabs */
+            max-height: 50vh !important;
+        }
+
+        /* QA-01/02: Force generic typography */
+        body,
+        div,
+        span,
+        p,
+        a,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        input,
+        button:not(.hdr-btn),
+        textarea,
+        select {
+            font-family: Calibri, 微軟正黑體, sans-serif !important;
+        }
+
+        .text-sm {
+            font-size: 12px !important;
+        }
+
+        .text-xs {
+            font-size: 12px !important;
+        }
+
+        /* Tube Engine / Sovereign Tubes Specific Styles */
+        .eng-tube-flyout {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            border-bottom: 2px solid #39FF14;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #ddd;
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .eng-tube-flyout.visible {
+            display: flex;
+            flex-direction: column;
+            animation: pull-down-slide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes pull-down-slide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .gate-status-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            align-self: flex-start;
+        }
+
+        .gate-status-pill.blue {
+            background: rgba(0, 170, 255, 0.2);
+            color: #00aaff;
+            border: 1px solid #00aaff;
+        }
+
+        .gate-status-pill.orange {
+            background: rgba(255, 145, 77, 0.2);
+            color: var(--orange);
+            border: 1px solid var(--orange);
+        }
+
+        .gate-status-pill.red {
+            background: rgba(255, 51, 51, 0.2);
+            color: #ff3333;
+            border: 1px solid #ff3333;
+        }
+
+        .gate-status-pill.green {
+            background: rgba(57, 255, 20, 0.2);
+            color: var(--green);
+            border: 1px solid var(--green);
+        }
+
+        .gate-status-pill.gold {
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+        }
+
+        .gate-meaning {
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .gate-thinking-log {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #888;
+            background: #111;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 10px;
+            border-left: 2px solid #555;
+            text-align: left;
+        }
+
+        .gate-math {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #fff;
+            background: #000;
+            padding: 10px;
+            border-left: 2px solid #00aaff;
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 15px;
+            align-self: flex-end;
+        }
+
+        /* .eng-tube-arrow — governed by sovereign-header.css §2.3 (border-triangle approach) */
+
+        .eng-desc-body.visible {
+            display: block;
+        }
+
+    /* ── 3D ZOOM MODAL CSS ── */
+    .ded-modal-overlay {
+        position: fixed; inset: 0; z-index: 2147483647;
+        isolation: isolate;
+        background: rgba(0,0,0,0.97);
+        display: none; align-items: center; justify-content: center;
+        animation: dedModalFadeIn 0.22s ease;
+        overflow: hidden !important;
+    }
+    .ded-modal-overlay * { scrollbar-width: none; }
+    .ded-modal-overlay *::-webkit-scrollbar { display: none; }
+    /* XAI panel exception: show the light pill scrollbar inside the modal.
+       !important required to beat the blanket .ded-modal-overlay *::-webkit-scrollbar { display:none } rule */
+    .ded-modal-overlay .ded-xai-panel { scrollbar-width: thin !important; scrollbar-color: #bdbdbd #ececec !important; }
+    .ded-modal-overlay .ded-xai-panel::-webkit-scrollbar { display: block !important; width: 6px !important; }
+    .ded-modal-overlay .ded-xai-panel::-webkit-scrollbar-track { background: #ececec !important; border-radius: 9999px !important; }
+    .ded-modal-overlay .ded-xai-panel::-webkit-scrollbar-thumb { background: #bdbdbd !important; border-radius: 15px; border: 1px solid #ececec !important; }
+    .ded-modal-overlay .ded-xai-panel::-webkit-scrollbar-thumb:hover { background: #a0a0a0 !important; }
+    /* Block all pointer events and visibility from underlying page while modal is open */
+    body.ded-modal-open { overflow: hidden !important; }
+    body.ded-modal-open > *:not(#ded-3d-modal) {
+        pointer-events: none !important;
+        visibility: hidden !important;
+    }
+    /* The modal itself must be fully visible */
+    #ded-3d-modal, #ded-3d-modal * { visibility: visible !important; }
+    .ded-modal-overlay.is-open { display: flex !important; }
+@keyframes dedModalFadeIn { from { opacity:0; transform:scale(0.97) } to { opacity:1; transform:scale(1) } }
+    .ded-modal-inner {
+        width: 88vw; max-width: 1400px;
+        height: 86vh;
+        display: flex; flex-direction: column;
+        border: 2px solid #D4AF37;
+        border-radius: 10px;
+        box-shadow: 0 8px 60px rgba(0,0,0,0.55), 0 0 40px rgba(212,175,55,0.25);
+        overflow: hidden;
+        font-family: Calibri, 微軟正黑體, sans-serif;
+        background: #e8f5e9;  /* green background as requested */
+        margin: auto;
+    }
+    .ded-modal-hdr {
+        display: flex; align-items: center; gap: 8px;
+        background: #2e7d32; border-bottom: 2px solid #D4AF37;
+        padding: 0 12px; height: 52px; flex-shrink: 0;
+        overflow: hidden; flex-wrap: nowrap;
+    }
+    .ded-modal-phase-tabs { display:flex; gap:4px; }
+    .ded-phase-tab {
+        padding: 6px 18px; border-radius: 5px;
+        border: 1.5px solid #1b5e20; background: #c8e6c9;
+        color: #000; font-size: 12px;
+        font-family: 'Bebas Neue','JetBrains Mono',Calibri,sans-serif;
+        font-weight: 700; cursor: pointer; letter-spacing: 0.12em;
+        transition: background 0.18s, color 0.18s, border-color 0.18s;
+    }
+    .ded-phase-tab.active { background:#1b5e20; color:#fff; border-color:#D4AF37; }
+    .ded-phase-tab:hover:not(.active) { border-color:#388e3c; color:#000; background:#a5d6a7; }
+    .ded-modal-domain-tabs {
+    display: flex; gap: 3px;
+    flex: 1 1 0; min-width: 0;  /* Bug 10/18: scroll not wrap */
+    overflow-x: auto; overflow-y: hidden;
+    scrollbar-width: thin; scrollbar-color: #D4AF37 transparent;
+    align-items: center;
+}
+    .ded-domain-tab {
+        padding: 5px 14px; border-radius: 5px;
+        border: 1.5px solid #1b5e20; background: #c8e6c9;
+        color: #000; font-size: 11px;
+        font-family: 'Bebas Neue','JetBrains Mono',Calibri,sans-serif;
+        letter-spacing:0.08em; cursor: pointer; transition: all 0.18s;
+    }
+    .ded-domain-tab.active { background:#1b5e20; color:#fff; border-color:#D4AF37; }
+    .ded-domain-tab:hover:not(.active) { border-color:#388e3c; color:#000; background:#a5d6a7; }
+    .ded-modal-close {
+        padding: 6px 18px; margin-left: 8px; flex-shrink: 0;
+        background: #c62828; border: 1.5px solid #b71c1c; border-radius: 5px;
+        color: #fff; font-size: 12px;
+        font-family: 'Bebas Neue','JetBrains Mono',Calibri,sans-serif;
+        letter-spacing:0.12em; cursor: pointer; transition: all 0.15s;
+    }
+    .ded-modal-close:hover { background: #c62828; color: #fff; border-color:#c62828; }
+    .ded-modal-canvas-wrap {
+        flex: 1; position: relative; background: #ffffff;
+        overflow: hidden; min-height: 0;
+    }
+    .ded-modal-canvas {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        display: none;  /* JS sets display:block on the active canvas */
+    }
+    .ded-modal-canvas canvas { width:100%!important; height:100%!important; }
+    .ded-modal-footer {
+        display: flex; align-items: center; gap: 16px;
+        background: #f8f6f0; border-top: 1px solid #D4AF37;
+        padding: 6px 20px; height: 34px; flex-shrink: 0;
+        font-family: Calibri, 微軟正黑體, sans-serif; font-size: 11px; color: #555;
+    }
+    .ded-verdict-badge {
+        padding: 2px 10px; border-radius: 3px;
+        background:#1a3a1a; color:#4CAF50; border:1px solid #2e7d32;
+        font-weight:700; letter-spacing:0.06em;
+    }
+    .ded-verdict-badge.refuse { background:#3a0a0a; color:#ef5350; border-color:#c62828; }
+    .ded-verdict-badge.underdetermined { background:#3a2a00; color:#FFB300; border-color:#F57F17; }
+    .ded-modal-formula-label { color:#888; flex:1; }
+    .ded-modal-nodecount { color:#556; font-size:9px; }
+    /* ── Thumbnail hint in collapsed zones ─── */
+    .ded-3d-thumb {
+        cursor: pointer;
+        position: relative;
+        flex: 1;
+        min-height: 220px;
+        overflow: hidden !important;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overscroll-behavior: contain;
+    }
+    .ded-3d-thumb canvas { display:block !important; width:100% !important; height:100% !important; }
+    .ded-3d-thumb:hover { outline:2px solid #B8860B; }
+    .ded-thumb-hint {
+        display: none !important;  /* fully hide placeholder — gold circle removed */
+        pointer-events: none;
+    }
+    /* ── Modal body row ── */
+    .ded-modal-body { display:flex; flex:1; overflow:hidden; min-height:0; }
+    /* NOTE: .ded-modal-canvas-wrap and .ded-modal-canvas defined above */
+    /* ── XAI Narrative Panel ── */
+    .ded-xai-panel {
+        width:300px; min-width:280px; max-width:320px; flex-shrink:0;
+        background:#f4f2ec; border-left:2px solid #D4AF37;
+        display:flex; flex-direction:column; gap:0;
+        overflow-y:auto; padding:0 0 12px 0;
+        font-family: Calibri, 微軟正黑體, sans-serif; font-size:12px; color:#ccc;
+        /* ── Light pill scrollbar (OP-02/03 spec) ──────────────────────────
+           Track:  slightly-darker-than-white (#ececec)
+           Thumb:  light gray pill (#bdbdbd), fully rounded ends
+           Width:  6px track, matches sovereign_scrollbar slot width         */
+        scrollbar-width: thin;
+        scrollbar-color: #bdbdbd #ececec;
+    }
+    .ded-xai-panel::-webkit-scrollbar {
+        width: 6px;
+    }
+    .ded-xai-panel::-webkit-scrollbar-track {
+        background: #ececec;
+        border-radius: 9999px;
+    }
+    .ded-xai-panel::-webkit-scrollbar-thumb {
+        background: #bdbdbd;
+        border-radius: 15px;
+        border: 1px solid #ececec; /* inner padding so thumb doesn't touch track edge */
+    }
+    .ded-xai-panel::-webkit-scrollbar-thumb:hover {
+        background: #a0a0a0;
+    }
+.ded-modal-overlay.is-open { display: flex !important; }
+    
+        /* ── Bug 5/6: Scrollbar positioning fixes ── */
+        body { scrollbar-gutter: stable; }
+        body::-webkit-scrollbar { width: 8px; }
+        body::-webkit-scrollbar-track { background: transparent; }
+        body::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 15px; }
+        /* Banner must render over scrollbar */
+        .sm-header { z-index: 200; position: relative; }
+        /* Scrollbar must not show over modal */
+        body.ded-modal-open { overflow: hidden !important; }
+
+        /* ── Bugs 12,14: Modal tabs → fluorescent green active state ── */
+        .ded-phase-tab.active { background:#39FF14 !important; color:#000 !important; border-color:#39FF14 !important; font-weight:700; }
+        .ded-domain-tab.active { background:#39FF14 !important; color:#000 !important; border-color:#39FF14 !important; }
+
+        /* Bug 6: Scrollbar must not overlap modal — sovereign_scrollbar.css handles page-level scrollbars */
+        body.ded-modal-open { overflow: hidden !important; }
+
+</style>
+</head>
+
+<body>
+
+    <header class="sm-header" id="sm-header-op02">
+        <div class="hdr-wing left"><video autoplay muted loop playsinline>
+                <source src="P01Header_L.mp4" type="video/mp4">
+            </video></div>
+        <div class="hdr-wing right"><video autoplay muted loop playsinline>
+                <source src="P01header_R.mp4" type="video/mp4">
+            </video></div>
+
+        <div class="hdr-engines">
+            <!-- ══ SOVEREIGN TUBE ENGINE — Pill-shaped, Spectral, Flyout-gated ══ -->
+            <div class="eng-bars">
+
+                <!-- L1 -->
+                <div class="eng-bar-col">
+                    <div class="eng-tube-header">
+                        <span class="eng-tube-label" data-i18n="l1.id">L1 · LOGIC ENGINE REVISION</span>
+                        <span class="eng-tube-pct eng-bar-pct" id="pct-1">0%</span>
+                        <span class="eng-tube-arrow" id="arrow-1" title="Open gate details" onclick="SovereignTubes.toggleFlyout(1)">▼</span>
+                    </div>
+                    <div class="eng-bar-track">
+                        <div class="eng-bar-fill" id="fill-1" data-lane="1" style="width:0%"></div>
+                    </div>
+                    <div class="eng-tube-flyout" id="tube-flyout-1">
+                        <div class="gate-status-pill blue" id="pill-1">L1 Evidence Hygiene &amp; Paradox Gate</div>
+                        <div class="gate-meaning">
+                            <b>Mandate:</b> Establishing the Absolute Physical Baseline<br><br>
+                            <b>The Mechanism:</b> Before any mathematical reasoning commences, the system forces
+                            telemetry through a strict Paradox Filter. This includes baseline stationarity tests and
+                            Signal-to-Noise Ratio (<span class="mono-term">SNR</span>) verification to detect sensor
+                            drift or logical impossibilities (e.g., energy output exceeding input).<br><br>
+                            <b>The Auditor's Defense:</b> If an axiom passes L1, we can guarantee that the underlying
+                            sensor data is mechanically sound and free from temporal paradoxes.
+                        </div>
+                        <div class="gate-thinking-log" id="tube-log-1">System ready.</div>
+                        <div class="status-badge"
+                            style="color: #00aaff; border: 1px solid #00aaff; background-color: rgba(0, 170, 255, 0.1);">
+                            [STATUS: RIGID]</div>
+                    </div>
+                </div>
+
+                <!-- L2 -->
+                <div class="eng-bar-col">
+                    <div class="eng-tube-header">
+                        <span class="eng-tube-label" data-i18n="l2.id">L2 · ONTOLOGICAL ENGINE</span>
+                        <span class="eng-tube-pct eng-bar-pct" id="pct-2">0%</span>
+                        <span class="eng-tube-arrow" id="arrow-2" title="Open gate details" onclick="SovereignTubes.toggleFlyout(2)">▼</span>
+                    </div>
+                    <div class="eng-bar-track">
+                        <div class="eng-bar-fill" id="fill-2" data-lane="2" style="width:0%"></div>
+                    </div>
+                    <div class="eng-tube-flyout" id="tube-flyout-2">
+                        <div class="gate-status-pill orange" id="pill-2">L2 Epistemic Boundary Gate</div>
+                        <div class="gate-meaning">
+                            <b>Mandate:</b> Defining the Limits of Knowledge<br><br>
+                            <b>The Mechanism:</b> L2 shifts from physical reality to our knowledge of that reality. We
+                            construct Epistemic Bounding Boxes using Interval Arithmetic. The system asks: "Do we
+                            actually have the data required to evaluate this mathematical relationship?"<br><br>
+                            <b>The Auditor's Defense:</b> If an axiom passes L2, we are protected against the "Illusion
+                            of Precision." We guarantee that the mathematical equations are not operating on incomplete
+                            or unobservable states.
+                        </div>
+                        <div class="gate-thinking-log" id="tube-log-2">System ready.</div>
+                        <div class="status-badge"
+                            style="color: var(--orange); border: 1px solid var(--orange); background-color: rgba(255, 145, 77, 0.1);">
+                            [STATUS: RIGID]</div>
+                    </div>
+                </div>
+
+                <!-- L3 -->
+                <div class="eng-bar-col">
+                    <div class="eng-tube-header">
+                        <span class="eng-tube-label" data-i18n="l3.id">L3 · AXIOM ENGINE</span>
+                        <span class="eng-tube-pct eng-bar-pct" id="pct-3">0%</span>
+                        <span class="eng-tube-arrow" id="arrow-3" title="Open gate details" onclick="SovereignTubes.toggleFlyout(3)">▼</span>
+                    </div>
+                    <div class="eng-bar-track">
+                        <div class="eng-bar-fill" id="fill-3" data-lane="3" style="width:0%"></div>
+                    </div>
+                    <div class="eng-tube-flyout" id="tube-flyout-3">
+                        <div class="gate-status-pill red" id="pill-3">L3 Physical Admissibility Gate</div>
+                        <div class="gate-meaning">
+                            <b>Mandate:</b> The Graveyard of Theories (Z-Depth &gt; 0.3 triggers red breathing glow)<br><br>
+                            <b>The Mechanism:</b> This is the core engine. Using SymPy logic, we attempt to falsify the
+                            proposed relationship against absolute mathematical invariants (e.g., Conservation of Energy,
+                            Topological Continuity).<br><br>
+                            <b>The Auditor's Defense:</b> If an axiom passes L3, it is not just statistically probable;
+                            it is mathematically impossible to falsify within the defined boundaries of reality.
+                        </div>
+                        <div class="gate-math" id="tube-math-3">Z = e<sup>x</sup> − ln(y + ε) → if Z &gt; 0.3: PRUNE</div>
+                        <div class="gate-thinking-log" id="tube-log-3">System ready.</div>
+                        <div class="status-badge"
+                            style="color: #ff3333; border: 1px solid #ff3333; background-color: rgba(255, 51, 51, 0.1);">
+                            [STATUS: RIGID]</div>
+                    </div>
+                </div>
+
+                <!-- L4 -->
+                <div class="eng-bar-col">
+                    <div class="eng-tube-header">
+                        <span class="eng-tube-label" data-i18n="l4.id">L4 · GNN VECTOR ENGINE</span>
+                        <span class="eng-tube-pct eng-bar-pct" id="pct-4">0%</span>
+                        <span class="eng-tube-arrow" id="arrow-4" title="Open gate details" onclick="SovereignTubes.toggleFlyout(4)">▼</span>
+                    </div>
+                    <div class="eng-bar-track">
+                        <div class="eng-bar-fill" id="fill-4" data-lane="4" style="width:0%"></div>
+                    </div>
+                    <div class="eng-tube-flyout" id="tube-flyout-4">
+                        <div class="gate-status-pill green" id="pill-4">L4 Epistemic Uncertainty Gate</div>
+                        <div class="gate-meaning">
+                            <b>Mandate:</b> Quantifying the Unknown Unknowns<br><br>
+                            <b>The Mechanism:</b> We re-evaluate the surviving axiom against the broader World Model. We
+                            use Bayesian updates or Evidential Support metrics to assess if external, unmodeled factors
+                            could disrupt the conclusion. <span class="mono-term">MCMC</span> sampling is executed.<br><br>
+                            <b>The Auditor's Defense:</b> If an axiom passes L4, we are stating that even accounting for
+                            system noise and incomplete knowledge, the structural integrity of the conclusion remains robust.
+                        </div>
+                        <div class="gate-thinking-log" id="tube-log-4">System ready.</div>
+                        <div class="status-badge"
+                            style="color: var(--green); border: 1px solid var(--green); background-color: rgba(57, 255, 20, 0.1);">
+                            [STATUS: RIGID]</div>
+                    </div>
+                </div>
+
+                <!-- L5 -->
+                <div class="eng-bar-col">
+                    <div class="eng-tube-header">
+                        <span class="eng-tube-label" data-i18n="l5.id">L5 · GENERATION ENGINE</span>
+                        <span class="eng-tube-pct eng-bar-pct" id="pct-5">0%</span>
+                        <span class="eng-tube-arrow" id="arrow-5" title="Open gate details" onclick="SovereignTubes.toggleFlyout(5)">▼</span>
+                    </div>
+                    <div class="eng-bar-track">
+                        <div class="eng-bar-fill" id="fill-5" data-lane="5" style="width:0%"></div>
+                    </div>
+                    <div class="eng-tube-flyout" id="tube-flyout-5">
+                        <div class="gate-status-pill gold" id="pill-5">L5 Cryptographic Freeze &amp; Deployment Gate</div>
+                        <div class="gate-meaning">
+                            <b>Mandate:</b> The Immutable Record<br><br>
+                            <b>The Mechanism:</b> The axiom is formally converted into a deterministic computational graph.
+                            A <span class="mono-term">Merkle Root</span> hash is generated, immutably linking the final
+                            conclusion to the precise state of the telemetry that generated it.<br><br>
+                            <b>The Auditor's Defense:</b> This is the "Seal of Sovereignty." Any auditor, 10 years from
+                            now, can recalculate the hash using the original dataset and guarantee that the logic was not
+                            altered post-hoc.
+                        </div>
+                        <div class="gate-math" style="border-left-color: var(--gold); color: var(--gold);">Abduction
+                            proposes. Deduction decides. Execution stays frozen.<br><br>[ <span
+                                class="mono-term">SHA-256</span> FREEZE PACKAGE AWAITING ]</div>
+                        <div class="gate-thinking-log" id="tube-log-5">System ready.</div>
+                        <div class="status-badge"
+                            style="color: var(--gold); border: 1px solid var(--gold); background-color: rgba(212, 175, 55, 0.1);">
+                            [STATUS: RIGID]</div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- eng-descs REMOVED — sovereign tube header rows replace it -->
+        </div>
+
+        <div class="hdr-bottom" id="hdr-bottom-op02">
+            <div class="hdr-brand">
+                <a href="/" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
+                    <img src="aichip-logo-home.png" alt="Sovereign Matrix" class="hdr-logo">
+                    <span class="hdr-brand-text">ONTOLOGY COMPLIANCE MATRIX</span>
+                </a>
+            </div>
+            <nav class="hdr-nav" id="hdr-nav-op02">
+                <button class="hdr-btn" id="btn-home-op02" onclick="window.location.href='/'">&#8592; HOME</button>
+                <button class="hdr-btn active" id="btn-op02-axiom">MANUAL AXIOM SELECTION</button>
+                <button class="hdr-btn" id="btn-language">LANGUAGE</button>
+                <button class="hdr-btn" id="btn-mcp-op02" data-i18n="nav.mcp">MCP API</button>
+                <button class="hdr-btn" id="btn-pricing-op02" data-i18n="nav.pricing" onclick="window.open('/pricing.html','_blank')">PRICING</button>
+                <button class="hdr-btn" id="btn-login-op02" data-i18n="nav.login">LOG IN / SIGN UP</button>
+                <button class="hdr-btn" id="btn-entropy-op02" data-i18n="nav.entropy">ENTROPY EVAL</button>
+                <button class="hdr-btn" id="btn-op02-report" data-i18n="nav.audit_hdr">📄 AUDIT REPORT</button>
+            </nav>
+        </div>
+
+        <!-- Smooth cubic bezier tongue — same geometry as OP-01 -->
+        <div class="hdr-tongue">
+            <svg viewBox="0 0 1920 72" preserveAspectRatio="none" shape-rendering="geometricPrecision"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M 0,0 H 220 C 276,56 282,72 302,72 H 0 Z" fill="#f2f2f2" />
+                <path d="M 1920,0 H 1700 C 1644,56 1638,72 1618,72 H 1920 Z" fill="#f2f2f2" />
+            </svg>
+        </div>
+    </header>
+
+    <main class="op-stage" id="op02-stage">
+
+        <!-- Zone 1: EMPIRICAL TELEMETRY sidebar -->
+        <div class="zone1" id="zone1">
+            <div class="zone1-hdr">&#9660; EMPIRICAL_TELEMETRY</div>
+            <div class="zone1-body scroll-zone" id="tele-body-op02">
+                <!-- Standby list dynamically populated by AxiomMatcher.loadFromSession() -->
+            </div>
+        </div>
+
+        <!-- Zone right: 2 framed rows, each split left/right -->
+        <div class="zone-right">
+
+            <!-- ZONE 2 FRAME: Zone 2-1 (AXIOM APPLIED white left) | Zone 2-2 (WORLD MODEL dark right) -->
+            <div class="model-row" id="zone2-row">
+
+                <!-- Zone 2-1: AXIOM APPLIED (white, scrollable via axiom-inner) -->
+                <div class="gold-panel panel-axiom" id="zone2-1">
+                    <div class="gold-panel-tab">AXIOM APPLIED</div>
+                    <div class="axiom-inner scroll-zone" data-sv-offset-top="40">
+                        <div class="axiom-body" id="ded-body-op02-1">
+                            <div class="math-formula">Q = &Sigma; &phi;<sub>i</sub>&Delta;<sub>i</sub></div>
+                            <div class="math-sub">
+                                <p>where &phi;<sub>i</sub> = &psi;(q<sub>0</sub> &middot; |f|)</p>
+                                <p>&phi;<sub>0</sub>&psi;<sub>0</sub> + &psi;<sub>0</sub>&phi;<sub>1</sub> &minus;
+                                    &phi;<sub>0</sub> &middot; &psi;<sub>1</sub> = 0</p>
+                                <br>
+                                <p>(A<sub>1</sub>,&hellip;,A<sub>n</sub>) = {f&isin;&reals; : f = &Sigma;
+                                    a<sub>i</sub>d<sub>s</sub> for a<sub>i</sub>&isin;&reals;}</p>
+                            </div>
+                            <!-- T-XYZ Axis Legend (spec/27 §9.2) -->
+                            <div class="txyz-legend" id="txyz-legend">
+                                <div class="txyz-legend-title" data-i18n="xyz.legend_title">T-XYZ AXIS DEFINITIONS</div>
+                                <div class="txyz-row"><span class="txyz-axis">T</span><span
+                                        class="txyz-sep">—</span><span data-i18n="xyz.t_def">Temporal index (μs
+                                        resolution, monotonic)</span></div>
+                                <div class="txyz-row"><span class="txyz-axis">X</span><span
+                                        class="txyz-sep">—</span><span data-i18n="xyz.x_def">Intervention variable
+                                        (Treatment / Controllable)</span></div>
+                                <div class="txyz-row"><span class="txyz-axis">Y</span><span
+                                        class="txyz-sep">—</span><span data-i18n="xyz.y_def">Outcome variable
+                                        (Observable / Measured)</span></div>
+                                <div class="txyz-row"><span class="txyz-axis">Z</span><span
+                                        class="txyz-sep">—</span><span data-i18n="xyz.z_def">Z = eˣ − ln(Y + Δt + ε)
+                                        &mdash; EML Evidence Depth</span></div>
+                            </div>
+                        </div>
+                    </div><!-- /axiom-inner -->
+                </div>
+
+                <!-- Zone 2-2: WORLD MODEL (dark, video + canvas from sessionStorage) -->
+                <div class="gold-panel panel-model" id="zone2-2" data-sv-offset-top="40" style="overflow:hidden; display:flex; flex-direction:column;">
+                    <div class="gold-panel-tab" data-i18n="viz.world_full"
+                        style="background:#fff;color:#111;border-radius:15px;">WORLD MODEL &mdash; AXIOM CONSTRAINT
+                        MANIFOLD</div>
+                    <div class="model-visual scroll-zone" id="wm-visual" onclick="typeof dedModalOpen==='function'&&dedModalOpen('phase2')" title="Click to expand" style="cursor:pointer; flex:1; overflow-y:auto; min-height:260px;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ZONE 3 FRAME: Zone 3-1 (AXIOM APPLIED white left) | Zone 3-2 (CAUSAL MODEL dark right) -->
+            <div class="model-row" id="zone3-row">
+
+                <!-- Zone 3-1: CAUSAL AXIOM (Residual Correlation Structure) -->
+                <div class="gold-panel panel-axiom" id="zone3-1">
+                    <div class="gold-panel-tab">AXIOM APPLIED</div>
+                    <div class="axiom-inner scroll-zone" data-sv-offset-top="40">
+                        <div class="axiom-body" id="ded-body-op02-2">
+                            <div class="math-formula">&Sigma;<sub>R</sub> = E[&epsilon;&epsilon;<sup>T</sup>] &minus;
+                                &Lambda;&Sigma;<sub>X</sub>&Lambda;<sup>T</sup></div>
+                            <div class="math-sub">
+                                <p>where &epsilon;<sub>i</sub> = Y<sub>i</sub> &minus; &Lambda;<sub>i</sub>X (residual
+                                    signal)</p>
+                                <p>Corr(i,j) = &Sigma;<sub>R</sub>[i,j] / &radic;(&Sigma;<sub>R</sub>[i,i] &middot;
+                                    &Sigma;<sub>R</sub>[j,j])</p>
+                                <br>
+                                <p>Reject if |Corr| &gt; &theta;<sub>c</sub> = 0.72 (causal bleed threshold)</p>
+                            </div>
+                            <!-- Causal Axis Legend -->
+                            <div class="txyz-legend" id="causal-legend">
+                                <div class="txyz-legend-title">RESIDUAL AXIS DEFINITIONS</div>
+                                <div class="txyz-row"><span class="txyz-axis">&epsilon;</span><span
+                                        class="txyz-sep">&mdash;</span><span>Model residual (observed &minus;
+                                        predicted)</span></div>
+                                <div class="txyz-row"><span class="txyz-axis">&Lambda;</span><span
+                                        class="txyz-sep">&mdash;</span><span>Factor loading matrix (latent &rarr;
+                                        observable)</span></div>
+                                <div class="txyz-row"><span class="txyz-axis">&Sigma;<sub>R</sub></span><span
+                                        class="txyz-sep">&mdash;</span><span>Residual covariance structure</span></div>
+                                <div class="txyz-row"><span class="txyz-axis">&theta;<sub>c</sub></span><span
+                                        class="txyz-sep">&mdash;</span><span>Causal bleed threshold (0.72)</span></div>
+                            </div>
+                        </div>
+                    </div><!-- /axiom-inner -->
+                </div>
+
+                <!-- Zone 3-2: CAUSAL MODEL (dark, video + canvas from sessionStorage) -->
+                <div class="gold-panel panel-model" id="zone3-2" data-sv-offset-top="40" style="overflow:hidden; display:flex; flex-direction:column;">
+                    <div class="gold-panel-tab" data-i18n="viz.causal_full"
+                        style="background:#fff;color:#111;border-radius:15px;">CAUSAL MODEL &mdash; RESIDUAL CORRELATION
+                        STRUCTURE</div>
+                    <div class="model-visual scroll-zone" id="cm-visual" onclick="typeof dedModalOpen==='function'&&dedModalOpen('phase3')" title="Click to expand" style="cursor:pointer; flex:1; overflow-y:auto; min-height:260px;">
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <style>
+        .page-nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 36px;
+            z-index: 200;
+            background: rgba(8, 8, 8, 0.94);
+            border-top: 1px solid #7a5c10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 48px;
+            backdrop-filter: blur(6px);
+        }
+
+        .pnb-label {
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: #D4AF37;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .pnb-btn {
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            background: transparent;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #666;
+            padding: 5px 18px;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .pnb-btn:hover,
+        .pnb-btn.pnb-pulse {
+            border-color: #D4AF37;
+            color: #D4AF37;
+        }
+
+        body {
+            padding-bottom: 36px;
+        }
+
+        /* Tube Engine / Sovereign Tubes Specific Styles */
+        .eng-tube-flyout {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            border-bottom: 2px solid #39FF14;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #ddd;
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .eng-tube-flyout.visible {
+            display: flex;
+            flex-direction: column;
+            animation: pull-down-slide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes pull-down-slide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .gate-status-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            align-self: flex-start;
+        }
+
+        .gate-status-pill.blue {
+            background: rgba(0, 170, 255, 0.2);
+            color: #00aaff;
+            border: 1px solid #00aaff;
+        }
+
+        .gate-status-pill.orange {
+            background: rgba(255, 145, 77, 0.2);
+            color: var(--orange);
+            border: 1px solid var(--orange);
+        }
+
+        .gate-status-pill.red {
+            background: rgba(255, 51, 51, 0.2);
+            color: #ff3333;
+            border: 1px solid #ff3333;
+        }
+
+        .gate-status-pill.green {
+            background: rgba(57, 255, 20, 0.2);
+            color: var(--green);
+            border: 1px solid var(--green);
+        }
+
+        .gate-status-pill.gold {
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+        }
+
+        .gate-meaning {
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .gate-thinking-log {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #888;
+            background: #111;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 10px;
+            border-left: 2px solid #555;
+            text-align: left;
+        }
+
+        .gate-math {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #fff;
+            background: #000;
+            padding: 10px;
+            border-left: 2px solid #00aaff;
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 15px;
+            align-self: flex-end;
+        }
+
+        /* .eng-tube-arrow — governed by sovereign-header.css §2.3 (border-triangle approach) */
+
+        .eng-desc-body.visible {
+            display: block;
+        }
+    </style>
+
+    <nav class="page-nav-bar" id="page-nav-bar">
+        <button class="pnb-btn" id="pnb-prev" onclick="window.location.href='/op_01.html'">&#8593; OP-01
+            INGESTION</button>
+        <span id="pnb-mode-label"
+            style="font-family: Calibri, 微軟正黑體, sans-serif;font-size: 12px;letter-spacing:2px;color:#555">&#9679; OP-02
+            &middot; ANALYSIS</span>
+        <span
+            style="font-family: Calibri, 微軟正黑體, sans-serif;font-size: 12px;letter-spacing:1px;color:#2a2a2a;border:1px solid #1a1a1a;border-radius:3px;padding:4px 12px"
+            title="DEDUCTION is a separate mode accessed from HOME">OP-03 DEDUCTION (separate mode)</span>
+    </nav>
+    <script>
+        (function () {
+            var prev = document.getElementById('pnb-prev');
+            var next = document.getElementById('pnb-next');
+            window.addEventListener('scroll', function () {
+                var atTop = window.scrollY <= 40;
+                var atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 40;
+                if (prev) prev.classList.toggle('pnb-pulse', atTop);
+                if (next) next.classList.toggle('pnb-pulse', atBottom);
+            }, { passive: true });
+        })();
+    </script>
+
+
+    <!-- Axiom Election Engine -->
+    <script src="axiom_db.js?v=2923"></script>
+    <script src="axiom_matcher.js?v=2923"></script>
+    <script src="sovereign_3d_engine.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="js/visualizations/HealthcareMedical3D.js" defer></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            /* 1. Populate telemetry sidebar from session */
+            if (window.AxiomMatcher) AxiomMatcher.loadFromSession("tele-body-op02");
+
+            /* 2. Render World Model + Causal Model canvases from OP-01 election data */
+            function renderModels() {
+                let sel = [], can = [], sby = [];
+                try {
+                    const raw = sessionStorage.getItem('sovereign_tiered_results');
+                    if (raw) {
+                        const tiered = JSON.parse(raw);
+                        sel = tiered.selected || [];
+                        can = tiered.candidate || [];
+                        sby = tiered.standby || [];
+                    } else {
+                        const rawOld = sessionStorage.getItem('sovereign_tiered');
+                        if (rawOld) {
+                            const tiered = JSON.parse(rawOld);
+                            const allAxioms = (window.SOVEREIGN_AXIOM_DB || window.AXIOM_DB || []);
+                            function resolveIds(ids) {
+                                if (!ids || !allAxioms.length) return [];
+                                return ids.map(id => allAxioms.find(a => a.id === id)).filter(Boolean);
+                            }
+                            sel = resolveIds(tiered.selectedIds);
+                            can = resolveIds(tiered.candidateIds);
+                            sby = resolveIds(tiered.standbyIds);
+                        }
+                    }
+                } catch (e) {
+                    console.error("[OP-02] Error loading tiered results from session:", e);
+                }
+
+                const hasData = sel.length > 0;
+
+                function mkCanvas(id, container, label, accentColor) {
+                    if (!container) return null;
+                    const w = container.offsetWidth || 600;
+                    const h = container.offsetHeight || 250;
+                    container.innerHTML =
+                        '<div style="font-family: Calibri, 微軟正黑體, sans-serif;font-size: 12px;color:' + accentColor +
+                        ';letter-spacing:1.5px;padding:4px 8px 2px;border-bottom:1px solid ' + accentColor + '22">' + label + '</div>' +
+                        '<canvas id="' + id + '" style="display:block;width:100%;background:#fff"></canvas>';
+                    const cv = document.getElementById(id);
+                    if (!cv) return null;
+                    cv.width = Math.max(w, 300);
+                    cv.height = Math.max(h - 20, 160);
+                    return cv;
+                }
+
+                /* ── WORLD MODEL → wm-visual (HM3D Phase 2) ── */
+                const wmEl = document.getElementById('wm-visual');
+                if (wmEl) {
+                    wmEl.style.minHeight = '260px';
+                    if (window.HealthcareMedical3D) {
+                        HealthcareMedical3D.init('phase2', 'wm-visual', { elected: sel, candidate: can, standby: sby, domain: 'GENERAL' });
+                    }
+                }
+                /* ── CAUSAL MODEL → cm-visual (HM3D Phase 3) ── */
+                const cmEl = document.getElementById('cm-visual');
+                if (cmEl) {
+                    cmEl.style.minHeight = '260px';
+                    if (window.HealthcareMedical3D) {
+                        HealthcareMedical3D.init('phase3', 'cm-visual', { elected: sel, candidate: can, standby: sby, domain: 'GENERAL' });
+                    }
+                }
+            }
+
+            /* Render immediately plus retry once after images settle */
+            renderModels();
+            setTimeout(() => { renderModels(); if (window.SovereignI18n && typeof SovereignI18n.refresh === 'function') SovereignI18n.refresh(); }, 800);
+            if (window.SovereignI18n && typeof SovereignI18n.refresh === 'function') SovereignI18n.refresh();
+        });
+    </script>
+
+    <script id="nav-wiring-op02">
+        (function () {
+            function _pulse(el) {
+                if (!el) return;
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const prev = el.style.outline;
+                el.style.transition = 'outline .2s';
+                el.style.outline = '2px solid #D4AF37';
+                el.style.outlineOffset = '4px';
+                setTimeout(() => { el.style.outline = prev; }, 2000);
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                /* MANUAL AXIOM SELECTION — highlight axiom panel, emit HITL event */
+                const btnAxiom = document.getElementById('btn-op02-axiom');
+                if (btnAxiom) btnAxiom.onclick = () => {
+                    _pulse(document.getElementById('zone2-1'));
+                    // Emit HITL request event for any registered listeners
+                    const ev = new CustomEvent('hitl:open', { detail: { reason: 'MANUAL_SELECTION', source: 'btn-op02-axiom' } });
+                    window.dispatchEvent(ev);
+                };
+
+                /* MCP API */
+                const btnMcp = document.getElementById('btn-mcp-op02');
+                if (btnMcp) {
+                    btnMcp.onclick = () => {
+                        if (typeof window._openMCPModal === 'function') {
+                            window._openMCPModal();
+                        } else if (window.parent && typeof window.parent._openMCPModal === 'function') {
+                            window.parent._openMCPModal();
+                        }
+                    };
+                }
+
+                /* LOG IN / SIGN UP */
+                const btnLogin = document.getElementById('btn-login-op02');
+                if (btnLogin) {
+                    btnLogin.onclick = () => {
+                        if (typeof window._modal === 'function') {
+                            window._modal('LOG IN / SIGN UP',
+                                `<p style="color:#888;margin-bottom:14px;">Sovereign Matrix authentication is managed via your organisation SSO provider.</p>
+                                 <button onclick="alert('SSO redirect — configure SOVEREIGN_AUTH_ENDPOINT in your .env');document.getElementById('sov-modal-ov').remove()"
+                                   style="width:100%;padding:10px;background:#D4AF37;color:#000;border:none;border-radius:4px;cursor:pointer;font-family:inherit;font-weight:700;font-size:12px;">
+                                   CONTINUE WITH SSO ↗
+                                 </button>`);
+                        } else {
+                            alert('Sovereign SSO: Service standby.');
+                        }
+                    };
+                }
+
+                /* Force wing videos to play (bypasses browser autoplay policy bugs) */
+                document.querySelectorAll('.hdr-wing video').forEach(v => {
+                    v.play().catch(() => {
+                        document.addEventListener('click', () => v.play(), { once: true });
+                    });
+                });
+
+                /* GENERATE AUDIT REPORT — generate in-page, NOT navigate to OP-03 */
+                const btnReport = document.getElementById('btn-op02-report');
+                if (btnReport) btnReport.onclick = () => {
+                    /* Try to use last tiered data from OP-01, or fall back to sessionStorage */
+                    const t = window._sovereignLastTiered || {};
+                    const sel = t.selected || [];
+                    const can = t.candidate || [];
+                    const sby = t.standby || [];
+                    const fname = (window._sovereignLastFile && window._sovereignLastFile.name) ||
+                        ((() => { try { const s = sessionStorage.getItem('sovereign_last_file'); return s || 'unknown'; } catch (e) { return 'unknown'; } })());
+                    const curMode = (() => { try { return sessionStorage.getItem('sovereign_mode') || 'induction'; } catch (e) { return 'induction'; } })();
+                    const ts = new Date().toISOString();
+                    const isHealthcare = fname.toLowerCase().includes('health') || fname.toLowerCase().includes('bio') || fname.toLowerCase().includes('medical');
+
+                    const rows = (axs, col, tier) => axs.map(a =>
+                        `<tr><td style="color:${col};padding:4px 8px">${tier}</td>`
+                        + `<td style="padding:4px 8px;color:#ccc">${a.id || ''}</td>`
+                        + `<td style="padding:4px 8px;color:#aaa">${(a.name || '').substring(0, 48)}</td>`
+                        + `<td style="padding:4px 8px;color:${col};text-align:right">${Math.round((a.score || 0) * 100)}%</td></tr>`
+                    ).join('');
+
+                    let fallbackMsg = '<p style="color:#555">No elected axioms in session. Return to OP-01 and process a file first.</p>';
+                    if (sel.length === 0 && isHealthcare) {
+                        fallbackMsg = `<div style="padding: 10px; border: 1px dashed #D4AF37; margin: 10px 0;"><h3 style="color:#D4AF37; margin-top:0;">&#9888; Zero Axiom Match: Standard Healthcare Report</h3><p style="color:#ccc">When providing observational or standard biological data without regulatory deviations, a zero-axiom match is expected. This document has been evaluated safely via L1-L4 Induction processes without drift.</p></div>`;
+                    }
+
+                    const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">`
+                        + `<title>Sovereign Audit (OP-02) — ${fname}</title>`
+                        + `<style>body{font-family: Calibri, 微軟正黑體, sans-serif;background:#000000;color:#ccc;padding:32px;font-size: 12px}h1{color:#D4AF37;font-size: 14px;letter-spacing:3px;margin-bottom:8px}h2{color:#39FF14;font-size: 12px;letter-spacing:2px;margin:20px 0 8px}table{width:100%;border-collapse:collapse;margin-bottom:18px}th{text-align:left;color:#555;padding:5px 8px;border-bottom:1px solid #222;font-weight:400;text-transform:uppercase;font-size: 12px;letter-spacing:1px}td{border-bottom:1px solid #111}.meta{color:#555;font-size: 12px;margin-bottom:24px;line-height:2}@media print{body{background:#fff;color:#000}h1,h2{color:#000}}
+        /* Tube Engine / Sovereign Tubes Specific Styles */
+        .eng-tube-flyout {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            border-bottom: 2px solid #39FF14;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #ddd;
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .eng-tube-flyout.visible {
+            display: flex;
+            flex-direction: column;
+            animation: pull-down-slide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes pull-down-slide {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .gate-status-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            align-self: flex-start;
+        }
+        .gate-status-pill.blue { background: rgba(0, 170, 255, 0.2); color: #00aaff; border: 1px solid #00aaff; }
+        .gate-status-pill.orange { background: rgba(255, 145, 77, 0.2); color: var(--orange); border: 1px solid var(--orange); }
+        .gate-status-pill.red { background: rgba(255, 51, 51, 0.2); color: #ff3333; border: 1px solid #ff3333; }
+        .gate-status-pill.green { background: rgba(57, 255, 20, 0.2); color: var(--green); border: 1px solid var(--green); }
+        .gate-status-pill.gold { background: rgba(212, 175, 55, 0.2); color: var(--gold); border: 1px solid var(--gold); }
+
+        .gate-meaning {
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .gate-thinking-log {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #888;
+            background: #111;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 10px;
+            border-left: 2px solid #555;
+            text-align: left;
+        }
+
+        .gate-math {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #fff;
+            background: #000;
+            padding: 10px;
+            border-left: 2px solid #00aaff;
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 15px;
+            align-self: flex-end;
+        }
+
+        .eng-tube-arrow {
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.3s ease;
+            color: #D4AF37; /* Default Gold */
+            user-select: none;
+            font-size: 14px;
+        }
+        .eng-tube-arrow:hover {
+            color: #fff;
+        }
+        .eng-tube-arrow.active {
+            color: #39FF14; /* Neon Green */
+            transform: rotate(180deg);
+        }
+
+            .eng-desc-body.visible {
+            display: block;
+        }
+    </style>`
+                        + `</head><body>`
+                        + `<h1>&#11041; SOVEREIGN OCM — ONTOLOGY COMPLIANCE AUDIT REPORT</h1>`
+                        + `<div class="meta" style="border-left: 2px solid #39FF14; padding-left: 10px;">`
+                        + `<strong>Target:</strong> <span style="color:#ccc">${fname}</span><br>`
+                        + `<strong>Evaluation Purpose:</strong> Assess regulatory drift and structural consistency across L1-L5 pipelines.<br>`
+                        + `<strong>Background:</strong> Automated Causal Structure Analysis.<br>`
+                        + `<strong>Mode:</strong> <span style="color:#D4AF37">${curMode.toUpperCase()}</span> (Gemini 3 L1-${curMode === 'deduction' ? 'L2' : 'L4'})<br>`
+                        + `<strong>Generated:</strong> ${ts}<br>`
+                        + `<strong>Metrics:</strong> Elected: <span style="color:#39FF14">${sel.length}</span> &middot; Candidate: <span style="color:#D4AF37">${can.length}</span> &middot; Standby: ${sby.length}</div>`
+                        + `<div style="margin-top: 20px; border: 1px solid #222; padding: 10px; background: #0a0f16; text-align: center;">`
+                        + `<h3 style="margin: 0 0 10px; color: #555;">TXYZ 3D Causal Drift Visualization (RCA/Prediction)</h3>`
+                        + `<div style="height: 150px; display: flex; align-items: center; justify-content: center; color: #39FF14; border: 1px dashed #333;">[3D Rendering Container]</div></div>`
+                        + (sel.length ? `<h2>&#9889; ELECTED AXIOMS APPLIED</h2><table><thead><tr><th>Tier</th><th>ID</th><th>Name</th><th>Score</th></tr></thead><tbody>${rows(sel, '#39FF14', 'ELECTED')}</tbody></table>` : fallbackMsg)
+                        + (can.length ? `<h2>&#9672; CANDIDATE AXIOMS</h2><table><thead><tr><th>Tier</th><th>ID</th><th>Name</th><th>Score</th></tr></thead><tbody>${rows(can, '#D4AF37', 'CANDIDATE')}</tbody></table>` : '')
+                        + `<div style="margin-top:32px;padding-top:16px;border-top:1px solid #222;color:#333;font-size: 12px">SOVEREIGN OCM &middot; ONTOLOGY COMPLIANCE MATRIX v4.0 &middot; ${ts}</div>`
+                        + `    <script src="js/tube_engine.js"><\/script>
+<\/body>
+
+<\/html>`;
+const w = window.open('', '_blank');
+if (w) { w.document.write(html); w.document.close(); w.setTimeout(() => w.print(), 400); }
+else { alert('Allow pop-ups to generate the audit report.'); }
+};
+});
+})();
+</script>
+
+<script src="js/i18n_data.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/sovereign_scrollbar.js?v=20"></script>
+<script src="js/axiom_browser_modal.js"></script>
+
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentMode = sessionStorage.getItem('sovereign_mode') || 'deduction';
+            if (typeof window.setSovereignTheme === 'function') {
+                window.setSovereignTheme(currentMode);
+            }
+            if (window.SovereignI18n && typeof SovereignI18n.refresh === 'function') {
+                SovereignI18n.refresh();
+            }
+
+            // QA-05 & QA-06: Translation Toast Prompt
+            const fileInput = document.getElementById('file-upload');
+            if (fileInput) {
+                fileInput.addEventListener('change', () => {
+                    const currentLang = sessionStorage.getItem('sovereign_lang_mode') || 'EN';
+                    if (currentLang !== 'ZH-TW') {
+                        const msgid = 'lang-toast';
+                        if (!document.getElementById(msgid)) {
+                            const msg = document.createElement('div');
+                            msg.id = msgid;
+                            msg.innerHTML = '<div style="background:#111; border:1px solid var(--theme-color); padding:10px; color:var(--theme-color); font-family: Calibri, 微軟正黑體, sans-serif; font-size: 12px;">Would you prefer to switch to ZH-TW language mode? <button onclick="SovereignI18n.setLanguage(\'zh-TW\');this.parentElement.style.opacity=0;setTimeout(()=>this.parentElement.remove(),500)" style="margin-left:10px;background:var(--theme-color);color:#000;border:none;cursor:pointer;padding:4px 10px;font-weight:bold;">YES</button></div>';
+                            msg.style.position = 'fixed'; msg.style.bottom = '20px'; msg.style.right = '20px'; msg.style.zIndex = '9999';
+                            document.body.appendChild(msg);
+                        }
+                    }
+                });
+            }
+        });
+</script>
+<!-- FORCE ROLLING NAV BRIDGE -->
+<!-- FORCE ROLLING NAV BRIDGE -->
+<!-- FORCE ROLLING NAV BRIDGE -->
+<!-- FORCE ROLLING NAV BRIDGE -->
+
+    <script>
+    window.addEventListener('load', function tryWM() {
+        if (window.HealthcareMedical3D) {
+            HealthcareMedical3D.init('phase2', 'wm-visual');
+            HealthcareMedical3D.init('phase3', 'cm-visual');
+        } else { setTimeout(tryWM, 250); }
+    });
+    </script>
+
+    
+    <script>
+    /* ── SAFETY: clear stale modal state ── */
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.remove('ded-modal-open');
+        var _m = document.getElementById('ded-3d-modal');
+        if (_m) { _m.style.display = 'none'; _m.classList.remove('is-open'); }
+    }, { once: true });
+
+    /* ── 3D ZOOM MODAL — STANDALONE (no PHASE_MAP dependency) ── */
+    (function() {
+        var _phase = 'phase1';
+        var _CANVAS = { phase1:'ded-modal-gnn', phase2:'ded-modal-wm', phase3:'ded-modal-cm' };
+        var _TABS   = { phase1:'ded-ptab-phase1', phase2:'ded-ptab-phase2', phase3:'ded-ptab-phase3' };
+        var _inited = {};
+
+        function _switchCanvas(p) {
+            Object.keys(_CANVAS).forEach(function(k) {
+                var el = document.getElementById(_CANVAS[k]);
+                if (el) el.style.display = (k === p) ? 'block' : 'none';
+                var tab = document.getElementById(_TABS[k]);
+                if (tab) tab.classList.toggle('active', k === p);
+            });
+        }
+
+        function _tryHM3D(p) {
+            var cid = _CANVAS[p];
+            var el = document.getElementById(cid);
+            if (!el || _inited[p]) return;
+            if (window.HealthcareMedical3D && typeof HealthcareMedical3D.init === 'function') {
+                try { HealthcareMedical3D.init(p, cid); _inited[p] = true; } catch(e) {}
+            }
+        }
+
+        window.dedModalOpen = function(phase) {
+            _phase = phase || 'phase1';
+            var modal = document.getElementById('ded-3d-modal');
+            if (!modal) return;
+            modal.style.display = '';
+            modal.classList.add('is-open');
+            document.body.style.overflow = 'hidden';
+            document.body.classList.add('ded-modal-open');
+            _switchCanvas(_phase);
+            setTimeout(function() { _tryHM3D(_phase); }, 80);
+        };
+
+        window.dedModalClose = function() {
+            var modal = document.getElementById('ded-3d-modal');
+            if (modal) { modal.style.display = 'none'; modal.classList.remove('is-open'); }
+            document.body.style.overflow = '';
+            document.body.classList.remove('ded-modal-open');
+        };
+
+        window.dedModalPhase = function(phase) {
+            _phase = phase;
+            _switchCanvas(phase);
+            setTimeout(function() { _tryHM3D(phase); }, 80);
+        };
+
+        window.dedModalDomain = function(idx) {
+            document.querySelectorAll('.ded-domain-tab').forEach(function(t, i) {
+                t.classList.toggle('active', i === idx);
+            });
+        };
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') window.dedModalClose();
+        });
+    })();
+
+    </script>
+
+    <script id="sov-rolling-bridge">
+        (function () {
+            let rolling = false;
+            let accum = 0;
+            let timer = null;
+
+            function isScrollable(el) {
+                if (!el || el === document.body || el === document.documentElement) return false;
+                const style = window.getComputedStyle(el);
+                const overflowY = style.overflowY;
+                const isScrollableStyle = overflowY === 'auto' || overflowY === 'scroll';
+                return isScrollableStyle && el.scrollHeight > el.clientHeight;
+            }
+
+            function isInsideScrollable(el) {
+                while (el && el !== document.body && el !== document.documentElement) {
+                    if (isScrollable(el)) return true;
+                    el = el.parentElement;
+                }
+                return false;
+            }
+
+            document.addEventListener('wheel', (e) => {
+                if (rolling) return;
+                if (isInsideScrollable(e.target)) return;
+
+                accum += e.deltaY;
+                clearTimeout(timer);
+                timer = setTimeout(() => { accum = 0; }, 150);
+
+                if (accum > 50) {
+                    rolling = true; window.location.href = 'op_03.html';
+                } else if (accum < -50) {
+                    rolling = true; window.location.href = 'op_01.html';
+                }
+            }, { passive: true });
+        })();
+</script>
+<script src="js/tube_engine.js"></script>
+
+    <!-- 3D Zoom Modal -->
+        <div id="ded-3d-modal" class="ded-modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Deduction 3D Viewer">
+            <div class="ded-modal-inner">
+                <!-- Header: phase tabs + domain tabs + close -->
+                <div class="ded-modal-hdr">
+                    <div class="ded-modal-phase-tabs">
+                        <button class="ded-phase-tab active" id="ded-ptab-phase1" onclick="dedModalPhase('phase1')">⬡ GNN MODEL</button>
+                        <button class="ded-phase-tab" id="ded-ptab-phase2" onclick="dedModalPhase('phase2')">◎ WORLD MODEL</button>
+                        <button class="ded-phase-tab" id="ded-ptab-phase3" onclick="dedModalPhase('phase3')">⟴ CAUSAL MODEL</button>
+                    </div>
+                    <div class="ded-modal-domain-tabs" id="ded-modal-domain-tabs">
+                        <button class="ded-domain-tab active" onclick="dedModalDomain(0)" title="Foundational Ontology Logic">⬡ FON</button>
+                        <button class="ded-domain-tab" onclick="dedModalDomain(1)" title="Alex's Ontological Core Primitives">⊛ OCP</button>
+                        <button class="ded-domain-tab" onclick="dedModalDomain(2)" title="Causal Deduction Layer">⟴ CAU</button>
+                        <button class="ded-domain-tab" onclick="dedModalDomain(3)" title="Stability & Convergence">◈ STAB</button>
+                        <button class="ded-domain-tab" onclick="dedModalDomain(4)" title="Physical Admissibility Layer">⊗ PAL</button>
+                        <button class="ded-domain-tab" onclick="dedModalDomain(5)" title="OCM Deduction-Lock Engine">⚙ OCM</button>
+                        <button class="ded-domain-tab" onclick="dedModalDomain(6)" title="International Canonical Laws">⊞ INTL</button>
+                    </div>
+                    <button class="ded-modal-close" id="ded-modal-close-btn" onclick="dedModalClose()" aria-label="Close 3D viewer">✕ CLOSE</button>
+                </div>
+                <!-- Content: 3D canvas + XAI narrative sidebar -->
+                <div class="ded-modal-body">
+                    <div class="ded-modal-canvas-wrap" id="ded-modal-canvas-wrap">
+                        <div class="ded-modal-canvas" id="ded-modal-gnn"  data-phase="phase1"></div>
+                        <div class="ded-modal-canvas" id="ded-modal-wm"   data-phase="phase2" style="display:none"></div>
+                        <div class="ded-modal-canvas" id="ded-modal-cm"   data-phase="phase3" style="display:none"></div>
+                    </div>
+                    <!-- XAI Narrative Panel -->
+                    <div class="ded-xai-panel" id="ded-xai-panel">
+                        <div class="xai-domain-badge fon" id="xai-domain-badge">⬡ FON · FOUNDATIONAL ONTOLOGY LOGIC</div>
+                        <div class="xai-phase-label" id="xai-phase-label">Phase 1 — GNN Axiom Skeleton</div>
+                        <div class="xai-narrative" id="xai-narrative">Loading narrative…</div>
+                        <div class="xai-section-title">AXIOM VERDICTS</div>
+                        <div class="xai-axiom-list" id="xai-axiom-list"></div>
+                        <div class="xai-section-title">CASCADE CHAIN</div>
+                        <div class="xai-cascade" id="xai-cascade"></div>
+                        <div class="xai-section-title">FORMULA</div>
+                        <div class="xai-formula" id="xai-formula"></div>
+                        <div class="xai-verdict-summary" id="xai-verdict-summary"></div>
+                    </div>
+                </div>
+                <!-- Footer info bar -->
+                <div class="ded-modal-footer" id="ded-modal-footer">
+                    <span id="ded-modal-verdict-badge" class="ded-verdict-badge">MOCKUP MODE</span>
+                    <span id="ded-modal-formula" class="ded-modal-formula-label">Axiom-skeletal deduction · Click any node for XAI detail</span>
+                    <span id="ded-modal-node-count" class="ded-modal-nodecount"></span>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </body>
+
+    </html>

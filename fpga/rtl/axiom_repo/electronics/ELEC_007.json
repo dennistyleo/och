@@ -1,0 +1,1 @@
+{"id":"ELEC_007","name":"ESD Protection","type":"D","level":"L8","statement":"All external I/O pins must have ESD protection rated to at least HBM 2 kV","severity":"HIGH"}

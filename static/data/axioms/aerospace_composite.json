@@ -1,0 +1,356 @@
+[
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "COMP_ILSS_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "hallucination_lock": true,
+    "domain": "AEROSPACE",
+    "subdomain": "Composite Material Integrity",
+    "name": "Interlaminar Shear Strength Compliance",
+    "description": "ILSS verifies the bonding strength between composite plies. Values below threshold indicate delamination risk under operational loads.",
+    "expression_latex": "ILSS = \\frac{3P}{4bh}",
+    "eml_formula": "Z = exp(ILSS_normalized) - ln(delamination_risk + 1e-5)",
+    "derivation_formula": {
+      "sympy_expr": "Rational(3, 4) * P_load / (b_width * h_thickness)",
+      "variables": {
+        "P_load": {
+          "maps_to_field": "ILSS",
+          "unit": "MPa",
+          "bounds": [
+            0.0,
+            200.0
+          ]
+        },
+        "b_width": {
+          "maps_to_field": "fiber_volume_fraction",
+          "unit": "%",
+          "bounds": [
+            0.0,
+            100.0
+          ]
+        },
+        "h_thickness": {
+          "maps_to_field": "specimen_thickness_mm",
+          "unit": "mm",
+          "bounds": [
+            0.1,
+            50.0
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "expr": "b_width * h_thickness",
+          "condition": "> 0",
+          "label": "division_guard"
+        }
+      ],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value_field": "ILSS_threshold_MPa"
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value_field": "ILSS_threshold_MPa"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "status": "CANONICAL",
+    "confidence_floor": 0.9,
+    "required_fields": [
+      {
+        "field": "ILSS",
+        "unit": "MPa",
+        "bounds": [
+          0.0,
+          200.0
+        ]
+      },
+      {
+        "field": "fiber_volume_fraction",
+        "unit": "%",
+        "bounds": [
+          0.0,
+          100.0
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "void_content",
+        "unit": "%",
+        "bounds": [
+          0.0,
+          10.0
+        ]
+      }
+    ],
+    "semantic_fingerprint": "interlaminar shear strength composite CFRP delamination ply bonding aerospace structural integrity",
+    "contradiction_axioms": [],
+    "spatial_tension": "HIGH",
+    "layer_2_summary": {
+      "explains": [
+        "DELAMINATION_RISK",
+        "PLY_BONDING_INTEGRITY"
+      ],
+      "fails_to_explain": [
+        "IMPACT_DAMAGE_TOLERANCE"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "safety_margin",
+      "threshold_op": "gt",
+      "threshold_val": 0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "AEROSPACE_COMPOSITE",
+      "semantic_label": "Interlaminar Shear Strength Compliance",
+      "reasoning_chain": [
+        "Evaluate composite structural constraint",
+        "Check safety margin > 0",
+        "Flag VIOLATION if margin violated"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "COMP_YOUNG_002",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "hallucination_lock": true,
+    "domain": "AEROSPACE",
+    "subdomain": "Elastic Properties",
+    "name": "Young's Modulus Elastic Compliance",
+    "description": "Young's Modulus defines the stiffness of a composite material under axial loading. Critical for predicting structural deflection under aerodynamic loads.",
+    "expression_latex": "E = \\frac{\\sigma}{\\varepsilon}",
+    "eml_formula": "Z = exp(E_normalized) - ln(strain + 1e-5)",
+    "derivation_formula": {
+      "sympy_expr": "sigma_stress / epsilon_strain",
+      "variables": {
+        "sigma_stress": {
+          "maps_to_field": "YoungModulus_E",
+          "unit": "GPa",
+          "bounds": [
+            0.0,
+            1000.0
+          ]
+        },
+        "epsilon_strain": {
+          "maps_to_field": "PoissonRatio_nu",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0001,
+            1.0
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "expr": "epsilon_strain",
+          "condition": "> 0",
+          "label": "division_guard"
+        }
+      ],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value_field": "YoungModulus_E_min_GPa"
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value_field": "YoungModulus_E_min_GPa"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null or epsilon_strain == 0"
+        }
+      }
+    },
+    "status": "CANONICAL",
+    "confidence_floor": 0.88,
+    "required_fields": [
+      {
+        "field": "YoungModulus_E",
+        "unit": "GPa",
+        "bounds": [
+          0.0,
+          1000.0
+        ]
+      },
+      {
+        "field": "PoissonRatio_nu",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          1.0
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "fiber_orientation",
+        "unit": "degrees",
+        "bounds": [
+          0.0,
+          90.0
+        ]
+      }
+    ],
+    "semantic_fingerprint": "Young modulus elastic stiffness CFRP composite axial load deflection aerospace material",
+    "contradiction_axioms": [],
+    "spatial_tension": "MEDIUM",
+    "layer_2_summary": {
+      "explains": [
+        "STRUCTURAL_DEFLECTION",
+        "AXIAL_LOAD_CAPACITY"
+      ],
+      "fails_to_explain": [
+        "FATIGUE_CYCLE_DEGRADATION"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "safety_margin",
+      "threshold_op": "gt",
+      "threshold_val": 0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "AEROSPACE_COMPOSITE",
+      "semantic_label": "Young's Modulus Elastic Compliance",
+      "reasoning_chain": [
+        "Evaluate composite structural constraint",
+        "Check safety margin > 0",
+        "Flag VIOLATION if margin violated"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "COMP_THERMAL_003",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "hallucination_lock": true,
+    "domain": "AEROSPACE",
+    "subdomain": "Thermal Stability",
+    "name": "Glass Transition Temperature Compliance",
+    "description": "Tg defines the upper operating temperature limit of the composite matrix. Exceeding Tg causes matrix softening and loss of structural integrity.",
+    "expression_latex": "T_{operating} \\leq T_g - \\Delta T_{margin}",
+    "eml_formula": "Z = exp(Tg_normalized) - ln(operating_temp + 1e-5)",
+    "derivation_formula": {
+      "sympy_expr": "Tg - Temp_T - delta_T_margin",
+      "variables": {
+        "Tg": {
+          "maps_to_field": "Tg",
+          "unit": "degC",
+          "bounds": [
+            0.0,
+            500.0
+          ]
+        },
+        "Temp_T": {
+          "maps_to_field": "Temp_T",
+          "unit": "degC",
+          "bounds": [
+            0.0,
+            300.0
+          ]
+        },
+        "delta_T_margin": {
+          "maps_to_field": "delta_T_safety_margin_degC",
+          "unit": "degC",
+          "bounds": [
+            0.0,
+            50.0
+          ]
+        }
+      },
+      "constraints": [],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0,
+          "note": "Tg - Temp_T - margin >= 0 means operating below safe ceiling"
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0,
+          "note": "Operating temperature exceeds Tg safety margin"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "status": "CANONICAL",
+    "confidence_floor": 0.92,
+    "required_fields": [
+      {
+        "field": "Tg",
+        "unit": "°C",
+        "bounds": [
+          0.0,
+          500.0
+        ]
+      },
+      {
+        "field": "Temp_T",
+        "unit": "°C",
+        "bounds": [
+          0.0,
+          300.0
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "cure_cycle_temp",
+        "unit": "°C",
+        "bounds": [
+          0.0,
+          300.0
+        ]
+      }
+    ],
+    "semantic_fingerprint": "glass transition temperature Tg composite matrix thermal stability aerospace cure cycle",
+    "contradiction_axioms": [],
+    "spatial_tension": "HIGH",
+    "layer_2_summary": {
+      "explains": [
+        "MATRIX_SOFTENING_RISK",
+        "OPERATING_TEMP_LIMIT"
+      ],
+      "fails_to_explain": [
+        "OXIDATION_DEGRADATION_RATE"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "safety_margin",
+      "threshold_op": "gt",
+      "threshold_val": 0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "AEROSPACE_COMPOSITE",
+      "semantic_label": "Glass Transition Temperature Compliance",
+      "reasoning_chain": [
+        "Evaluate composite structural constraint",
+        "Check safety margin > 0",
+        "Flag VIOLATION if margin violated"
+      ]
+    }
+  }
+]

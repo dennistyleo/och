@@ -1,0 +1,1 @@
+{"id":"DET_003","name":"Idempotency","type":"D","level":"L3","statement":"Repeated operations must produce same result","severity":"MEDIUM"}

@@ -1,0 +1,3424 @@
+[
+  {
+    "axiom_id": "HC_001",
+    "domain": "HEALTHCARE",
+    "subdomain": "metabolic",
+    "name": "Glycemic Control Threshold (HbA1c)",
+    "description": "HbA1c must remain within 4.0-5.6% for non-diabetic compliance; 5.7-6.4% pre-diabetic alert; ≥6.5% diagnostic flag.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "hba1c glycemic glucose diabetes metabolic blood sugar glycated haemoglobin",
+    "required_fields": [
+      {
+        "field": "HbA1c",
+        "unit": "%",
+        "bounds": [
+          0.0,
+          20.0
+        ],
+        "alert_min": null,
+        "alert_max": 5.6
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "Glu",
+        "unit": "mg/dL"
+      },
+      {
+        "field": "Ins",
+        "unit": "μU/mL"
+      }
+    ],
+    "entity_keywords": [
+      "hba1c",
+      "glycated",
+      "glycemic",
+      "glycaemic",
+      "diabetes",
+      "blood sugar",
+      "glucose control",
+      "haemoglobin a1c",
+      "a1c",
+      "fasting",
+      "insulin",
+      "metabolic"
+    ],
+    "eml_formula": "z = (hba1c - 5.6) / 0.5",
+    "expression_latex": "\\text{HbA1c} \\in [4.0\\%, 5.6\\%]",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [
+        "HbA1c"
+      ],
+      "optional": [
+        "Glu",
+        "Ins"
+      ]
+    },
+    "match_conditions": [
+      {
+        "field": "HbA1c",
+        "present": true
+      }
+    ],
+    "derivation_formula": {
+      "name": "ADAG_Nathan",
+      "description": "Average glucose estimated from HbA1c (Nathan 2008). eAG = 28.7*HbA1c - 46.7",
+      "inputs": {
+        "HbA1c": {
+          "unit": "%",
+          "field": "HbA1c"
+        }
+      },
+      "output": {
+        "field": "eAG_estimated",
+        "unit": "mg/dL"
+      },
+      "compute": "eAG = 28.7 * HbA1c - 46.7",
+      "cross_check": {
+        "field": "Glu",
+        "tolerance_pct": 15.0
+      },
+      "tamper_threshold_sigma": 2.5,
+      "sympy_expr": "HbA1c - 7.0",
+      "variables": [
+        "HbA1c"
+      ]
+    },
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "HbA1c - 7.0",
+      "variables": {
+        "HbA1c": {
+          "maps_to_field": "HbA1c",
+          "unit": "%",
+          "bounds": [
+            4,
+            20
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value": 7.0
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value": 7.0
+        },
+        "UNDERDETERMINED": {
+          "condition": "HbA1c is null"
+        }
+      },
+      "eval_mode": "threshold",
+      "trigger_field": "HbA1c",
+      "threshold_op": "gt",
+      "threshold_val": 7.0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "glycaemic_control_gate",
+      "ABD_RCA": "hyperglycaemia_root_cause",
+      "ABD_QA": "dm_management_hypothesis",
+      "category": "CLINICAL_BOUNDARY",
+      "semantic_label": "Glycemic Control (HbA1c)",
+      "reasoning_chain": [
+        "Extract HbA1c value",
+        "Compare against 7.0% ceiling",
+        "Flag VIOLATION if exceeded"
+      ]
+    },
+    "xai_narrator_hint": "HbA1c>7.0% indicates suboptimal glycaemic control — evaluate insulin regimen and dietary compliance.",
+    "variables": {
+      "HbA1c": "percent"
+    }
+  },
+  {
+    "axiom_id": "HC_002",
+    "domain": "HEALTHCARE",
+    "subdomain": "cardiovascular",
+    "name": "Blood Pressure Safety Boundary",
+    "description": "Systolic BP must be <130 mmHg and diastolic <80 mmHg for optimal cardiovascular compliance.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "blood pressure systolic diastolic hypertension cardiovascular SBP DBP",
+    "required_fields": [
+      {
+        "field": "SBP",
+        "unit": "mmHg",
+        "bounds": [
+          50.0,
+          300.0
+        ],
+        "alert_min": null,
+        "alert_max": 130.0
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "DBP",
+        "unit": "mmHg",
+        "bounds": [
+          30.0,
+          200.0
+        ],
+        "alert_min": null,
+        "alert_max": 80.0
+      }
+    ],
+    "entity_keywords": [
+      "systolic",
+      "diastolic",
+      "blood pressure",
+      "hypertension",
+      "hypertensive",
+      "sbp",
+      "dbp",
+      "mmhg",
+      "arterial pressure",
+      "prehypertension",
+      "cardiovascular risk",
+      "pulse pressure"
+    ],
+    "eml_formula": "z = (sbp - 130) / 10",
+    "expression_latex": "\\text{SBP} < 130\\,\\text{mmHg},\\;\\text{DBP} < 80\\,\\text{mmHg}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [
+        "SBP"
+      ],
+      "optional": [
+        "DBP"
+      ]
+    },
+    "match_conditions": [
+      {
+        "field": "SBP",
+        "present": true
+      }
+    ],
+    "derivation_formula": {
+      "sympy_expr": "Max(SBP - 140, DBP - 90)",
+      "variables": [
+        "SBP",
+        "DBP"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "dual_threshold",
+      "trigger_field": "SBP",
+      "secondary_field": "DBP",
+      "threshold_op": "gt",
+      "threshold_val": 140,
+      "secondary_threshold_val": 90,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CLINICAL_BOUNDARY",
+      "semantic_label": "Blood Pressure Safety",
+      "reasoning_chain": [
+        "Extract SBP and DBP",
+        "Apply 140/90 mmHg ceiling",
+        "Flag VIOLATION if either exceeded"
+      ]
+    },
+    "variables": {
+      "SBP": "mmHg",
+      "DBP": "mmHg"
+    }
+  },
+  {
+    "axiom_id": "HC_003",
+    "domain": "HEALTHCARE",
+    "subdomain": "renal",
+    "name": "Renal Function Adequacy (eGFR)",
+    "description": "eGFR ≥90 mL/min/1.73m² indicates normal kidney function. <60 signals chronic kidney disease stage 3+.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "egfr kidney renal creatinine glomerular filtration CKD",
+    "required_fields": [
+      {
+        "field": "eGFR",
+        "unit": "mL/min/1.73m²",
+        "bounds": [
+          0.0,
+          200.0
+        ],
+        "alert_min": 60.0,
+        "alert_max": null
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "Cr",
+        "unit": "mg/dL"
+      },
+      {
+        "field": "BUN",
+        "unit": "mg/dL"
+      },
+      {
+        "field": "CysC",
+        "unit": "mg/L"
+      }
+    ],
+    "entity_keywords": [
+      "egfr",
+      "glomerular filtration",
+      "creatinine",
+      "renal",
+      "kidney",
+      "ckd",
+      "chronic kidney disease",
+      "mdrd",
+      "ckd-epi",
+      "nephrology",
+      "urea",
+      "bun",
+      "cystatin"
+    ],
+    "eml_formula": "z = (90 - egfr) / 15",
+    "expression_latex": "\\text{eGFR} \\geq 90\\,\\text{mL/min/1.73m}^2",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [
+        "eGFR"
+      ],
+      "optional": [
+        "Cr",
+        "BUN",
+        "CysC"
+      ]
+    },
+    "match_conditions": [
+      {
+        "field": "eGFR",
+        "present": true
+      }
+    ],
+    "derivation_formula": {
+      "name": "CKD_EPI_2021",
+      "description": "CKD-EPI 2021 eGFR (race-free). For Cr-based: eGFR = 142 * min(Cr/kappa,1)^alpha * max(Cr/kappa,1)^(-1.200) * 0.9938^age. kappa=0.7(F)/0.9(M), alpha=-0.241(F)/-0.302(M).",
+      "inputs": {
+        "Cr": {
+          "unit": "mg/dL",
+          "field": "Cr"
+        },
+        "age": {
+          "unit": "years",
+          "field": "age"
+        },
+        "sex": {
+          "unit": "binary",
+          "field": "sex"
+        }
+      },
+      "output": {
+        "field": "eGFR_computed",
+        "unit": "mL/min/1.73m²"
+      },
+      "compute": "eGFR = 142 * min(Cr/kappa,1)^alpha * max(Cr/kappa,1)^(-1.200) * 0.9938^age",
+      "cross_check": {
+        "field": "eGFR",
+        "tolerance_pct": 10.0
+      },
+      "tamper_threshold_sigma": 2.0,
+      "sympy_expr": "60 - eGFR",
+      "variables": [
+        "eGFR"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "eGFR",
+      "threshold_op": "lt",
+      "threshold_val": 60,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CLINICAL_BOUNDARY",
+      "semantic_label": "Renal Function (eGFR)",
+      "reasoning_chain": [
+        "Extract eGFR",
+        "Flag VIOLATION if <60 mL/min/1.73m²"
+      ]
+    },
+    "variables": {
+      "eGFR": "mL/min/1.73m2"
+    }
+  },
+  {
+    "axiom_id": "HC_004",
+    "domain": "HEALTHCARE",
+    "subdomain": "cardiovascular",
+    "name": "LDL Cholesterol Cardiovascular Ceiling",
+    "description": "LDL-C must be <130 mg/dL for general population. Elevated LDL drives plaque deposition via Poiseuille's Law: ↑μ and ↓R → ↓Q. Causal pathway to vascular obstruction.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "LDL cholesterol lipid cardiovascular Poiseuille vascular plaque atherosclerosis",
+    "required_fields": [
+      {
+        "field": "LDL",
+        "unit": "mg/dL",
+        "bounds": [
+          0.0,
+          500.0
+        ],
+        "alert_min": null,
+        "alert_max": 130.0
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "HDL",
+        "unit": "mg/dL"
+      },
+      {
+        "field": "T-CHO",
+        "unit": "mg/dL"
+      },
+      {
+        "field": "TG",
+        "unit": "mg/dL"
+      }
+    ],
+    "entity_keywords": [
+      "ldl",
+      "cholesterol",
+      "lipid",
+      "lipoprotein",
+      "ldl-c",
+      "hdl",
+      "triglycerides",
+      "tg",
+      "dyslipidaemia",
+      "dyslipidemia",
+      "hyperlipidaemia",
+      "atherosclerosis",
+      "plaque",
+      "statin",
+      "cardiovascular",
+      "poiseuille",
+      "viscosity",
+      "vascular",
+      "flow obstruction",
+      "aip",
+      "framingham"
+    ],
+    "eml_formula": "z = (ldl - 130) / 20",
+    "expression_latex": "Q = \\frac{\\pi R^4 \\Delta P}{8 \\mu L},\\;\\text{LDL} < 130\\,\\text{mg/dL}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [
+        "LDL"
+      ],
+      "optional": [
+        "HDL",
+        "T-CHO",
+        "TG"
+      ]
+    },
+    "match_conditions": [
+      {
+        "field": "LDL",
+        "present": true
+      }
+    ],
+    "derivation_formula": {
+      "name": "Friedewald",
+      "description": "Friedewald equation: LDL = T-CHO - HDL - TG/5. Valid only when TG < 400 mg/dL.",
+      "inputs": {
+        "T-CHO": {
+          "unit": "mg/dL",
+          "field": "T-CHO"
+        },
+        "HDL": {
+          "unit": "mg/dL",
+          "field": "HDL"
+        },
+        "TG": {
+          "unit": "mg/dL",
+          "field": "TG"
+        }
+      },
+      "output": {
+        "field": "LDL_computed",
+        "unit": "mg/dL"
+      },
+      "compute": "LDL = T-CHO - HDL - TG/5.0",
+      "validity_gate": {
+        "field": "TG",
+        "max": 400.0
+      },
+      "cross_check": {
+        "field": "LDL",
+        "tolerance_pct": 8.0
+      },
+      "tamper_threshold_sigma": 2.5,
+      "sympy_expr": "LDL - 130",
+      "variables": [
+        "LDL"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "LDL",
+      "threshold_op": "gt",
+      "threshold_val": 130,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CLINICAL_BOUNDARY",
+      "semantic_label": "LDL Cardiovascular Ceiling",
+      "reasoning_chain": [
+        "Extract LDL-C",
+        "Compare against 130 mg/dL ceiling",
+        "Flag VIOLATION if exceeded"
+      ]
+    },
+    "variables": {
+      "LDL": "mg/dL"
+    }
+  },
+  {
+    "axiom_id": "HC_006",
+    "domain": "HEALTHCARE",
+    "subdomain": "metabolic",
+    "name": "Fasting Glucose Metabolic Boundary",
+    "description": "Fasting glucose must be 70-99 mg/dL. 100-125 = pre-diabetic; ≥126 = diabetic diagnostic threshold.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "glucose fasting metabolic diabetes hyperglycaemia FBG blood sugar glu",
+    "required_fields": [
+      {
+        "field": "Glu",
+        "unit": "mg/dL",
+        "bounds": [
+          0.0,
+          600.0
+        ],
+        "alert_min": 70.0,
+        "alert_max": 99.0
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "HbA1c",
+        "unit": "%"
+      },
+      {
+        "field": "Ins",
+        "unit": "μU/mL"
+      }
+    ],
+    "entity_keywords": [
+      "glucose",
+      "fasting glucose",
+      "fbg",
+      "blood sugar",
+      "hyperglycaemia",
+      "hypoglycaemia",
+      "hyperglycemia",
+      "hypoglycemia",
+      "prediabetes",
+      "diabetes mellitus",
+      "insulin resistance",
+      "impaired fasting",
+      "glu"
+    ],
+    "eml_formula": "z = (glu - 99) / 10",
+    "expression_latex": "\\text{FBG} \\in [70, 99]\\,\\text{mg/dL}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [
+        "Glu"
+      ],
+      "optional": [
+        "HbA1c",
+        "Ins"
+      ]
+    },
+    "match_conditions": [
+      {
+        "field": "Glu",
+        "present": true
+      }
+    ],
+    "derivation_formula": {
+      "sympy_expr": "fasting_glucose - 100",
+      "variables": [
+        "fasting_glucose"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "fasting_glucose",
+      "threshold_op": "gt",
+      "threshold_val": 100,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CLINICAL_BOUNDARY",
+      "semantic_label": "Fasting Glucose Boundary",
+      "reasoning_chain": [
+        "Extract fasting glucose",
+        "Flag if ≥100 mg/dL (prediabetes threshold)"
+      ]
+    },
+    "variables": {
+      "fasting_glucose": "mg/dL"
+    }
+  },
+  {
+    "axiom_id": "HC_007",
+    "domain": "HEALTHCARE",
+    "subdomain": "hepatic",
+    "name": "Hepatic Marker Safety Boundary (ALT/AST)",
+    "description": "ALT and AST must be within reference range. Elevated transaminases signal hepatocellular injury. AST/ALT ratio differentiates alcoholic vs non-alcoholic liver disease.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "ALT AST liver hepatic transaminase hepatocellular SGOT SGPT",
+    "required_fields": [
+      {
+        "field": "ALT",
+        "unit": "U/L",
+        "bounds": [
+          0.0,
+          2000.0
+        ],
+        "alert_min": null,
+        "alert_max": 40.0
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "AST",
+        "unit": "U/L"
+      },
+      {
+        "field": "GGT",
+        "unit": "U/L"
+      },
+      {
+        "field": "ALP",
+        "unit": "U/L"
+      },
+      {
+        "field": "Bil",
+        "unit": "mg/dL"
+      }
+    ],
+    "entity_keywords": [
+      "alt",
+      "ast",
+      "liver function",
+      "hepatic",
+      "alanine aminotransferase",
+      "aspartate aminotransferase",
+      "sgpt",
+      "sgot",
+      "transaminase",
+      "hepatocellular",
+      "cirrhosis",
+      "fibrosis",
+      "nafld",
+      "nash",
+      "ggamma",
+      "alkaline phosphatase",
+      "bilirubin",
+      "liver"
+    ],
+    "eml_formula": "z = (alt - 40) / 20",
+    "expression_latex": "\\text{ALT} < 40\\,\\text{U/L},\\;\\text{AST} < 40\\,\\text{U/L}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [
+        "ALT"
+      ],
+      "optional": [
+        "AST",
+        "GGT",
+        "ALP",
+        "Bil"
+      ]
+    },
+    "match_conditions": [
+      {
+        "field": "ALT",
+        "present": true
+      }
+    ],
+    "derivation_formula": {
+      "sympy_expr": "Max(ALT - 56, AST - 40)",
+      "variables": [
+        "ALT",
+        "AST"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "dual_threshold",
+      "trigger_field": "ALT",
+      "secondary_field": "AST",
+      "threshold_op": "gt",
+      "threshold_val": 56,
+      "secondary_threshold_val": 40,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CLINICAL_BOUNDARY",
+      "semantic_label": "Hepatic Marker Safety (ALT/AST)",
+      "reasoning_chain": [
+        "Extract ALT and AST",
+        "Compare against ULN (ALT 56, AST 40 IU/L)",
+        "Flag VIOLATION if exceeded"
+      ]
+    },
+    "variables": {
+      "ALT": "IU/L",
+      "AST": "IU/L"
+    }
+  },
+  {
+    "axiom_id": "HC_008",
+    "domain": "HEALTHCARE",
+    "subdomain": "haematological",
+    "name": "Hemoglobin Reference Range Compliance",
+    "description": "Hemoglobin carries O2 via Fick's Principle: VO2 = CO × (CaO2 - CvO2). Must be within sex-adjusted reference range.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "spatial_tension": "MEDIUM",
+    "semantic_fingerprint": "hemoglobin haemoglobin Hb Fick oxygen CBC anaemia erythrocyte",
+    "required_fields": [
+      {
+        "field": "Hb",
+        "unit": "g/dL",
+        "bounds": [
+          4.0,
+          25.0
+        ],
+        "alert_min": 13.5,
+        "alert_max": 17.5
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "RBC",
+        "unit": "10⁶/μL"
+      },
+      {
+        "field": "WBC",
+        "unit": "10³/μL"
+      },
+      {
+        "field": "PLT",
+        "unit": "10³/μL"
+      },
+      {
+        "field": "Hct",
+        "unit": "%"
+      }
+    ],
+    "entity_keywords": [
+      "hemoglobin",
+      "haemoglobin",
+      "hb",
+      "hgb",
+      "anaemia",
+      "anemia",
+      "cbc",
+      "complete blood count",
+      "erythrocyte",
+      "red blood cell",
+      "rbc",
+      "hematocrit",
+      "haematocrit",
+      "oxygen carrying",
+      "fick",
+      "mch",
+      "mchc",
+      "mcv",
+      "reticulocyte"
+    ],
+    "eml_formula": "z = (hb - 13.5) / 1.5",
+    "expression_latex": "\\text{VO}_2 = CO \\times (CaO_2 - CvO_2),\\;\\text{Hb} \\in [13.5, 17.5]\\,\\text{g/dL}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [
+        "Hb"
+      ],
+      "optional": [
+        "RBC",
+        "WBC",
+        "PLT",
+        "Hct"
+      ]
+    },
+    "match_conditions": [
+      {
+        "field": "Hb",
+        "present": true
+      }
+    ],
+    "derivation_formula": {
+      "sympy_expr": "hemoglobin - 12",
+      "variables": [
+        "hemoglobin"
+      ],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0,
+          "note": "Hb >= 12 g/dL: normal"
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0,
+          "note": "Hb < 12 g/dL: anemia"
+        }
+      }
+    },
+    "saa_hook": {
+      "eval_mode": "range",
+      "trigger_field": "hemoglobin",
+      "lower": 12.0,
+      "upper": 17.5,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CLINICAL_BOUNDARY",
+      "semantic_label": "Hemoglobin Reference Range",
+      "reasoning_chain": [
+        "Extract Hb value",
+        "Flag if outside 12–17.5 g/dL normal range"
+      ]
+    },
+    "variables": {
+      "hemoglobin": "g/dL"
+    }
+  },
+  {
+    "axiom_id": "HC_009",
+    "domain": "HEALTHCARE",
+    "subdomain": "cardiovascular",
+    "name": "QTc Interval Cardiac Safety Boundary",
+    "description": "QTc must be <450 ms (male) or <470 ms (female). Prolonged QTc indicates risk of torsades de pointes and sudden cardiac death.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.9,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "QTc ECG cardiac arrhythmia torsades Bazett interval",
+    "required_fields": [
+      {
+        "field": "QTc",
+        "unit": "ms",
+        "bounds": [
+          200.0,
+          700.0
+        ],
+        "alert_min": null,
+        "alert_max": 450.0
+      }
+    ],
+    "optional_fields": [],
+    "entity_keywords": [
+      "qtc",
+      "qt interval",
+      "qt prolongation",
+      "corrected qt",
+      "bazett",
+      "ecg",
+      "electrocardiogram",
+      "arrhythmia",
+      "torsades",
+      "cardiac safety",
+      "drug-induced",
+      "lqts"
+    ],
+    "eml_formula": "z = (qtc - 450) / 30",
+    "expression_latex": "\\text{QTc} < 450\\,\\text{ms (male)}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [
+        "QTc"
+      ],
+      "optional": []
+    },
+    "match_conditions": [
+      {
+        "field": "QTc",
+        "present": true
+      }
+    ],
+    "derivation_formula": {
+      "sympy_expr": "QTc - 450",
+      "variables": [
+        "QTc"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "QTc",
+      "threshold_op": "gt",
+      "threshold_val": 450,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CLINICAL_BOUNDARY",
+      "semantic_label": "QTc Cardiac Safety",
+      "reasoning_chain": [
+        "Extract QTc interval",
+        "Flag if >450 ms (FDA arrhythmia threshold)"
+      ]
+    },
+    "variables": {
+      "QTc": "ms"
+    }
+  },
+  {
+    "axiom_id": "HC_015",
+    "domain": "HEALTHCARE",
+    "subdomain": "cardiovascular",
+    "name": "Framingham Cardiovascular Risk Ceiling",
+    "description": "10-year ASCVD risk must be <7.5%. Derived from age, sex, TC, HDL, SBP, smoking, diabetes status.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "Framingham cardiovascular risk ASCVD 10-year risk lipid age",
+    "required_fields": [
+      {
+        "field": "T-CHO",
+        "unit": "mg/dL",
+        "bounds": [
+          0.0,
+          600.0
+        ],
+        "alert_min": null,
+        "alert_max": 200.0
+      },
+      {
+        "field": "HDL",
+        "unit": "mg/dL",
+        "bounds": [
+          0.0,
+          200.0
+        ],
+        "alert_min": 40.0,
+        "alert_max": null
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "LDL",
+        "unit": "mg/dL"
+      },
+      {
+        "field": "SBP",
+        "unit": "mmHg"
+      }
+    ],
+    "entity_keywords": [
+      "framingham",
+      "cardiovascular risk",
+      "10-year risk",
+      "ascvd",
+      "pooled cohort equations",
+      "cardiac risk",
+      "risk score",
+      "total cholesterol",
+      "hdl",
+      "ldl",
+      "statin therapy",
+      "prevention",
+      "cardiovascular event"
+    ],
+    "eml_formula": "z = (10yr_cvd_risk - 7.5) / 5",
+    "expression_latex": "P(\\text{CVD}_{10yr}) < 7.5\\%",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [
+        "T-CHO",
+        "HDL"
+      ],
+      "optional": [
+        "LDL",
+        "SBP"
+      ]
+    },
+    "match_conditions": [
+      {
+        "field": "T-CHO",
+        "present": true
+      },
+      {
+        "field": "HDL",
+        "present": true
+      }
+    ],
+    "derivation_formula": {
+      "name": "Pooled_Cohort_Equations",
+      "description": "ACC/AHA Pooled Cohort 10-yr ASCVD risk (simplified). Female AA: ln_Age*17.1141, others per PCE table. Cross-checks reported risk % against computed score.",
+      "inputs": {
+        "T-CHO": {
+          "unit": "mg/dL",
+          "field": "T-CHO"
+        },
+        "HDL": {
+          "unit": "mg/dL",
+          "field": "HDL"
+        },
+        "SBP": {
+          "unit": "mmHg",
+          "field": "SBP"
+        },
+        "age": {
+          "unit": "years",
+          "field": "age"
+        },
+        "sex": {
+          "unit": "binary",
+          "field": "sex"
+        },
+        "smoker": {
+          "unit": "binary",
+          "field": "smoker"
+        },
+        "diabetic": {
+          "unit": "binary",
+          "field": "diabetic"
+        }
+      },
+      "output": {
+        "field": "CVD_risk_10yr_pct",
+        "unit": "%"
+      },
+      "compute": "PCE formula — multi-variable log-sum per sex/race cohort table",
+      "cross_check": {
+        "field": "CVD_risk_reported",
+        "tolerance_pct": 20.0
+      },
+      "tamper_threshold_sigma": 3.0,
+      "sympy_expr": "framingham_risk - 0.20",
+      "variables": [
+        "framingham_risk"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "framingham_risk",
+      "threshold_op": "gt",
+      "threshold_val": 0.2,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CARDIOVASCULAR_RISK",
+      "semantic_label": "Framingham CV Risk Ceiling",
+      "reasoning_chain": [
+        "Compute Framingham 10-year risk",
+        "Flag VIOLATION if >20% (high-risk threshold)"
+      ]
+    },
+    "variables": {
+      "framingham_risk": "ratio"
+    }
+  },
+  {
+    "axiom_id": "HC_016",
+    "domain": "HEALTHCARE",
+    "subdomain": "metabolic",
+    "name": "Serum Electrolyte Critical Value Boundary",
+    "description": "Serum Na⁺ must be 136-145 mEq/L; K⁺ 3.5-5.0 mEq/L. Critical deviations trigger life-threatening cardiac arrhythmia or cerebral edema.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.9,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "sodium potassium electrolyte anion gap metabolic acidosis",
+    "required_fields": [
+      {
+        "field": "Na",
+        "unit": "mEq/L",
+        "bounds": [
+          100.0,
+          180.0
+        ],
+        "alert_min": 136.0,
+        "alert_max": 145.0
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "K",
+        "unit": "mEq/L"
+      },
+      {
+        "field": "Cl",
+        "unit": "mEq/L"
+      },
+      {
+        "field": "HCO3",
+        "unit": "mEq/L"
+      }
+    ],
+    "entity_keywords": [
+      "sodium",
+      "potassium",
+      "electrolyte",
+      "anion gap",
+      "metabolic acidosis",
+      "hyponatraemia",
+      "hypernatraemia",
+      "hypokalaemia",
+      "hyperkalaemia",
+      "chloride",
+      "bicarbonate",
+      "acid-base",
+      "serum electrolyte"
+    ],
+    "eml_formula": "z = abs(na - 140) / 3",
+    "expression_latex": "\\text{Na}^+ \\in [136, 145]\\,\\text{mEq/L}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [
+        "Na"
+      ],
+      "optional": [
+        "K",
+        "Cl",
+        "HCO3"
+      ]
+    },
+    "match_conditions": [
+      {
+        "field": "Na",
+        "present": true
+      }
+    ],
+    "derivation_formula": {
+      "sympy_expr": "Abs(K - 4.25) - 0.75",
+      "variables": [
+        "K"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "range",
+      "trigger_field": "K",
+      "lower": 3.5,
+      "upper": 5.0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CLINICAL_BOUNDARY",
+      "semantic_label": "Serum Electrolyte Critical Value",
+      "reasoning_chain": [
+        "Extract K+ (potassium)",
+        "Flag if outside 3.5–5.0 mEq/L critical range"
+      ]
+    },
+    "variables": {
+      "K": "mEq/L",
+      "Na": "mEq/L"
+    }
+  },
+  {
+    "axiom_id": "HC_021",
+    "domain": "HEALTHCARE",
+    "subdomain": "cardiovascular",
+    "name": "Total Cholesterol Cardiovascular Ceiling (T-CHO)",
+    "description": "Total cholesterol (T-CHO) must be <200 mg/dL. T-CHO ≥240 mg/dL = high risk.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "total cholesterol T-CHO cardiovascular risk lipid hypercholesterolaemia",
+    "required_fields": [
+      {
+        "field": "T-CHO",
+        "unit": "mg/dL",
+        "bounds": [
+          0.0,
+          600.0
+        ],
+        "alert_min": null,
+        "alert_max": 200.0
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "LDL",
+        "unit": "mg/dL"
+      },
+      {
+        "field": "HDL",
+        "unit": "mg/dL"
+      },
+      {
+        "field": "TG",
+        "unit": "mg/dL"
+      }
+    ],
+    "entity_keywords": [
+      "total cholesterol",
+      "t-cho",
+      "cholesterol",
+      "serum cholesterol",
+      "lipid",
+      "hypercholesterolaemia",
+      "hypercholesterolemia",
+      "cardiovascular risk",
+      "atherogenic",
+      "lipid panel",
+      "lipoprotein",
+      "statin"
+    ],
+    "eml_formula": "z = (tcho - 200) / 20",
+    "expression_latex": "\\text{T-CHO} < 200\\,\\text{mg/dL}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [
+        "T-CHO"
+      ],
+      "optional": [
+        "LDL",
+        "HDL",
+        "TG"
+      ]
+    },
+    "match_conditions": [
+      {
+        "field": "T-CHO",
+        "present": true
+      }
+    ],
+    "derivation_formula": {
+      "sympy_expr": "T_CHO - 200",
+      "variables": [
+        "T_CHO"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "T_CHO",
+      "threshold_op": "gt",
+      "threshold_val": 200,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CLINICAL_BOUNDARY",
+      "semantic_label": "Total Cholesterol CV Ceiling",
+      "reasoning_chain": [
+        "Extract T-CHO value",
+        "Flag VIOLATION if >200 mg/dL (borderline high)"
+      ]
+    },
+    "variables": {
+      "T_CHO": "mg/dL",
+      "HDL": "mg/dL",
+      "TG": "mg/dL"
+    }
+  },
+  {
+    "axiom_id": "CAUSAL_001",
+    "domain": "CAUSALITY",
+    "subdomain": "causal_inference",
+    "name": "Temporal Antecedence Gate",
+    "description": "Verifies that a putative cause precedes its effect in time. A causal chain is only admissible if the exposure event (drug initiation, procedure, environmental trigger) demonstrably antedates the outcome event (adverse event, lab abnormality, clinical change). Violations indicate reverse causality or confounding.",
+    "status": "active",
+    "confidence_floor": 0.7,
+    "spatial_tension": 0.25,
+    "semantic_fingerprint": "temporal precedence antecedence causal timeline exposure onset sequence chronological",
+    "required_fields": [
+      "max_rpn",
+      "critical_failure_modes"
+    ],
+    "optional_fields": [
+      "washout_period",
+      "latency_days",
+      "event_sequence"
+    ],
+    "entity_keywords": [
+      "temporal precedence",
+      "antecedence",
+      "causal chain",
+      "causal sequence",
+      "cause precedes effect",
+      "root cause",
+      "failure mode",
+      "FMEA",
+      "RPN",
+      "causal timeline",
+      "event sequence",
+      "exposure onset",
+      "chronological order",
+      "latency"
+    ],
+    "eml_formula": "exposure_date < outcome_date",
+    "expression_latex": "t_{exposure} < t_{outcome}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "exposure_date": "ISO8601 date of initiating event",
+      "outcome_date": "ISO8601 date of observed outcome",
+      "latency_days": "integer days between exposure and outcome"
+    },
+    "match_conditions": [
+      {
+        "field": "max_rpn",
+        "operator": "exists"
+      },
+      {
+        "field": "critical_failure_modes",
+        "operator": "exists"
+      }
+    ],
+    "derivation_formula": {
+      "sympy_expr": "1",
+      "variables": [
+        "exposure_date",
+        "outcome_date"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "temporal",
+      "trigger_field": "exposure_date",
+      "secondary_field": "outcome_date",
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CAUSAL_INFERENCE",
+      "semantic_label": "Temporal Antecedence Gate",
+      "reasoning_chain": [
+        "Extract exposure_date and outcome_date",
+        "Verify exposure precedes outcome",
+        "Flag VIOLATION if reversed"
+      ]
+    },
+    "variables": {
+      "exposure_date": "ISO8601",
+      "outcome_date": "ISO8601"
+    }
+  },
+  {
+    "axiom_id": "CAUSAL_003",
+    "domain": "CAUSALITY",
+    "subdomain": "causal_inference",
+    "name": "Counterfactual Consistency Check",
+    "description": "Assesses whether the observed outcome would not have occurred in the absence of the exposure, using counterfactual or control group evidence. Requires documented placebo arm, historical control, or dechallenge/rechallenge data to confirm that the factor under scrutiny is necessary for the outcome.",
+    "status": "active",
+    "confidence_floor": 0.72,
+    "spatial_tension": 0.2,
+    "semantic_fingerprint": "counterfactual control placebo dechallenge rechallenge absence exposure necessary condition",
+    "required_fields": [
+      "HbA1c",
+      "Cr",
+      "BMI"
+    ],
+    "optional_fields": [
+      "dechallenge_result",
+      "rechallenge_result",
+      "placebo_arm",
+      "relative_risk"
+    ],
+    "entity_keywords": [
+      "counterfactual",
+      "control group",
+      "dechallenge",
+      "rechallenge",
+      "absence of exposure",
+      "relative risk",
+      "comparative effectiveness",
+      "causal necessity",
+      "counterfactual reasoning",
+      "experimental control",
+      "corrective action",
+      "no treatment arm",
+      "causal validation"
+    ],
+    "eml_formula": "exposure_group_outcome > control_group_outcome",
+    "expression_latex": "P(Y|do(X=1)) > P(Y|do(X=0))",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "control_group_outcome": "rate or severity in unexposed group",
+      "exposure_group_outcome": "rate or severity in exposed group",
+      "dechallenge_result": "outcome change after exposure removal",
+      "rechallenge_result": "outcome recurrence after re-exposure"
+    },
+    "match_conditions": [
+      {
+        "field": "HbA1c",
+        "operator": "exists"
+      },
+      {
+        "field": "Cr",
+        "operator": "exists"
+      },
+      {
+        "field": "BMI",
+        "operator": "exists"
+      }
+    ],
+    "derivation_formula": {
+      "sympy_expr": "exposure_group_outcome - control_group_outcome",
+      "variables": [
+        "exposure_group_outcome",
+        "control_group_outcome"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "comparison",
+      "trigger_field": "exposure_group_outcome",
+      "secondary_field": "control_group_outcome",
+      "threshold_op": "gt",
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CAUSAL_INFERENCE",
+      "semantic_label": "Counterfactual Consistency",
+      "reasoning_chain": [
+        "Compare exposed vs control outcomes",
+        "Verify P(Y|X=1) > P(Y|X=0)",
+        "Flag VIOLATION if no differential"
+      ]
+    },
+    "variables": {
+      "exposure_group_outcome": "float",
+      "control_group_outcome": "float"
+    }
+  },
+  {
+    "axiom_id": "CAUSAL_004",
+    "domain": "CAUSALITY",
+    "subdomain": "causal_inference",
+    "name": "Confounding Variable Exclusion",
+    "description": "Verifies that known confounders have been identified, measured, and adequately controlled for in the causal analysis. Residual confounding not addressed by study design (randomisation, matching, stratification) or statistical adjustment (multivariable regression, propensity scoring) invalidates a causal claim.",
+    "status": "active",
+    "confidence_floor": 0.68,
+    "spatial_tension": 0.35,
+    "semantic_fingerprint": "confounding confounder adjustment covariate control propensity score stratification randomisation",
+    "required_fields": [
+      "SBP",
+      "LDL",
+      "BMI"
+    ],
+    "optional_fields": [
+      "propensity_score",
+      "matched_pairs",
+      "residual_confounding_risk",
+      "sensitivity_analysis"
+    ],
+    "entity_keywords": [
+      "confounding",
+      "confounder",
+      "covariate adjustment",
+      "propensity score",
+      "stratification",
+      "residual confounding",
+      "sensitivity analysis",
+      "multivariable regression",
+      "matching",
+      "causal adjustment",
+      "omitted variable",
+      "selection bias",
+      "confounding control"
+    ],
+    "eml_formula": "confounders_identified == true AND adjustment_method != null",
+    "expression_latex": "C_{adj} \\neq \\emptyset \\;\\wedge\\; \\text{method} \\in \\{RCT, PS, MV\\}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "confounders_identified": "boolean indicating confounder assessment done",
+      "adjustment_method": "string describing adjustment technique used",
+      "propensity_score": "numeric propensity score if applicable",
+      "sensitivity_analysis": "description of sensitivity analysis performed"
+    },
+    "match_conditions": [
+      {
+        "field": "SBP",
+        "operator": "exists"
+      },
+      {
+        "field": "LDL",
+        "operator": "exists"
+      },
+      {
+        "field": "BMI",
+        "operator": "exists"
+      }
+    ],
+    "derivation_formula": {
+      "sympy_expr": "Piecewise((0, confounders_identified), (1, True))",
+      "variables": [
+        "confounders_identified"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "boolean",
+      "trigger_field": "confounders_identified",
+      "threshold_op": "eq",
+      "threshold_val": true,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CAUSAL_INFERENCE",
+      "semantic_label": "Confounding Variable Exclusion",
+      "reasoning_chain": [
+        "Check confounders_identified==True",
+        "Verify adjustment_method present",
+        "Flag VIOLATION if residual confounding unaddressed"
+      ]
+    },
+    "variables": {
+      "confounders_identified": "boolean",
+      "adjustment_method": "string"
+    }
+  },
+  {
+    "axiom_id": "HC_AIP_001",
+    "domain": "HEALTHCARE",
+    "mode": "deduction",
+    "subdomain": "vascular lipid atherogenesis AIP",
+    "name": "Atherogenic Index of Plasma (AIP)",
+    "description": "AIP = log10(TG/HDL). AIP < 0.11 = low cardiovascular risk; 0.11-0.21 = intermediate; > 0.21 = high. Captures lipoprotein particle size better than raw TG or HDL alone.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "semantic_fingerprint": "AIP atherogenic index plasma triglycerides HDL cholesterol cardiovascular risk lipid particle",
+    "eml_formula": "log10(TG/HDL)",
+    "expression_latex": "\\text{AIP} = \\log_{10}\\left(\\frac{TG}{HDL}\\right)",
+    "required_fields": [
+      {
+        "field": "TG",
+        "unit": "mg/dL"
+      },
+      {
+        "field": "HDL",
+        "unit": "mg/dL"
+      }
+    ],
+    "derivation_formula": {
+      "sympy_expr": "log(TG/HDL, 10)",
+      "variables": {
+        "TG": {
+          "maps_to_field": "TG",
+          "unit": "mg/dL"
+        },
+        "HDL": {
+          "maps_to_field": "HDL",
+          "unit": "mg/dL"
+        }
+      },
+      "constraints": [
+        {
+          "expr": "HDL",
+          "condition": "> 0",
+          "label": "division_guard"
+        }
+      ],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value": 0.11,
+          "note": "AIP<=0.11 = low risk"
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value": 0.11,
+          "note": "AIP>0.11 = intermediate/high risk"
+        },
+        "UNDERDETERMINED": {
+          "condition": "TG or HDL is null"
+        }
+      }
+    }
+  },
+  {
+    "axiom_id": "HC_CAO2_001",
+    "domain": "HEALTHCARE",
+    "mode": "deduction",
+    "subdomain": "hemoglobin oxygen carrying CaO2 Fick",
+    "name": "Arterial Oxygen Content Gate (CaO2)",
+    "description": "CaO2 = 1.34×Hb×SaO2 + 0.003×PaO2 — 18.0. Derived from Fick's Principle. Hb=16.4 g/dL with SaO2≈0.98 → CaO2≈21.5 mL/dL (normal). Tests oxygen delivery capacity.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "semantic_fingerprint": "oxygen hemoglobin CaO2 SaO2 PaO2 Fick exercise tolerance delivery capacity",
+    "eml_formula": "1.34 * Hb * SaO2 + 0.003 * PaO2",
+    "expression_latex": "C_aO_2 = 1.34 \\times Hb \\times S_aO_2 + 0.003 \\times P_aO_2",
+    "required_fields": [
+      {
+        "field": "Hb",
+        "unit": "g/dL"
+      },
+      {
+        "field": "SaO2",
+        "unit": "fraction"
+      },
+      {
+        "field": "PaO2",
+        "unit": "mmHg"
+      }
+    ],
+    "solvable_for": [
+      "SaO2"
+    ],
+    "derivation_formula": {
+      "sympy_expr": "1.34 * Hb * SaO2 + 0.003 * PaO2 - 18.0",
+      "variables": {
+        "Hb": {
+          "maps_to_field": "Hb",
+          "unit": "g/dL"
+        },
+        "SaO2": {
+          "maps_to_field": "SaO2",
+          "unit": "fraction"
+        },
+        "PaO2": {
+          "maps_to_field": "PaO2",
+          "unit": "mmHg"
+        }
+      },
+      "solvable_for": [
+        "SaO2"
+      ],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value": 0,
+          "note": "CaO2>=18 mL/dL normal"
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value": 0,
+          "note": "CaO2<18 mL/dL hypoxia"
+        },
+        "UNDERDETERMINED": {
+          "condition": "SaO2 or PaO2 missing"
+        }
+      }
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_BIO_CORRIDOR_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "HEALTHCARE",
+    "subdomain": "Biological Stability",
+    "name": "Regime Corridor Index (RCI)",
+    "description": "Verifies that the Regime Corridor Index (RCI = Eprop/En = (En-Mn)/En) does not fall below the critical clinical stability boundary of 0.20.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "hallucination_lock": true,
+    "expression_latex": "RCI = \\frac{E_n - M_n}{E_n} \\geq 0.20",
+    "derivation_formula": {
+      "sympy_expr": "(e_n - m_n) / e_n",
+      "variables": {
+        "e_n": {
+          "maps_to_field": "evidence_scalar",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0001,
+            100.0
+          ]
+        },
+        "m_n": {
+          "maps_to_field": "model_binding_scalar",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            100.0
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0.2
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0.2
+        },
+        "UNDERDETERMINED": {
+          "condition": "e_n or m_n is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "evidence_scalar",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0001,
+          100.0
+        ]
+      },
+      {
+        "field": "model_binding_scalar",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          100.0
+        ]
+      }
+    ],
+    "optional_fields": [],
+    "semantic_fingerprint": "regime corridor index biological stability critical boundary cellular preservation",
+    "xai_narrator_hint": "Please be assured that your body is working hard to compensate for current physiological stress. However, our measurements indicate that your Regime Corridor Index has fallen below the normal baseline of 0.20. We will closely coordinate clinical support to help restore your body's natural reserves."
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_BIO_REPAIR_002",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "HEALTHCARE",
+    "subdomain": "Biological Stability",
+    "name": "Repair vs. Compensation Threshold",
+    "description": "Checks if the metabolic reserve energy is sufficient to support structural tissue repair (e_reserve >= 30.0) rather than falling into degenerative compensation.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "hallucination_lock": true,
+    "expression_latex": "E_{reserve} \\geq 30.0",
+    "derivation_formula": {
+      "sympy_expr": "e_reserve",
+      "variables": {
+        "e_reserve": {
+          "maps_to_field": "metabolic_reserve_energy",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            100.0
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 30.0
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 30.0
+        },
+        "UNDERDETERMINED": {
+          "condition": "e_reserve is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "metabolic_reserve_energy",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          100.0
+        ]
+      }
+    ],
+    "optional_fields": [],
+    "semantic_fingerprint": "metabolic reserve energy tissue repair structural compensation threshold",
+    "xai_narrator_hint": "Your metabolic reserve energy shows a lower level than what is typically required to support full tissue healing. While your body is compensating beautifully, we advise focusing on nutritional support, hydration, and restful pacing to cross back into the active repair regime."
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_NEURO_STAB_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "HEALTHCARE",
+    "subdomain": "Neurobiology",
+    "name": "Neural Propagation Velocity Sensitivity Bound",
+    "description": "Checks the sensitivity of propagation velocity relative to model binding (m_n/e_n). Fails if the model binding ratio approaches the propagation collapse threshold (m_n/e_n >= 0.90).",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "hallucination_lock": true,
+    "expression_latex": "\\epsilon_n = \\frac{M_n}{E_n} < 0.90",
+    "derivation_formula": {
+      "sympy_expr": "m_n / e_n",
+      "variables": {
+        "m_n": {
+          "maps_to_field": "model_binding_scalar",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            100.0
+          ]
+        },
+        "e_n": {
+          "maps_to_field": "evidence_scalar",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0001,
+            100.0
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<",
+          "value": 0.9
+        },
+        "REFUSE": {
+          "operator": ">=",
+          "value": 0.9
+        },
+        "UNDERDETERMINED": {
+          "condition": "m_n or e_n is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "model_binding_scalar",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          100.0
+        ]
+      },
+      {
+        "field": "evidence_scalar",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0001,
+          100.0
+        ]
+      }
+    ],
+    "optional_fields": [],
+    "semantic_fingerprint": "neural propagation velocity sensitivity model binding ratio",
+    "xai_narrator_hint": "We want to reassure you that your overall neural framework is active. However, your neural model binding ratio (m_n/e_n) is elevated at a level that borders on propagation saturation. This suggests potential synaptic congestion, and we recommend introducing conscious delays or pacing cognitive load to avoid fatigue."
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_NEURO_OVERLOAD_002",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "HEALTHCARE",
+    "subdomain": "Neurobiology",
+    "name": "Synaptic Signal Overload",
+    "description": "Evaluates if the active synaptic signal load exceeds the propositional energy surplus. If E_prop - signal_load < 0, a Resolution Failure is triggered.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "hallucination_lock": true,
+    "expression_latex": "(E_n - M_n) - \\sum a_i s_i \\geq 0",
+    "derivation_formula": {
+      "sympy_expr": "(e_n - m_n) - signal_load",
+      "variables": {
+        "e_n": {
+          "maps_to_field": "evidence_scalar",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            100.0
+          ]
+        },
+        "m_n": {
+          "maps_to_field": "model_binding_scalar",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            100.0
+          ]
+        },
+        "signal_load": {
+          "maps_to_field": "synaptic_signal_load",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            100.0
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0.0
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0.0
+        },
+        "UNDERDETERMINED": {
+          "condition": "e_n, m_n, or signal_load is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "evidence_scalar",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          100.0
+        ]
+      },
+      {
+        "field": "model_binding_scalar",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          100.0
+        ]
+      },
+      {
+        "field": "synaptic_signal_load",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          100.0
+        ]
+      }
+    ],
+    "optional_fields": [],
+    "semantic_fingerprint": "synaptic signal overload resolution failure propositional surplus",
+    "xai_narrator_hint": "Your cellular energy surplus is slightly lower than your current active synaptic signal load. We recommend supporting metabolic recovery and reducing sensory input parameters to prevent neural processing resolution failure."
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_NEURO_CORRIDOR_003",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "HEALTHCARE",
+    "subdomain": "Neurobiology",
+    "name": "Neural Binding Admissibility Corridor",
+    "description": "Checks if the model binding ratio falls within the physiological admissibility corridor (0.10 <= m_n/e_n <= 0.85).",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "hallucination_lock": true,
+    "expression_latex": "0.10 \\leq \\frac{M_n}{E_n} \\leq 0.85",
+    "derivation_formula": {
+      "sympy_expr": "m_n / e_n",
+      "variables": {
+        "m_n": {
+          "maps_to_field": "model_binding_scalar",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            100.0
+          ]
+        },
+        "e_n": {
+          "maps_to_field": "evidence_scalar",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0001,
+            100.0
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value": 0.85
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value": 0.85
+        },
+        "UNDERDETERMINED": {
+          "condition": "m_n or e_n is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "model_binding_scalar",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          100.0
+        ]
+      },
+      {
+        "field": "evidence_scalar",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0001,
+          100.0
+        ]
+      }
+    ],
+    "optional_fields": [],
+    "semantic_fingerprint": "neural binding corridor physiological range structural underbinding overbinding",
+    "xai_narrator_hint": "To keep your nervous system in its optimal corridor, the neural binding ratio must stay within healthy limits. We noticed your results show a slight displacement outside this corridor. Let's work together to restore this balance through optimized rest and nervous system regulation."
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "PathologyCrossReference",
+    "version": "1.0.0",
+    "description": "Multi-modal pathology signal router. Maps imaging modalities and lab inputs to axiom IDs for SAA cross-domain correlation. Enables the solver to consolidate MRI/CT/X-Ray/Ultrasound/Blood findings into unified axiom verdicts.",
+    "modalities": {
+      "blood_test": {
+        "description": "Haematology, biochemistry, flow cytometry, and molecular blood panels",
+        "signals": [
+          {
+            "field": "HbA1c",
+            "unit": "%",
+            "axiom_refs": [
+              "HC_001"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION",
+              "ABD_QA"
+            ]
+          },
+          {
+            "field": "SBP",
+            "unit": "mmHg",
+            "axiom_refs": [
+              "HC_002"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION"
+            ]
+          },
+          {
+            "field": "eGFR",
+            "unit": "mL/min/1.73m²",
+            "axiom_refs": [
+              "HC_003"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION",
+              "ABD_RCA"
+            ]
+          },
+          {
+            "field": "mnc_yield_pct",
+            "unit": "%",
+            "axiom_refs": [
+              "HC_SCO_001"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION",
+              "ABD_RCA"
+            ],
+            "process": "Centrifuge Separation Process"
+          },
+          {
+            "field": "viability_pct",
+            "unit": "%",
+            "axiom_refs": [
+              "HC_SCO_002"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION"
+            ]
+          },
+          {
+            "field": "cd34_pct",
+            "unit": "%",
+            "axiom_refs": [
+              "HC_SCO_003"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION",
+              "ABD_RCA"
+            ],
+            "marker_type": "flow_cytometry"
+          },
+          {
+            "field": "cfu_count_per_10k",
+            "unit": "colonies/10⁴ cells",
+            "axiom_refs": [
+              "HC_SCO_004"
+            ],
+            "paradigm_hints": [
+              "ABD_RCA",
+              "ABD_QA"
+            ]
+          },
+          {
+            "field": "tmb_mut_per_mb",
+            "unit": "mut/Mb",
+            "axiom_refs": [
+              "HC_DNA_001"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION",
+              "INDUCTION"
+            ],
+            "assay": "NGS_WES"
+          },
+          {
+            "field": "gh2ax_foci_per_cell",
+            "unit": "foci/cell",
+            "axiom_refs": [
+              "HC_DNA_002"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION",
+              "ABD_RCA"
+            ],
+            "assay": "immunofluorescence"
+          },
+          {
+            "field": "line1_methylation_pct",
+            "unit": "%",
+            "axiom_refs": [
+              "HC_DNA_003"
+            ],
+            "paradigm_hints": [
+              "ABD_QA",
+              "INDUCTION"
+            ],
+            "assay": "bisulfite_pyrosequencing"
+          },
+          {
+            "field": "fga_pct",
+            "unit": "%",
+            "axiom_refs": [
+              "HC_DNA_004"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION",
+              "ABD_RCA"
+            ],
+            "assay": "SNP_array_or_WGS"
+          },
+          {
+            "field": "pdl1_tps_pct",
+            "unit": "%",
+            "axiom_refs": [
+              "HC_IMM_003"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION"
+            ],
+            "assay": "IHC_22C3"
+          },
+          {
+            "field": "il6_pg_ml",
+            "unit": "pg/mL",
+            "axiom_refs": [
+              "HC_IMM_004"
+            ],
+            "paradigm_hints": [
+              "ABD_RCA",
+              "DEDUCTION"
+            ]
+          },
+          {
+            "field": "orr_pct",
+            "unit": "%",
+            "axiom_refs": [
+              "HC_IMM_001"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION",
+              "ABD_QA"
+            ]
+          }
+        ]
+      },
+      "mri": {
+        "description": "Magnetic Resonance Imaging — structural and functional tumour assessment",
+        "signals": [
+          {
+            "field": "tumour_volume_cm3",
+            "unit": "cm³",
+            "axiom_refs": [
+              "HC_IMM_001",
+              "HC_DNA_004"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION",
+              "ABD_RCA"
+            ],
+            "sequence_types": [
+              "T1",
+              "T2",
+              "FLAIR",
+              "DWI",
+              "DCE"
+            ]
+          },
+          {
+            "field": "adc_value",
+            "unit": "mm²/s",
+            "axiom_refs": [
+              "HC_IMM_001"
+            ],
+            "paradigm_hints": [
+              "ABD_QA"
+            ],
+            "sequence_types": [
+              "DWI"
+            ],
+            "note": "Low ADC correlates with high cellularity"
+          },
+          {
+            "field": "contrast_enhancement_pct",
+            "unit": "%",
+            "axiom_refs": [
+              "HC_IMM_001",
+              "HC_IMM_002"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION"
+            ]
+          },
+          {
+            "field": "bone_marrow_signal_change",
+            "unit": "boolean",
+            "axiom_refs": [
+              "HC_SCO_003",
+              "HC_DNA_004"
+            ],
+            "paradigm_hints": [
+              "ABD_RCA"
+            ],
+            "note": "Marrow infiltration by tumour or stem cell engraftment"
+          }
+        ]
+      },
+      "ct_scan": {
+        "description": "Computed Tomography — RECIST tumour measurement and staging",
+        "signals": [
+          {
+            "field": "lesion_longest_diameter_mm",
+            "unit": "mm",
+            "axiom_refs": [
+              "HC_IMM_001"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION"
+            ],
+            "standard": "RECIST_1.1"
+          },
+          {
+            "field": "lymph_node_short_axis_mm",
+            "unit": "mm",
+            "axiom_refs": [
+              "HC_IMM_001"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION"
+            ],
+            "standard": "RECIST_1.1"
+          },
+          {
+            "field": "new_lesion_detected",
+            "unit": "boolean",
+            "axiom_refs": [
+              "HC_IMM_001",
+              "HC_IMM_002"
+            ],
+            "paradigm_hints": [
+              "ABD_RCA"
+            ],
+            "note": "New lesion = Progressive Disease regardless of target lesion change"
+          },
+          {
+            "field": "pleural_effusion_grade",
+            "unit": "grade",
+            "axiom_refs": [
+              "HC_IMM_002"
+            ],
+            "paradigm_hints": [
+              "ABD_RCA"
+            ]
+          },
+          {
+            "field": "pulmonary_opacity_pct",
+            "unit": "%",
+            "axiom_refs": [
+              "HC_IMM_002"
+            ],
+            "paradigm_hints": [
+              "ABD_RCA"
+            ],
+            "note": "irAE pneumonitis marker"
+          }
+        ]
+      },
+      "xray": {
+        "description": "Chest and skeletal X-Ray for irAE screening and bone metastasis",
+        "signals": [
+          {
+            "field": "pulmonary_infiltrate_present",
+            "unit": "boolean",
+            "axiom_refs": [
+              "HC_IMM_002"
+            ],
+            "paradigm_hints": [
+              "ABD_RCA"
+            ],
+            "note": "Flag for immune-related pneumonitis"
+          },
+          {
+            "field": "bone_lytic_lesion",
+            "unit": "boolean",
+            "axiom_refs": [
+              "HC_DNA_004"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION",
+              "ABD_RCA"
+            ]
+          },
+          {
+            "field": "mediastinal_widening",
+            "unit": "boolean",
+            "axiom_refs": [
+              "HC_IMM_002",
+              "HC_IMM_004"
+            ],
+            "paradigm_hints": [
+              "ABD_RCA"
+            ]
+          }
+        ]
+      },
+      "ultrasound": {
+        "description": "Abdominal and lymph node ultrasound for organ toxicity and staging",
+        "signals": [
+          {
+            "field": "liver_size_cm",
+            "unit": "cm",
+            "axiom_refs": [
+              "HC_IMM_002"
+            ],
+            "paradigm_hints": [
+              "ABD_RCA"
+            ],
+            "note": "Hepatomegaly as irAE hepatitis marker"
+          },
+          {
+            "field": "spleen_size_cm",
+            "unit": "cm",
+            "axiom_refs": [
+              "HC_SCO_003",
+              "HC_IMM_004"
+            ],
+            "paradigm_hints": [
+              "ABD_RCA"
+            ],
+            "note": "Splenomegaly in stem cell engraftment or CRS"
+          },
+          {
+            "field": "lymph_node_cortex_mm",
+            "unit": "mm",
+            "axiom_refs": [
+              "HC_IMM_001"
+            ],
+            "paradigm_hints": [
+              "DEDUCTION"
+            ]
+          },
+          {
+            "field": "peritoneal_fluid_present",
+            "unit": "boolean",
+            "axiom_refs": [
+              "HC_IMM_002",
+              "HC_IMM_004"
+            ],
+            "paradigm_hints": [
+              "ABD_RCA"
+            ]
+          }
+        ]
+      }
+    },
+    "correlation_rules": [
+      {
+        "rule_id": "CROSSREF_001",
+        "name": "Multi-Modal Tumour Response Consolidation",
+        "description": "When CT RECIST + blood ORR + MRI tumour volume all available, consolidate into unified ORR verdict",
+        "required_modalities": [
+          "ct_scan",
+          "blood_test"
+        ],
+        "optional_modalities": [
+          "mri"
+        ],
+        "primary_axiom": "HC_IMM_001",
+        "fusion_logic": "CT RECIST takes precedence; MRI ADC and blood biomarkers are corroborating evidence",
+        "paradigm_affinity": [
+          "DEDUCTION",
+          "ABD_QA"
+        ]
+      },
+      {
+        "rule_id": "CROSSREF_002",
+        "name": "irAE Multi-Organ Toxicity Sweep",
+        "description": "Correlate pulmonary (CT/X-Ray), hepatic (US/blood LFT), and endocrine (blood TSH/cortisol) signals for comprehensive irAE grading",
+        "required_modalities": [
+          "blood_test"
+        ],
+        "optional_modalities": [
+          "ct_scan",
+          "xray",
+          "ultrasound"
+        ],
+        "primary_axiom": "HC_IMM_002",
+        "fusion_logic": "Worst-grade organ toxicity determines overall irAE grade",
+        "paradigm_affinity": [
+          "ABD_RCA",
+          "DEDUCTION"
+        ]
+      },
+      {
+        "rule_id": "CROSSREF_003",
+        "name": "Stem Cell Engraftment Multi-Signal Validation",
+        "description": "Correlate blood CD34+/CFU with MRI bone marrow signal and US spleen size to confirm engraftment success",
+        "required_modalities": [
+          "blood_test"
+        ],
+        "optional_modalities": [
+          "mri",
+          "ultrasound"
+        ],
+        "primary_axiom": "HC_SCO_003",
+        "secondary_axioms": [
+          "HC_SCO_004",
+          "HC_SCO_002"
+        ],
+        "fusion_logic": "CD34% is primary; CFU and imaging are confirmatory",
+        "paradigm_affinity": [
+          "DEDUCTION",
+          "ABD_QA"
+        ]
+      },
+      {
+        "rule_id": "CROSSREF_004",
+        "name": "DNA Damage — Genomic Instability Panel",
+        "description": "Consolidate TMB (NGS), γH2AX DSB (IF), LINE-1 methylation, and FGA/CIN into unified genomic instability verdict",
+        "required_modalities": [
+          "blood_test"
+        ],
+        "optional_modalities": [],
+        "primary_axiom": "HC_DNA_001",
+        "secondary_axioms": [
+          "HC_DNA_002",
+          "HC_DNA_003",
+          "HC_DNA_004"
+        ],
+        "fusion_logic": "Any REFUSE verdict from HC_DNA_002 or HC_DNA_004 overrides overall compliance",
+        "paradigm_affinity": [
+          "DEDUCTION",
+          "INDUCTION",
+          "ABD_RCA"
+        ]
+      }
+    ],
+    "semantic_fingerprint": "pathology crossref MRI CT xray ultrasound blood test multimodal correlation axiom fusion stem cell oncology immunotherapy DNA genomics",
+    "g3fp_intent_map": {
+      "DEDUCTION": "multi_modal_compliance_fusion",
+      "ABD_RCA": "cross_domain_root_cause_triangulation",
+      "ABD_QA": "hypothesis_multi_evidence_validation",
+      "INDUCTION": "cross_modal_biomarker_pattern_learning"
+    },
+    "saa_hook": {
+      "eval_mode": "boolean",
+      "trigger_field": "crossref_valid",
+      "threshold_op": "eq",
+      "threshold_val": true,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "variables": {
+      "crossref_valid": "boolean"
+    },
+    "derivation_formula": {
+      "sympy_expr": "Piecewise((0, crossref_valid), (1, True))",
+      "variables": [
+        "crossref_valid"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "MATH_GEN_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "MATH_FOUNDATION",
+    "subdomain": "population_genetics",
+    "name": "Hardy-Weinberg Equilibrium (HWE) Deviation Gate",
+    "description": "Tests whether observed genotype frequencies deviate from HWE expectations using chi-square. p<0.05 flags population stratification, selection, or genotyping error — mandatory QC before GWAS.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "HWE chi2>3.841 (p<0.05) signals genotype frequency deviation — check for population stratification, inbreeding, or batch effects before GWAS.",
+    "entity_keywords": [
+      "hardy-weinberg",
+      "equilibrium",
+      "(hwe)",
+      "deviation",
+      "gate",
+      "population",
+      "genetics"
+    ],
+    "required_fields": [
+      {
+        "field": "hwe_chi2_stat",
+        "unit": "chi2",
+        "bounds": [
+          0,
+          1000
+        ],
+        "alert_max": 3.841
+      }
+    ],
+    "optional_fields": [],
+    "expression_latex": "p^2 + 2pq + q^2 = 1;\\quad \\chi^2 = \\sum\\frac{(O-E)^2}{E}",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "hwe_chi2 - 3.841",
+      "variables": {
+        "hwe_chi2": {
+          "maps_to_field": "hwe_chi2_stat",
+          "unit": "chi2",
+          "bounds": [
+            0,
+            1000
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value": 3.841
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value": 3.841
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "MATH_GEN_001_FORMULA",
+      "sympy_expr": "hwe_chi2 - 3.841",
+      "variables": {
+        "hwe_chi2": {
+          "maps_to_field": "hwe_chi2_stat",
+          "unit": "chi2",
+          "bounds": [
+            0,
+            1000
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value": 3.841
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value": 3.841
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "hwe_compliance_gate",
+      "ABD_RCA": "population_stratification_rca",
+      "ABD_QA": "gwas_qc_hypothesis",
+      "INDUCTION": "allele_frequency_pattern"
+    },
+    "xai_narrator_hint": "HWE chi2>3.841 (p<0.05) signals genotype frequency deviation — check for population stratification, inbreeding, or batch effects before GWAS.",
+    "contradiction_axioms": [],
+    "cascade_to": [
+      "MATH_GEN_002"
+    ]
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "MATH_GEN_002",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "MATH_FOUNDATION",
+    "subdomain": "information_theory",
+    "name": "Shannon Genetic Diversity Index (H')",
+    "description": "Shannon entropy H' = -Σ(p_i * ln(p_i)) quantifies allelic diversity at a locus. H'<0.5 indicates low diversity (bottleneck risk); H'>2.0 indicates high polymorphism.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "Shannon H'<0.5 flags low genetic diversity — assess founder effect, genetic drift, or selective sweep in study population.",
+    "entity_keywords": [
+      "shannon",
+      "genetic",
+      "diversity",
+      "index",
+      "(h')",
+      "information",
+      "theory"
+    ],
+    "required_fields": [
+      {
+        "field": "shannon_diversity_index",
+        "unit": "bits",
+        "bounds": [
+          0,
+          10
+        ],
+        "alert_min": 0.5
+      }
+    ],
+    "optional_fields": [],
+    "expression_latex": "H' = -\\sum_{i} p_i \\ln p_i",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "shannon_h - 0.5",
+      "variables": {
+        "shannon_h": {
+          "maps_to_field": "shannon_diversity_index",
+          "unit": "bits",
+          "bounds": [
+            0,
+            10
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0.5
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0.5
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "MATH_GEN_002_FORMULA",
+      "sympy_expr": "shannon_h - 0.5",
+      "variables": {
+        "shannon_h": {
+          "maps_to_field": "shannon_diversity_index",
+          "unit": "bits",
+          "bounds": [
+            0,
+            10
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0.5
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0.5
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "genetic_diversity_gate",
+      "ABD_RCA": "bottleneck_diversity_loss_rca",
+      "INDUCTION": "diversity_population_pattern",
+      "ABD_QA": "allelic_richness_hypothesis"
+    },
+    "xai_narrator_hint": "Shannon H'<0.5 flags low genetic diversity — assess founder effect, genetic drift, or selective sweep in study population.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "MATH_GEN_003",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "MATH_FOUNDATION",
+    "subdomain": "thermodynamics",
+    "name": "Gibbs Free Energy — DNA/RNA Folding Stability (ΔG)",
+    "description": "ΔG = ΔH - T·ΔS determines thermodynamic stability of nucleic acid secondary structures. ΔG < -30 kcal/mol indicates strong stable hairpin/stem-loop; critical for siRNA and CRISPR guide design.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "ΔG>-1 kcal/mol suggests thermodynamically unstable guide/siRNA — redesign sequence or adjust salt/temperature conditions.",
+    "entity_keywords": [
+      "gibbs",
+      "free",
+      "energy",
+      "—",
+      "dna/rna",
+      "folding",
+      "stability",
+      "(δg)",
+      "thermodynamics"
+    ],
+    "required_fields": [
+      {
+        "field": "dna_folding_dG_kcal_mol",
+        "unit": "kcal/mol",
+        "bounds": [
+          -200,
+          50
+        ],
+        "alert_max": -1.0
+      }
+    ],
+    "optional_fields": [],
+    "expression_latex": "\\Delta G = \\Delta H - T \\cdot \\Delta S",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "delta_G - (-30)",
+      "variables": {
+        "delta_G": {
+          "maps_to_field": "dna_folding_dG_kcal_mol",
+          "unit": "kcal/mol",
+          "bounds": [
+            -200,
+            50
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value": -1.0
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value": -1.0
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "MATH_GEN_003_FORMULA",
+      "sympy_expr": "delta_G - (-30)",
+      "variables": {
+        "delta_G": {
+          "maps_to_field": "dna_folding_dG_kcal_mol",
+          "unit": "kcal/mol",
+          "bounds": [
+            -200,
+            50
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value": -1.0
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value": -1.0
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "nucleic_acid_stability_gate",
+      "ABD_QA": "crispr_guide_stability_hypothesis",
+      "ABD_RCA": "misfolding_rca",
+      "INDUCTION": "secondary_structure_pattern"
+    },
+    "xai_narrator_hint": "ΔG>-1 kcal/mol suggests thermodynamically unstable guide/siRNA — redesign sequence or adjust salt/temperature conditions.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "MATH_GEN_004",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "MATH_FOUNDATION",
+    "subdomain": "enzyme_kinetics",
+    "name": "Michaelis-Menten Enzyme Kinetics (DNA Polymerase Efficiency)",
+    "description": "v = Vmax * [S] / (Km + [S]). Catalytic efficiency kcat/Km ≥ 10⁵ M⁻¹s⁻¹ is the standard threshold for biologically competent DNA polymerases and restriction enzymes.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "kcat/Km <1e5 M⁻¹s⁻¹ indicates suboptimal enzyme — verify dNTP concentration, pH, Mg²⁺ and reaction temperature.",
+    "entity_keywords": [
+      "michaelis-menten",
+      "enzyme",
+      "kinetics",
+      "(dna",
+      "polymerase",
+      "efficiency)",
+      "enzyme",
+      "kinetics"
+    ],
+    "required_fields": [
+      {
+        "field": "enzyme_catalytic_efficiency",
+        "unit": "M-1s-1",
+        "bounds": [
+          0,
+          1000000000000.0
+        ],
+        "alert_min": 100000.0
+      }
+    ],
+    "optional_fields": [],
+    "expression_latex": "v = \\frac{V_{max} \\cdot [S]}{K_m + [S]};\\quad \\eta = k_{cat}/K_m",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "kcat_over_Km - 1e5",
+      "variables": {
+        "kcat_over_Km": {
+          "maps_to_field": "enzyme_catalytic_efficiency",
+          "unit": "M-1s-1",
+          "bounds": [
+            0,
+            1000000000000.0
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 100000.0
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 100000.0
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "MATH_GEN_004_FORMULA",
+      "sympy_expr": "kcat_over_Km - 1e5",
+      "variables": {
+        "kcat_over_Km": {
+          "maps_to_field": "enzyme_catalytic_efficiency",
+          "unit": "M-1s-1",
+          "bounds": [
+            0,
+            1000000000000.0
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 100000.0
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 100000.0
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "enzyme_efficiency_gate",
+      "ABD_RCA": "polymerase_fidelity_rca",
+      "ABD_QA": "pcr_efficiency_hypothesis",
+      "INDUCTION": "kinetics_optimisation_pattern"
+    },
+    "xai_narrator_hint": "kcat/Km <1e5 M⁻¹s⁻¹ indicates suboptimal enzyme — verify dNTP concentration, pH, Mg²⁺ and reaction temperature.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "MATH_GEN_005",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "MATH_FOUNDATION",
+    "subdomain": "tumour_dynamics",
+    "name": "Gompertz Tumour Growth Model (Doubling Time Gate)",
+    "description": "N(t) = N0 * exp(a/b * (1 - exp(-b*t))). Tumour doubling time Td = ln(2)/b. Td < 30 days (b > 0.023/day) classifies rapid-growth tumour requiring immediate intervention.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "Tumour Td<30 days indicates aggressive growth — escalate treatment; validate with serial imaging using RECIST 1.1.",
+    "entity_keywords": [
+      "gompertz",
+      "tumour",
+      "growth",
+      "model",
+      "(doubling",
+      "time",
+      "gate)",
+      "tumour",
+      "dynamics"
+    ],
+    "required_fields": [
+      {
+        "field": "tumour_doubling_time_days",
+        "unit": "days",
+        "bounds": [
+          1,
+          3650
+        ],
+        "alert_min": 30
+      }
+    ],
+    "optional_fields": [],
+    "expression_latex": "N_t = N0 * exp((a/b) * (1 - exp(-b * t)))",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "tumour_doubling_time_days - 30",
+      "variables": {
+        "tumour_doubling_time_days": {
+          "maps_to_field": "tumour_doubling_time_days",
+          "unit": "days",
+          "bounds": [
+            1,
+            3650
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 30
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 30
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "MATH_GEN_005_FORMULA",
+      "sympy_expr": "tumour_doubling_time_days - 30",
+      "variables": {
+        "tumour_doubling_time_days": {
+          "maps_to_field": "tumour_doubling_time_days",
+          "unit": "days",
+          "bounds": [
+            1,
+            3650
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 30
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 30
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "tumour_growth_rate_gate",
+      "ABD_RCA": "rapid_growth_rca",
+      "ABD_QA": "treatment_urgency_hypothesis",
+      "INDUCTION": "growth_kinetics_pattern"
+    },
+    "xai_narrator_hint": "Tumour Td<30 days indicates aggressive growth — escalate treatment; validate with serial imaging using RECIST 1.1.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "MATH_GEN_006",
+    "version": "1.0.0",
+    "mode": "abduction",
+    "paradigm": "ABD_QA",
+    "domain": "MATH_FOUNDATION",
+    "subdomain": "statistical_mechanics",
+    "name": "Boltzmann Population Distribution — Mutation Energy Landscape",
+    "description": "P(state_i) = exp(-E_i/kT) / Z quantifies the probability of a genomic state under thermal fluctuation. Used in protein folding and mutation fitness landscape modelling.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "Boltzmann fitness P<0.5 suggests energetically unfavourable mutation state — correlate with ΔΔG protein stability predictions and population frequency.",
+    "entity_keywords": [
+      "boltzmann",
+      "population",
+      "distribution",
+      "—",
+      "mutation",
+      "energy",
+      "landscape",
+      "statistical",
+      "mechanics"
+    ],
+    "required_fields": [
+      {
+        "field": "mutation_fitness_probability",
+        "unit": "probability",
+        "bounds": [
+          0,
+          1
+        ],
+        "alert_min": 0.5
+      }
+    ],
+    "optional_fields": [],
+    "expression_latex": "P_i = \\frac{e^{-E_i/k_BT}}{Z};\\quad Z = \\sum_j e^{-E_j/k_BT}",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "boltzmann_fitness_score - 0.5",
+      "variables": {
+        "boltzmann_fitness_score": {
+          "maps_to_field": "mutation_fitness_probability",
+          "unit": "probability",
+          "bounds": [
+            0,
+            1
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0.5
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0.5
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "MATH_GEN_006_FORMULA",
+      "sympy_expr": "boltzmann_fitness_score - 0.5",
+      "variables": {
+        "boltzmann_fitness_score": {
+          "maps_to_field": "mutation_fitness_probability",
+          "unit": "probability",
+          "bounds": [
+            0,
+            1
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0.5
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0.5
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "ABD_QA": "mutation_fitness_landscape_hypothesis",
+      "DEDUCTION": "thermodynamic_mutation_gate",
+      "ABD_RCA": "deleterious_mutation_rca",
+      "INDUCTION": "energy_landscape_pattern"
+    },
+    "xai_narrator_hint": "Boltzmann fitness P<0.5 suggests energetically unfavourable mutation state — correlate with ΔΔG protein stability predictions and population frequency.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "MATH_GEN_007",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "MATH_FOUNDATION",
+    "subdomain": "population_genetics",
+    "name": "Wright-Fisher Genetic Drift Index (Effective Population Size Ne)",
+    "description": "Var(Δp) = p(1-p)/(2Ne). Ne < 50 triggers critical drift risk with allele fixation probability > 50% per generation — extinction/bottleneck threshold.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "Ne<50 triggers critical drift threshold — allele fixation/loss highly probable; flag for evolutionary rescue or diversity supplementation.",
+    "entity_keywords": [
+      "wright-fisher",
+      "genetic",
+      "drift",
+      "index",
+      "(effective",
+      "population",
+      "size",
+      "ne)",
+      "population",
+      "genetics"
+    ],
+    "required_fields": [
+      {
+        "field": "Ne",
+        "unit": "individuals",
+        "bounds": [
+          1,
+          1000000000.0
+        ],
+        "alert_min": 50
+      }
+    ],
+    "optional_fields": [],
+    "expression_latex": "\\text{Var}(\\Delta p) = \\frac{p(1-p)}{2N_e}",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "effective_population_size - 50",
+      "variables": {
+        "effective_population_size": {
+          "maps_to_field": "Ne",
+          "unit": "individuals",
+          "bounds": [
+            1,
+            1000000000.0
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 50
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 50
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "MATH_GEN_007_FORMULA",
+      "sympy_expr": "effective_population_size - 50",
+      "variables": {
+        "effective_population_size": {
+          "maps_to_field": "Ne",
+          "unit": "individuals",
+          "bounds": [
+            1,
+            1000000000.0
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 50
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 50
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "genetic_drift_gate",
+      "ABD_RCA": "population_bottleneck_rca",
+      "INDUCTION": "drift_fixation_pattern",
+      "ABD_QA": "conservation_genetics_hypothesis"
+    },
+    "xai_narrator_hint": "Ne<50 triggers critical drift threshold — allele fixation/loss highly probable; flag for evolutionary rescue or diversity supplementation.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "MATH_GEN_008",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "MATH_FOUNDATION",
+    "subdomain": "survival_analysis",
+    "name": "Log-Rank Survival Difference (Kaplan-Meier Hazard Ratio Gate)",
+    "description": "HR = λ_treatment / λ_control from Cox proportional hazards. HR < 0.7 with 95% CI upper bound < 1.0 defines statistically significant survival benefit for immunotherapy/gene therapy endpoints.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "HR<0.7 with CI upper<1.0 confirms significant survival benefit — validate with KM curves, log-rank p<0.05, and median OS/PFS.",
+    "entity_keywords": [
+      "log-rank",
+      "survival",
+      "difference",
+      "(kaplan-meier",
+      "hazard",
+      "ratio",
+      "gate)",
+      "survival",
+      "analysis"
+    ],
+    "required_fields": [
+      {
+        "field": "cox_hr",
+        "unit": "ratio",
+        "bounds": [
+          0,
+          10
+        ],
+        "alert_max": 0.7
+      },
+      {
+        "field": "hr_ci_upper",
+        "unit": "ratio",
+        "bounds": [
+          0,
+          10
+        ],
+        "alert_max": 1.0
+      }
+    ],
+    "optional_fields": [],
+    "expression_latex": "\\text{HR} = \\frac{\\lambda_{trt}}{\\lambda_{ctrl}} < 0.7",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "1.0 - hazard_ratio",
+      "variables": {
+        "hazard_ratio": {
+          "maps_to_field": "cox_hr",
+          "unit": "ratio",
+          "bounds": [
+            0,
+            10
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value": 0.7
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value": 0.7
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "MATH_GEN_008_FORMULA",
+      "sympy_expr": "1.0 - hazard_ratio",
+      "variables": {
+        "hazard_ratio": {
+          "maps_to_field": "cox_hr",
+          "unit": "ratio",
+          "bounds": [
+            0,
+            10
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value": 0.7
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value": 0.7
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "survival_benefit_gate",
+      "ABD_RCA": "treatment_failure_survival_rca",
+      "ABD_QA": "os_pfs_hypothesis",
+      "INDUCTION": "survival_curve_pattern"
+    },
+    "xai_narrator_hint": "HR<0.7 with CI upper<1.0 confirms significant survival benefit — validate with KM curves, log-rank p<0.05, and median OS/PFS.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "MATH_GEN_009",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "MATH_FOUNDATION",
+    "subdomain": "pharmacodynamics",
+    "name": "Hill Equation — Receptor-Drug Binding Cooperativity (EC50 Gate)",
+    "description": "E = Emax * C^n / (EC50^n + C^n). Hill coefficient n>1 = positive cooperativity; EC50 is the half-maximal effective concentration. Used for CAR-T antigen density and checkpoint inhibitor binding.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "Drug C/EC50 ratio <1 means sub-therapeutic — increase dose or investigate receptor downregulation/resistance; Hill n<0.5 suggests negative cooperativity.",
+    "entity_keywords": [
+      "hill",
+      "equation",
+      "—",
+      "receptor-drug",
+      "binding",
+      "cooperativity",
+      "(ec50",
+      "gate)",
+      "pharmacodynamics"
+    ],
+    "required_fields": [
+      {
+        "field": "drug_conc_nM",
+        "unit": "nM"
+      },
+      {
+        "field": "ec50_nM",
+        "unit": "nM"
+      },
+      {
+        "field": "hill_n",
+        "unit": "dimensionless",
+        "bounds": [
+          0.1,
+          5
+        ]
+      }
+    ],
+    "optional_fields": [],
+    "expression_latex": "E = \\frac{E_{max} \\cdot C^n}{EC_{50}^n + C^n}",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "drug_concentration_nM - ec50_nM",
+      "variables": {
+        "drug_concentration_nM": {
+          "maps_to_field": "drug_conc_nM",
+          "unit": "nM",
+          "bounds": [
+            0,
+            1000000.0
+          ]
+        },
+        "ec50_nM": {
+          "maps_to_field": "ec50_nM",
+          "unit": "nM",
+          "bounds": [
+            0,
+            1000000.0
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "MATH_GEN_009_FORMULA",
+      "sympy_expr": "drug_concentration_nM - ec50_nM",
+      "variables": {
+        "drug_concentration_nM": {
+          "maps_to_field": "drug_conc_nM",
+          "unit": "nM",
+          "bounds": [
+            0,
+            1000000.0
+          ]
+        },
+        "ec50_nM": {
+          "maps_to_field": "ec50_nM",
+          "unit": "nM",
+          "bounds": [
+            0,
+            1000000.0
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "drug_binding_efficacy_gate",
+      "ABD_QA": "pd_response_hypothesis",
+      "ABD_RCA": "resistance_rca",
+      "INDUCTION": "dose_response_pattern"
+    },
+    "xai_narrator_hint": "Drug C/EC50 ratio <1 means sub-therapeutic — increase dose or investigate receptor downregulation/resistance; Hill n<0.5 suggests negative cooperativity.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  }
+]

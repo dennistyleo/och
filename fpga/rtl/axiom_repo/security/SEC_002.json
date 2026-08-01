@@ -1,0 +1,1 @@
+{"id":"SEC_002","name":"Input Sanitization","type":"D","level":"L3","statement":"All inputs must be sanitized before use","severity":"CRITICAL"}

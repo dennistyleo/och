@@ -1,0 +1,79 @@
+/* --- OP-01: INGESTION BIBLE GEOMETRY (v1.25) --- */
+
+.op01-header-geometry {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    z-index: 0;
+    pointer-events: none;
+}
+
+#stage-op-01 {
+    display: flex;
+    top: 150px; /* Bible top margin for OP-01 */
+}
+
+/* LEFT 40% GRID */
+.op01-left-container {
+    flex: 0 0 calc(40% - 10px);
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}
+
+/* ZONE 1 (20% Width, Seamless) */
+.op01-zone1-seamless {
+    flex: 0 0 18%;
+    display: flex;
+    flex-direction: column;
+    gap: 0 !important;
+    background: #000;
+    border-radius: var(--r15);
+    overflow: hidden;
+}
+
+.op01-zone1-seamless video {
+    width: 100%;
+    height: 33.33%;
+    object-fit: cover; /* Prevent squishing */
+    display: block;
+}
+
+/* ZONE 2 (82% Width, Black Spec) */
+.op01-zone2-black {
+    flex: 0 0 calc(82% - 15px);
+}
+
+/* RIGHT 60% GRID */
+.op01-right-container {
+    flex: 0 0 calc(60% - 10px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.op01-zone3-workbench {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 30px 50px;
+}
+
+.workbench-icon {
+    width: 200px !important;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.op01-zone4-row {
+    flex: 1.5;
+    display: flex;
+    gap: 20px;
+}
+
+.op01-zone4-1 { flex: 1; }
+.op01-zone4-2-white { flex: 1; background: #fff !important; }

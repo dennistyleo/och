@@ -1,0 +1,366 @@
+[
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "DEDUCT_CAUSAL_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "GENERAL",
+    "subdomain": "Causal Closure",
+    "name": "Temporal Antecedence Gate",
+    "description": "Verifies that every declared cause-effect pair satisfies strict temporal ordering: the cause timestamp must precede the effect timestamp. A violation (t_cause >= t_effect) indicates an acausal relationship — either a data recording error, a feedback loop not modelled as such, or a genuine causal chain inversion that must be escalated to HITL.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "expression_latex": "\\forall (X \\to Y) \\in \\mathcal{C} : t_X < t_Y",
+    "derivation_formula": {
+      "sympy_expr": "t_effect - t_cause",
+      "variables": {
+        "t_cause": {
+          "maps_to_field": "cause_timestamp_unix",
+          "unit": "seconds_unix",
+          "bounds": [
+            0.0,
+            null
+          ]
+        },
+        "t_effect": {
+          "maps_to_field": "effect_timestamp_unix",
+          "unit": "seconds_unix",
+          "bounds": [
+            0.0,
+            null
+          ]
+        }
+      },
+      "constraints": [],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">",
+          "value": 0,
+          "note": "t_effect > t_cause — causal ordering holds"
+        },
+        "REFUSE": {
+          "operator": "<=",
+          "value": 0,
+          "note": "t_effect <= t_cause — acausal or simultaneous, reject"
+        },
+        "UNDERDETERMINED": {
+          "condition": "either timestamp is null"
+        }
+      },
+      "evaluation_mode": "per_pair",
+      "aggregation": "ALL must ALLOW — single REFUSE causes overall REFUSE"
+    },
+    "required_fields": [
+      {
+        "field": "cause_timestamp_unix",
+        "unit": "seconds_unix",
+        "bounds": [
+          0.0,
+          null
+        ]
+      },
+      {
+        "field": "effect_timestamp_unix",
+        "unit": "seconds_unix",
+        "bounds": [
+          0.0,
+          null
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "causal_pair_label",
+        "unit": "string",
+        "bounds": []
+      }
+    ],
+    "semantic_fingerprint": "temporal antecedence cause effect timestamp causal ordering acausal feedback loop inversion",
+    "contradiction_axioms": [],
+    "spatial_tension": "HIGH",
+    "layer_2_summary": {
+      "explains": [
+        "CAUSAL_ORDERING_VALIDITY",
+        "ACAUSALITY_DETECTION"
+      ],
+      "fails_to_explain": [
+        "CONFOUNDING_VARIABLE_PRESENCE"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "boolean",
+      "trigger_field": "causal_path_valid",
+      "threshold_op": "eq",
+      "threshold_val": true,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CAUSAL_DEDUCTION",
+      "semantic_label": "Causal Path Deduction",
+      "reasoning_chain": [
+        "Validate causal graph",
+        "Check path admissibility",
+        "Flag VIOLATION if causal chain broken"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "DEDUCT_CAUSAL_002",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "GENERAL",
+    "subdomain": "Causal Closure",
+    "name": "Functional Closure Condition",
+    "description": "Verifies that the system is causally closed: all state transitions must be derivable from the declared internal state vector without external stochastic injection. The closure ratio is computed as internally-explained transitions divided by total transitions. In deduction mode, stochastic injection is prohibited — any non-deterministic external driver causes a REFUSE.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.9,
+    "hallucination_lock": true,
+    "expression_latex": "\\rho_{closure} = \\frac{|T_{internal}|}{|T_{total}|} \\geq \\rho_{min}",
+    "derivation_formula": {
+      "sympy_expr": "T_internal / T_total - rho_min",
+      "variables": {
+        "T_internal": {
+          "maps_to_field": "internally_explained_transitions",
+          "unit": "integer",
+          "bounds": [
+            0,
+            null
+          ]
+        },
+        "T_total": {
+          "maps_to_field": "total_transitions",
+          "unit": "integer",
+          "bounds": [
+            1,
+            null
+          ]
+        },
+        "rho_min": {
+          "maps_to_field": "closure_ratio_threshold",
+          "unit": "dimensionless",
+          "bounds": [
+            0.0,
+            1.0
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "expr": "T_total",
+          "condition": "> 0",
+          "label": "division_guard"
+        }
+      ],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0,
+          "note": "T_internal/T_total >= rho_min — system is causally closed"
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0,
+          "note": "Closure ratio below threshold — stochastic injection detected"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null or T_total == 0"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "internally_explained_transitions",
+        "unit": "integer",
+        "bounds": [
+          0,
+          null
+        ]
+      },
+      {
+        "field": "total_transitions",
+        "unit": "integer",
+        "bounds": [
+          1,
+          null
+        ]
+      },
+      {
+        "field": "closure_ratio_threshold",
+        "unit": "dimensionless",
+        "bounds": [
+          0.0,
+          1.0
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "stochastic_driver_ids",
+        "unit": "array_string",
+        "bounds": []
+      }
+    ],
+    "semantic_fingerprint": "functional closure causal determinism stochastic injection state transition internal derivable",
+    "contradiction_axioms": [],
+    "spatial_tension": "MEDIUM",
+    "layer_2_summary": {
+      "explains": [
+        "CAUSAL_COMPLETENESS",
+        "STOCHASTIC_INJECTION_RISK"
+      ],
+      "fails_to_explain": [
+        "TEMPORAL_ORDERING_OF_TRANSITIONS"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "boolean",
+      "trigger_field": "causal_path_valid",
+      "threshold_op": "eq",
+      "threshold_val": true,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CAUSAL_DEDUCTION",
+      "semantic_label": "Causal Path Deduction",
+      "reasoning_chain": [
+        "Validate causal graph",
+        "Check path admissibility",
+        "Flag VIOLATION if causal chain broken"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "DEDUCT_CAUSAL_003",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "GENERAL",
+    "subdomain": "Causal Closure",
+    "name": "Root Cause Cardinality Bound",
+    "description": "Verifies that the identified root cause set R is sparse relative to the total node vector N. Empirically, root causes constitute 0.1%–1% of nodes (α ∈ [0.001, 0.01]). A root cause set exceeding α_max·N indicates either over-attribution (too many nodes blamed) or a systemic failure mode requiring BLOCK-level escalation rather than targeted RCA.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "hallucination_lock": true,
+    "expression_latex": "|\\mathcal{R}| \\leq \\alpha_{max} \\cdot N, \\quad \\alpha_{max} \\in [0.001,\\, 0.01]",
+    "derivation_formula": {
+      "sympy_expr": "R_count - alpha_max * N_total",
+      "variables": {
+        "R_count": {
+          "maps_to_field": "root_cause_node_count",
+          "unit": "integer",
+          "bounds": [
+            0,
+            null
+          ]
+        },
+        "N_total": {
+          "maps_to_field": "total_node_count",
+          "unit": "integer",
+          "bounds": [
+            1,
+            null
+          ]
+        },
+        "alpha_max": {
+          "maps_to_field": "cardinality_bound",
+          "unit": "dimensionless",
+          "bounds": [
+            0.001,
+            0.01
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "expr": "N_total",
+          "condition": "> 0",
+          "label": "division_guard"
+        }
+      ],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value": 0,
+          "note": "R_count <= alpha_max * N — sparse root cause set, RCA valid"
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value": 0,
+          "note": "R_count > alpha_max * N — over-attributed, escalate to BLOCK"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "root_cause_node_count",
+        "unit": "integer",
+        "bounds": [
+          0,
+          null
+        ]
+      },
+      {
+        "field": "total_node_count",
+        "unit": "integer",
+        "bounds": [
+          1,
+          null
+        ]
+      },
+      {
+        "field": "cardinality_bound",
+        "unit": "dimensionless",
+        "bounds": [
+          0.001,
+          0.01
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "root_cause_node_ids",
+        "unit": "array_string",
+        "bounds": []
+      }
+    ],
+    "semantic_fingerprint": "root cause cardinality sparsity node count RCA over-attribution systemic failure bound alpha",
+    "contradiction_axioms": [],
+    "spatial_tension": "MEDIUM",
+    "layer_2_summary": {
+      "explains": [
+        "ROOT_CAUSE_SPARSITY",
+        "OVER_ATTRIBUTION_RISK"
+      ],
+      "fails_to_explain": [
+        "IDENTITY_OF_ROOT_CAUSE_NODES"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "boolean",
+      "trigger_field": "causal_path_valid",
+      "threshold_op": "eq",
+      "threshold_val": true,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CAUSAL_DEDUCTION",
+      "semantic_label": "Causal Path Deduction",
+      "reasoning_chain": [
+        "Validate causal graph",
+        "Check path admissibility",
+        "Flag VIOLATION if causal chain broken"
+      ]
+    }
+  }
+]

@@ -1,0 +1,1 @@
+{"id":"CONC_003","name":"Thread Safety","type":"D","level":"L3","statement":"Reentrant functions must be thread-safe","severity":"HIGH"}

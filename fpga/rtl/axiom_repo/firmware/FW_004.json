@@ -1,0 +1,1 @@
+{"id":"FW_004","name":"Watchdog Timer","type":"D","level":"L8","statement":"Critical loops must reset watchdog","severity":"HIGH"}

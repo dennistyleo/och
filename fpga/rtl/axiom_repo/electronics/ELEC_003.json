@@ -1,0 +1,1 @@
+{"id":"ELEC_003","name":"Thermal De-rating","type":"D","level":"L8","statement":"Component junction temperature must not exceed Tj_max minus thermal de-rating margin (10 °C floor)","severity":"CRITICAL"}

@@ -1,0 +1,1 @@
+{"id":"RES_001","name":"Conservation of Memory","type":"D","level":"L3","statement":"Every allocation must have deallocation","severity":"HIGH"}

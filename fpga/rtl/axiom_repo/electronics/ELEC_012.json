@@ -1,0 +1,1 @@
+{"id":"ELEC_012","name":"Galvanic Isolation","type":"D","level":"L8","statement":"High-voltage rails (>60 V DC or >42.4 V AC peak) must be galvanically isolated from logic ground","severity":"CRITICAL"}

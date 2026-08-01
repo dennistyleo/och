@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFP PROPOSAL GENERATOR | Sovereign OCM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Calibri&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/sovereign-accents-rounded.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background:#000;
+            color:#eee;
+            font-family: Calibri, 微軟正黑體, sans-serif;
+            min-height:100vh;
+            background-image: url('LandingPage_Background.png');
+            background-size:cover;
+            background-attachment:fixed;
+        }
+        .container { max-width:1100px; margin:0 auto; padding:48px clamp(16px,5vw,60px); }
+
+        /* Header */
+        .rfp-header {
+            display:flex; align-items:center; gap:18px;
+            border-bottom:1px solid #222; padding-bottom:24px; margin-bottom:40px;
+        }
+        .rfp-header img { height:48px; filter:drop-shadow(0 0 12px rgba(255,107,26,0.5)); }
+        .rfp-badge {
+            font-family:'Orbitron',sans-serif;
+            font-size:10px; letter-spacing:4px; color:#ff6b1a;
+            background:rgba(255,107,26,0.08); border:1px solid rgba(255,107,26,0.3);
+            border-radius:4px; padding:4px 10px; margin-bottom:6px; display:inline-block;
+        }
+        .rfp-title {
+            font-family:'Orbitron',sans-serif;
+            font-size:clamp(1.2rem,3vw,2.2rem);
+            font-weight:900; letter-spacing:3px;
+            background:linear-gradient(135deg,#ff8c42,#ff6b1a,#ff4500);
+            -webkit-background-clip:text; background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+        .rfp-subtitle { color:#bbb;font-weight:600; font-size:0.9rem; margin-top:6px; }
+
+        /* Pricing Info Strip */
+        .pricing-strip {
+            background:rgba(255,107,26,0.06);
+            border:1px solid rgba(255,107,26,0.25);
+            border-radius:10px; padding:16px 22px;
+            display:flex; align-items:center; gap:16px;
+            margin-bottom:32px; flex-wrap:wrap;
+        }
+        .pricing-tier {
+            font-size:11px; font-weight:700; letter-spacing:2px;
+            color:#ff8c42; text-transform:uppercase;
+        }
+        .pricing-desc { color:#ccc;font-weight:600; font-size:12px; flex:1; }
+        .pricing-link {
+            font-size:11px; color:#ff6b1a; text-decoration:none;
+            border:1px solid rgba(255,107,26,0.4); border-radius:4px;
+            padding:4px 12px; transition:all .2s;
+        }
+        .pricing-link:hover { background:rgba(255,107,26,0.15); color:#ff8c42; }
+
+        /* Feature Tags */
+        .feature-tags { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px; }
+        .tag {
+            font-size:11px; color:#ddd; font-weight:700; padding:5px 12px;
+            border:1px solid #444; border-radius:4px; letter-spacing:1px;
+        }
+        .tag.active { color:#ff8c42; border-color:rgba(255,107,26,0.5); background:rgba(255,107,26,0.08); font-weight:700; }
+
+        /* Upload Zone */
+        .upload-section {
+            background:rgba(5,5,5,0.7);
+            border:1.5px solid rgba(255,107,26,0.25);
+            border-radius:16px; padding:36px 32px;
+            backdrop-filter:blur(12px); margin-bottom:28px;
+        }
+        .upload-section h2 {
+            font-family:'Orbitron',sans-serif;
+            font-size:14px; letter-spacing:3px; color:#ff8c42;
+            margin-bottom:8px; text-transform:uppercase;
+        }
+        .upload-desc { color:#ccc;font-weight:600; font-size:12px; margin-bottom:24px; line-height:1.7; }
+
+        /* Multi-file drop zone */
+        .drop-zone {
+            border:2px dashed rgba(255,107,26,0.35);
+            border-radius:12px; padding:48px 24px;
+            text-align:center; cursor:pointer;
+            transition:all .25s; position:relative;
+            background:rgba(255,107,26,0.03);
+        }
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color:#ff6b1a;
+            background:rgba(255,107,26,0.08);
+            box-shadow:0 0 30px rgba(255,107,26,0.12);
+        }
+        .drop-zone input[type=file] {
+            position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
+        }
+        .dz-icon { font-size:2.5rem; margin-bottom:12px; }
+        .dz-label { color:#ff8c42; font-size:1rem; font-weight:700; letter-spacing:2px; margin-bottom:8px; }
+        .dz-sub { color:#bbb;font-weight:600; font-size:11px; letter-spacing:1px; }
+
+        /* File list */
+        #rfp-file-list {
+            margin-top:20px; display:flex; flex-direction:column; gap:8px;
+        }
+        .rfp-file-item {
+            display:flex; align-items:center; gap:12px;
+            background:rgba(255,107,26,0.06); border:1px solid rgba(255,107,26,0.2);
+            border-radius:8px; padding:10px 16px;
+        }
+        .rfp-file-icon { font-size:1.2rem; }
+        .rfp-file-name { flex:1; font-size:12px; color:#ccc; }
+        .rfp-file-size { font-size:10px; color:#bbb;font-weight:600; }
+        .rfp-file-remove {
+            background:none; border:none; color:#bbb;font-weight:600; cursor:pointer;
+            font-size:16px; line-height:1; padding:2px 6px;
+            border-radius:4px; transition:color .2s;
+        }
+        .rfp-file-remove:hover { color:#ff4444; }
+
+        /* Confirm CTA */
+        .cta-section { text-align:center; margin-top:32px; }
+        #btn-rfp-confirm {
+            font-family:'Orbitron',Calibri,sans-serif;
+            font-size:14px; font-weight:700; letter-spacing:3px;
+            padding:18px 48px; border-radius:10px;
+            border:1.5px solid rgba(255,107,26,0.5);
+            background:linear-gradient(135deg,rgba(255,107,26,0.12),rgba(255,69,0,0.06));
+            color:#e0a060; cursor:not-allowed; transition:all .25s;
+            display:inline-flex; align-items:center; gap:12px;
+            opacity:0.7;
+        }
+        #btn-rfp-confirm.ready {
+            opacity:1; pointer-events:auto; cursor:pointer;
+            color:#ff8c42;
+            border-color:#ff6b1a;
+            background:linear-gradient(135deg,rgba(255,107,26,0.22),rgba(255,69,0,0.12));
+        }
+        #btn-rfp-confirm.ready:hover {
+            background:rgba(255,107,26,0.35);
+            box-shadow:0 0 40px rgba(255,107,26,0.35);
+            transform:scale(1.02);
+        }
+        .cta-note { color:#e8e8e8; font-weight:700; font-size:12px; margin-top:14px; letter-spacing:1px; }
+
+        /* Back link */
+        .back-link {
+            display:inline-flex; align-items:center; gap:6px;
+            color:#ddd; font-weight:700; font-size:12px; letter-spacing:1px;
+            text-decoration:none; margin-bottom:32px;
+            transition:color .2s;
+        }
+        .back-link:hover { color:#ff8c42; }
+
+        /* Footer */
+        footer {
+            margin-top:60px; border-top:1px solid #1a1a1a;
+            padding-top:24px; text-align:center;
+            font-size:11px; letter-spacing:2px; color:#ddd; font-weight:600;
+        }
+
+        /* ── RFP Pricing Confirmation Modal ── */
+        #rfp-pricing-modal{display:none;position:fixed;inset:0;z-index:9999;
+          background:rgba(0,0,0,0.82);backdrop-filter:blur(6px);
+          align-items:center;justify-content:center}
+        #rfp-pricing-modal.open{display:flex}
+        .rfp-modal-box{background:#0d0700;border:1.5px solid rgba(255,107,26,0.5);
+          border-radius:14px;padding:36px 40px;max-width:620px;width:90%;
+          box-shadow:0 0 60px rgba(255,107,26,0.15)}
+        .rfp-modal-title{font-family:'Orbitron',sans-serif;font-size:1rem;
+          letter-spacing:4px;color:#ff8c42;margin-bottom:4px}
+        .rfp-modal-sub{color:#bbb;font-weight:600;font-size:11px;letter-spacing:1px;margin-bottom:24px}
+        .rfp-pricing-table{width:100%;border-collapse:collapse;margin-bottom:22px;font-size:12px}
+        .rfp-pricing-table th{color:#ff6b1a;font-size:9px;letter-spacing:2px;
+          text-transform:uppercase;padding:8px 12px;border-bottom:1px solid #2a1800;text-align:left}
+        .rfp-pricing-table td{padding:10px 12px;border-bottom:1px solid #1a0e00;color:#bbb}
+        .rfp-pricing-table tr.highlight td{background:rgba(255,107,26,0.08);color:#ff8c42;font-weight:700}
+        .rfp-pricing-table .check{color:#39ff14;font-size:14px}
+        .rfp-modal-files{background:rgba(255,107,26,0.06);border:1px solid rgba(255,107,26,0.2);
+          border-radius:8px;padding:12px 16px;margin-bottom:22px;font-size:11px;color:#aaa}
+        .rfp-modal-files strong{color:#ff8c42}
+        .rfp-modal-actions{display:flex;align-items:center;justify-content:space-between;gap:12px}
+        #btn-rfp-go{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:3px;
+          padding:14px 32px;border:1.5px solid #ff6b1a;border-radius:8px;
+          background:linear-gradient(135deg,rgba(255,107,26,0.25),rgba(255,69,0,0.15));
+          color:#ff8c42;cursor:pointer;transition:all .2s;font-weight:700}
+        #btn-rfp-go:hover{background:rgba(255,107,26,0.35);box-shadow:0 0 30px rgba(255,107,26,0.3)}
+        .rfp-modal-cancel{color:#555;font-size:11px;cursor:pointer;
+          text-decoration:underline;transition:color .2s}
+        .rfp-modal-cancel:hover{color:#aaa}
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="/" class="back-link">← BACK TO ENGINE SELECTION</a>
+
+    <!-- Header -->
+    <div class="rfp-header">
+        <img src="aichip-logo-home.png" onerror="this.src='seal_xrag_core_logo.png'" alt="AICHIP">
+        <div>
+            <div class="rfp-badge">🟠 RFP GENERATOR · SSO ENTERPRISE &amp; ABOVE</div>
+            <div class="rfp-title">RFP Proposal Generator</div>
+            <div class="rfp-subtitle">Anti-hallucination · Source_UID anchored · Ontology-grounded · BIS/GAIN compliant</div>
+        </div>
+    </div>
+
+    <!-- Pricing Strip -->
+    <div class="pricing-strip">
+        <span class="pricing-tier">🔒 Enterprise Only</span>
+        <span class="pricing-desc">This module requires SSO Enterprise or Sovereign Pro subscription. Each RFP generation consumes 1 RFP credit.</span>
+        <a href="/pricing.html#rfp" class="pricing-link" target="_blank">View Plans →</a>
+    </div>
+
+    <!-- Feature Tags -->
+    <div class="feature-tags">
+        <span class="tag active">⚙ OCM Double-Loop Verification</span>
+        <span class="tag active">🔗 Source_UID Anchoring</span>
+        <span class="tag active">📊 PCE / BIS 2026</span>
+        <span class="tag active">✦ Multi-File Ingestion</span>
+        <span class="tag active">🚫 Hallucination Circuit-Breaker</span>
+        <span class="tag">📄 Word + PDF Output</span>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="upload-section">
+        <h2>Step 1 — Upload Source Documents</h2>
+        <p class="upload-desc">
+            Upload your <strong style="color:#ff8c42;">product specification sheets</strong>,
+            <strong style="color:#ff8c42;">technical datasheets</strong>, pricing tables,
+            compliance certificates, or any supporting content to integrate into the RFP.
+            Multiple files are supported and strongly recommended for richer proposals.<br><br>
+            <span style="color:#bbb;font-weight:600;">Accepted: PDF, XLSX, DOCX, CSV, PNG, JPG · Max 20 MB per file · Up to 10 files</span>
+        </p>
+
+        <div class="drop-zone" id="rfp-drop-zone">
+            <input type="file" id="rfp-file-input" multiple
+                   accept=".pdf,.xlsx,.xls,.docx,.doc,.csv,.txt,.png,.jpg,.jpeg">
+            <div class="dz-icon">📂</div>
+            <div class="dz-label">DROP FILES HERE OR CLICK TO BROWSE</div>
+            <div class="dz-sub">Drag &amp; drop multiple files · PDF, XLSX, DOCX, CSV, Images</div>
+        </div>
+
+        <div id="rfp-file-list"></div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+        <button id="btn-rfp-confirm" onclick="_launchRFPPipeline()">
+            <span>⚡</span> CONFIRM &amp; START RFP GENERATION →
+        </button>
+        <div class="cta-note">
+            Your purpose is pre-confirmed as <strong style="color:#ff8c42;">RFP GENERATION</strong>.
+            The OCM will begin axiom election immediately after file scan.
+        </div>
+    </div>
+
+    
+<!-- RFP Pricing Confirmation Modal -->
+<div id="rfp-pricing-modal">
+  <div class="rfp-modal-box">
+    <div class="rfp-modal-title">⚡ GENERATE RFP — CONFIRM &amp; PROCEED</div>
+    <div class="rfp-modal-sub">Review your plan and file summary before launching the OCM pipeline</div>
+    <table class="rfp-pricing-table">
+      <thead><tr><th>Plan</th><th>Price / RFP</th><th>OCM Double-Loop</th><th>Source_UID</th><th>Multi-File</th></tr></thead>
+      <tbody>
+        <tr><td>Starter</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr class="highlight"><td>🏆 Enterprise</td><td>1 RFP Credit</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Sovereign Pro</td><td>Unlimited</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+      </tbody>
+    </table>
+    <div class="rfp-modal-files" id="rfp-modal-summary">—</div>
+    <div class="rfp-modal-actions">
+      <button id="btn-rfp-go" onclick="_confirmAndLaunch()">GENERATE RFP →</button>
+      <span class="rfp-modal-cancel" onclick="_closeRFPModal()">Cancel</span>
+    </div>
+  </div>
+</div>
+
+    <footer>AICHIP CORPORATION | © 2026. All rights reserved. | Sovereign OCM — RFP Module v1.0</footer>
+</div>
+
+<script>
+    const _files = [];
+
+    function _renderFileList() {
+        const list = document.getElementById('rfp-file-list');
+        const btn  = document.getElementById('btn-rfp-confirm');
+        list.innerHTML = _files.map((f, i) => `
+            <div class="rfp-file-item">
+                <span class="rfp-file-icon">${_fileIcon(f.name)}</span>
+                <span class="rfp-file-name">${_esc(f.name)}</span>
+                <span class="rfp-file-size">${(f.size / 1024).toFixed(1)} KB</span>
+                <button class="rfp-file-remove" onclick="_removeFile(${i})" title="Remove">✕</button>
+            </div>`).join('');
+        btn.classList.toggle('ready', _files.length > 0);
+    }
+
+    function _fileIcon(name) {
+        const ext = name.split('.').pop().toLowerCase();
+        return { pdf:'📄', xlsx:'📊', xls:'📊', docx:'📝', doc:'📝',
+                 csv:'📋', txt:'📃', png:'🖼', jpg:'🖼', jpeg:'🖼' }[ext] || '📁';
+    }
+
+    function _esc(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function _removeFile(i) {
+        _files.splice(i, 1);
+        _renderFileList();
+    }
+
+    function _addFiles(fileList) {
+        Array.from(fileList).forEach(f => {
+            if (_files.length >= 10) return;
+            if (!_files.find(x => x.name === f.name && x.size === f.size)) _files.push(f);
+        });
+        _renderFileList();
+    }
+
+    // File input change
+    document.getElementById('rfp-file-input').addEventListener('change', e => {
+        _addFiles(e.target.files);
+        e.target.value = ''; // reset so same file can be re-added if removed
+    });
+
+    // Drag & drop
+    const dz = document.getElementById('rfp-drop-zone');
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragleave', ()  => dz.classList.remove('drag-over'));
+    dz.addEventListener('drop', e => {
+        e.preventDefault(); dz.classList.remove('drag-over');
+        _addFiles(e.dataTransfer.files);
+    });
+
+    // Step 1: Show pricing confirmation modal
+    function _launchRFPPipeline() {
+        if (_files.length === 0) return;
+        const s = document.getElementById('rfp-modal-summary');
+        if (s) s.innerHTML = `<strong>${_files.length} file(s) queued:</strong> ` +
+            _files.map(f => f.name).join(' · ') +
+            `<br>Purpose pre-confirmed: <strong>RFP GENERATION</strong> · Credits: 1 RFP credit`;
+        document.getElementById('rfp-pricing-modal').classList.add('open');
+    }
+
+    function _closeRFPModal() {
+        document.getElementById('rfp-pricing-modal').classList.remove('open');
+    }
+
+    // Step 2: User confirmed in modal → store + navigate
+    function _confirmAndLaunch() {
+        if (_files.length === 0) return;
+        try {
+            sessionStorage.setItem('sovereign_mode', 'rfp');
+            sessionStorage.setItem('sovereign_confirmed_purpose', JSON.stringify({
+                purpose:   'RFP_GENERATION',
+                label:     'Generate RFP Proposal',
+                confirmed: true,
+                mode:      'rfp',
+                fileCount: _files.length,
+                fileNames: _files.map(f => f.name),
+                ts:        Date.now()
+            }));
+            sessionStorage.setItem('sovereign_rfp_file_count', String(_files.length));
+            sessionStorage.setItem('sovereign_rfp_file_names', JSON.stringify(_files.map(f => f.name)));
+        } catch(e) {}
+        _closeRFPModal();
+        window.location.href = '/op_01.html?mode=rfp&files=' + encodeURIComponent(_files.length);
+    }
+</script>
+</body>
+</html>

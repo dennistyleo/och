@@ -1,0 +1,54 @@
+/*
+ * SOVEREIGN MATRIX — NATIVE GOLD PILL SCROLLBARS
+ * ─────────────────────────────────────────────────────────────
+ * Gold-coloured thumb (#D4AF37), rounded ends (~15px),
+ * gold-tinted transparent track — pure CSS, no JS injection required.
+ * Replaces the sovereign_scrollbar.js DOM-pill system.
+ */
+
+/* ─── FIREFOX GLOBAL ─────────────────────────────────────────── */
+* {
+    scrollbar-width: none !important;
+}
+
+/* ─── SUPPRESS BROWSER-NATIVE SCROLLBARS GLOBALLY ────────────── */
+::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+::-webkit-scrollbar-thumb {
+    background: transparent !important;
+}
+::-webkit-scrollbar-button {
+    display: none !important;
+}
+
+/* Force scroll behavior on all required dashboard zones to show the beautiful track consistently */
+.scroll-zone,
+.panel-ded-scroll,
+.axiom-inner,
+.zone1-body,
+.z41-body,
+#tele-body-op01,
+#tele-body-op02,
+#tele-body-op03,
+#ev-source-log-block,
+#ded-trace-log-block,
+#ded-ts-log-block {
+    overflow-y: scroll !important; /* always show scrollbar rail */
+}
+
+/* ─── XAI PANEL inside 3D modal keeps its own slim glass scrollbar ─── */
+.ded-modal-overlay .ded-xai-panel {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.08);
+}
+.ded-modal-overlay .ded-xai-panel::-webkit-scrollbar        { display: block !important; width: 6px !important; }
+.ded-modal-overlay .ded-xai-panel::-webkit-scrollbar-track  { background: rgba(255, 255, 255, 0.08) !important; border-radius: 9999px !important; border: 1px solid rgba(255, 255, 255, 0.05) !important; }
+.ded-modal-overlay .ded-xai-panel::-webkit-scrollbar-thumb  { background: rgba(255, 255, 255, 0.25) !important; border-radius: 6px !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; }
+.ded-modal-overlay .ded-xai-panel::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.45) !important; }
+

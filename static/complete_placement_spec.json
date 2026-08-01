@@ -1,0 +1,236 @@
+{
+  "_meta": {
+    "schema_version": "2.0.0",
+    "source": "Sovereign Matrix Modular Specification",
+    "reference_resolution": "1366x768",
+    "description": "Conflict-free, semantically modular design blueprint for the Sovereign Matrix dashboard.",
+    "canva_source_archived": "DESIGN_BACKUP_v5_2/complete_placement_spec.json"
+  },
+
+  "aesthetic_core": {
+    "radii": {
+      "panel": "42px",
+      "header_tongue": "22px",
+      "pill_button": "60px",
+      "card_inner": "12px"
+    },
+    "spacing": {
+      "breathing_zone_left": "12%",
+      "breathing_zone_right": "12%",
+      "panel_gap": "12px",
+      "header_height_full": "120px",
+      "header_height_slim": "60px"
+    },
+    "color_tokens": {
+      "bedrock_green": "#224d2b",
+      "neon_green": "#39FF14",
+      "premium_gold": "#c9a349",
+      "gold_shadow": "#734f22",
+      "alert_red": "#ff3131",
+      "alert_orange": "#ff914d",
+      "node_normal": "#00bf63",
+      "node_drift": "#ff4444",
+      "background_dark": "#0a0a0a",
+      "surface": "#111111",
+      "text_primary": "#ffffff",
+      "text_muted": "#89ef65"
+    },
+    "typography": {
+      "primary_font": "Montserrat",
+      "display_font": "Horizon",
+      "fallback": "sans-serif"
+    }
+  },
+
+  "header_states": {
+    "hdr_full_tongue": {
+      "id": "hdr-full-tongue",
+      "rows": ["title", "tubes", "descriptions"],
+      "height": "120px",
+      "border_radius": "22px",
+      "active_on": ["landing"]
+    },
+    "hdr_slim_dual_action": {
+      "id": "hdr-slim-dual-action",
+      "rows": ["title", "actions"],
+      "height": "60px",
+      "border_radius": "22px",
+      "active_on": ["op-page-1", "op-page-2"],
+      "actions": ["RETURN", "GENERATE_AUDIT_REPORT"]
+    },
+    "hdr_slim_triple_action": {
+      "id": "hdr-slim-triple-action",
+      "rows": ["title", "actions"],
+      "height": "60px",
+      "border_radius": "22px",
+      "active_on": ["op-page-3"],
+      "banner_text": "DEDUCTION SPECIFIED EVALUATION",
+      "actions": ["RETURN", "MANUAL_AXIOM_SELECTION", "GENERATE_AUDIT_REPORT"],
+      "note": "op-page-3 is exclusively for DEDUCTION mode"
+    }
+  },
+
+  "tube_system": {
+    "count": 5,
+    "tubes": [
+      { "id": "tube-l1", "scalar_id": "scalar-l1", "label": "L1", "stage": "ONTOLOGICAL_ENGINE" },
+      { "id": "tube-l2", "scalar_id": "scalar-l2", "label": "L2", "stage": "AXIOM_ENGINE" },
+      { "id": "tube-l3", "scalar_id": "scalar-l3", "label": "L3", "stage": "GNN_VECTOR_ENGINE" },
+      { "id": "tube-l4", "scalar_id": "scalar-l4", "label": "L4", "stage": "GENERATION_ENGINE" },
+      { "id": "tube-l5", "scalar_id": "scalar-l5", "label": "L5", "stage": "LOGIC_ENGINE_REVISION" }
+    ],
+    "animation": {
+      "stagger_ms": 150,
+      "fill_speed_ms": 15
+    }
+  },
+
+  "operative_pages": {
+    "op-page-1": {
+      "id": "op-page-1",
+      "paradigm": "INDUCTION",
+      "axiom_filter": "ALL_NON_DEDUCTION",
+      "header_state": "hdr_slim_dual_action",
+      "description": "Induction mode — standard audit pipeline"
+    },
+    "op-page-2": {
+      "id": "op-page-2",
+      "paradigm": "ABDUCTION",
+      "axiom_filter": "ALL_NON_DEDUCTION",
+      "header_state": "hdr_slim_dual_action",
+      "description": "Abduction mode — hypothesis-led audit"
+    },
+    "op-page-3": {
+      "id": "op-page-3",
+      "paradigm": "DEDUCTION",
+      "axiom_filter": "DEDUCTION_ONLY",
+      "axiom_repo_filter": "type === 'DEDUCTION'",
+      "header_state": "hdr_slim_triple_action",
+      "description": "Deduction mode — exclusively deduction axioms. Axiom Repo on this page is filtered to DEDUCTION type only.",
+      "note": "No Induction or Abduction axioms are displayed or selectable on this page."
+    }
+  },
+
+  "structural_zones": {
+    "Z1_TELEMETRY": {
+      "id": "Z1_TELEMETRY",
+      "label": "Input Telemetry",
+      "role": "File upload, data fingerprint display, domain classification",
+      "bus_event_in": "DATA_EXTRACTED",
+      "bus_event_out": "Z1_READY"
+    },
+    "Z2_ANALYSIS": {
+      "id": "Z2_ANALYSIS",
+      "label": "Analysis Engine",
+      "role": "GNN 3D Shape + RAG extraction results display",
+      "bus_event_in": "ONTOLOGY_CLASSIFIED",
+      "bus_event_out": "Z2_READY",
+      "tabs": ["core", "gnn", "world_model", "causal_matrix"]
+    },
+    "Z3_WORLD": {
+      "id": "Z3_WORLD",
+      "label": "World Model",
+      "role": "Shape comparison, ideal model overlay",
+      "bus_event_in": "DRIFT_DETECTED",
+      "bus_event_out": "Z3_READY"
+    },
+    "Z4_CAUSAL": {
+      "id": "Z4_CAUSAL",
+      "label": "Causal Matrix",
+      "role": "Root cause chain, Bayesian risk display",
+      "bus_event_in": "SHAPE_COMPARED",
+      "bus_event_out": "CAUSAL_MATRIX_READY"
+    },
+    "Z5_AUDIT": {
+      "id": "Z5_AUDIT",
+      "label": "Trace & Timestamp",
+      "role": "Full trace engine logic, deductive timestamps, audit trail",
+      "bus_event_in": "CAUSAL_MATRIX_READY",
+      "bus_event_out": "REPORT_READY"
+    }
+  },
+
+  "tab_registry": [
+    { "id": "core",         "label": "CORE",         "order": 1, "zone": "Z2_ANALYSIS" },
+    { "id": "gnn",          "label": "GNN MODEL",    "order": 2, "zone": "Z2_ANALYSIS" },
+    { "id": "world_model",  "label": "WORLD MODEL",  "order": 3, "zone": "Z2_ANALYSIS" },
+    { "id": "causal_matrix","label": "CAUSAL MODEL", "order": 4, "zone": "Z2_ANALYSIS" }
+  ],
+
+  "phase_registry": {
+    "phase_1": {
+      "id": "phase_1",
+      "label": "Input Phase — Vertical Split",
+      "css_class": "grid-phase-1",
+      "grid_template_areas": "'Z1 Z2'",
+      "grid_template_columns": "1fr 1fr",
+      "active_zones": ["Z1_TELEMETRY", "Z2_ANALYSIS"],
+      "trigger_event": "EVT_PHASE_1"
+    },
+    "phase_2": {
+      "id": "phase_2",
+      "label": "Analysis Phase — 2-Row Center Stack",
+      "css_class": "grid-phase-2",
+      "grid_template_areas": "'Z1 Z2' 'Z1 Z3'",
+      "grid_template_columns": "1fr 1fr",
+      "active_zones": ["Z1_TELEMETRY", "Z2_ANALYSIS", "Z3_WORLD"],
+      "trigger_event": "EVT_PHASE_2"
+    },
+    "phase_3": {
+      "id": "phase_3",
+      "label": "Audit Phase — 3-Row Stack + Trace",
+      "css_class": "grid-phase-3",
+      "grid_template_areas": "'Z1 Z2' 'Z1 Z3' 'Z4 Z5'",
+      "grid_template_columns": "1fr 1fr",
+      "active_zones": ["Z1_TELEMETRY", "Z2_ANALYSIS", "Z3_WORLD", "Z4_CAUSAL", "Z5_AUDIT"],
+      "trigger_event": "EVT_PHASE_3"
+    }
+  },
+
+  "standards_mapping": {
+    "ISO_26262": {
+      "standard": "ISO 26262",
+      "domain": "Automotive Functional Safety",
+      "applied_to": ["Z4_CAUSAL", "AxiomController", "risk_scoring"],
+      "axiom_types": ["DEDUCTION", "INDUCTION"]
+    },
+    "DO_178C": {
+      "standard": "DO-178C",
+      "domain": "Airborne Software Safety",
+      "applied_to": ["Z2_ANALYSIS", "RAGModule"],
+      "axiom_types": ["DEDUCTION"]
+    },
+    "IEC_61508": {
+      "standard": "IEC 61508",
+      "domain": "Functional Safety of E/E/PE Systems",
+      "applied_to": ["Z4_CAUSAL", "Z5_AUDIT"],
+      "axiom_types": ["INDUCTION", "DEDUCTION"]
+    },
+    "NIST": {
+      "standard": "NIST Cybersecurity Framework",
+      "domain": "Cybersecurity Risk",
+      "applied_to": ["Z5_AUDIT", "audit_trail"],
+      "axiom_types": ["ALL"]
+    },
+    "FDA": {
+      "standard": "FDA 21 CFR Part 11",
+      "domain": "Medical Software Audit Trail",
+      "applied_to": ["Z5_AUDIT", "hitl_modal"],
+      "axiom_types": ["ALL"]
+    },
+    "MISRA": {
+      "standard": "MISRA C",
+      "domain": "Automotive Code Safety",
+      "applied_to": ["GNNModule", "RAGModule"],
+      "axiom_types": ["DEDUCTION"]
+    }
+  },
+
+  "hitl_trigger_conditions": [
+    { "condition": "assessment.tier == 3",               "label": "TIER_3 REFUSE",        "action": "open_hitl_modal" },
+    { "condition": "gnn_output.drift_detected == true",  "label": "GNN DRIFT",            "action": "open_hitl_modal" },
+    { "condition": "assessment.conf < 0.60",             "label": "LOW CONFIDENCE",       "action": "open_hitl_modal" },
+    { "condition": "any node.confidence < 0.60",         "label": "NODE LOW CONFIDENCE",  "action": "open_hitl_modal" },
+    { "condition": "user_request",                       "label": "MANUAL REVIEW",        "action": "open_hitl_modal" }
+  ]
+}

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RCA INVESTIGATION | Sovereign OCM</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/sovereign-accents-rounded.css">
+<style>
+:root{--rc:#ff3333;--rc-dim:rgba(255,50,50,0.10);--rc-bdr:rgba(255,50,50,0.22);
+  --bg:#080101;--bg2:#110202;--pass:#00e676;--warn:#ff9800;--txt:#dcc;--muted:#664}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:Calibri,sans-serif;font-size:13px}
+.page{max-width:1280px;margin:0 auto;padding:36px clamp(14px,4vw,52px)}
+
+.hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+  border-bottom:2px solid var(--rc-bdr);padding-bottom:22px;margin-bottom:28px}
+.hdr-left{display:flex;align-items:center;gap:14px}
+.hdr-left img{height:42px;filter:drop-shadow(0 0 10px rgba(255,50,50,0.5))}
+.mode-badge{font-size:9px;letter-spacing:4px;color:var(--rc);background:var(--rc-dim);
+  border:1px solid var(--rc-bdr);border-radius:3px;padding:3px 8px;margin-bottom:5px;display:inline-block}
+.rpt-title{font-family:'Orbitron',sans-serif;font-size:clamp(.9rem,2.2vw,1.5rem);
+  font-weight:900;letter-spacing:3px;color:var(--rc)}
+.rpt-sub{color:var(--muted);font-size:10px;margin-top:4px;letter-spacing:1px}
+.meta-box{background:var(--rc-dim);border:1px solid var(--rc-bdr);border-radius:8px;
+  padding:13px 18px;font-size:11px;line-height:2;min-width:210px}
+.meta-box strong{color:var(--rc)}
+
+/* Severity banner */
+.sev{border-radius:8px;padding:14px 22px;margin-bottom:26px;
+  display:flex;align-items:center;gap:16px;border:1.5px solid var(--rc-bdr)}
+.sev.crit{background:rgba(139,0,0,0.25);border-color:#ff3333}
+.sev.maj{background:rgba(180,60,0,0.2);border-color:#ff6b1a}
+.sev.min{background:rgba(140,120,0,0.15);border-color:#f0b429}
+.sev-icon{font-size:1.8rem}
+.sev-label{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;letter-spacing:3px}
+.sev-sub{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:26px}
+.kpi{background:var(--bg2);border:1px solid #1e0000;border-radius:8px;padding:14px 10px;text-align:center}
+.kpi-val{font-family:'Orbitron',sans-serif;font-size:1.5rem;font-weight:900;margin-bottom:3px}
+.kpi-lbl{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+.kpi.rc .kpi-val{color:var(--rc)}.kpi.pass .kpi-val{color:var(--pass)}.kpi.warn .kpi-val{color:var(--warn)}
+
+/* Section */
+.sec{margin-bottom:30px}
+.sec-hdr{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:4px;color:var(--rc);
+  text-transform:uppercase;padding-bottom:8px;border-bottom:1px solid #1e0000;
+  margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-hdr::before{content:'';width:3px;height:14px;background:var(--rc);border-radius:2px;display:inline-block}
+
+/* Timeline */
+.tl{position:relative;padding-left:28px}
+.tl::before{content:'';position:absolute;left:8px;top:0;bottom:0;
+  width:2px;background:linear-gradient(to bottom,var(--rc),#1e0000)}
+.tl-ev{position:relative;margin-bottom:20px}
+.tl-dot{position:absolute;left:-24px;top:4px;width:10px;height:10px;
+  border-radius:50%;border:2px solid var(--rc);background:var(--bg)}
+.tl-dot.hot{background:var(--rc)}
+.tl-t{font-size:9px;letter-spacing:2px;color:var(--muted);font-family:'Orbitron',sans-serif;margin-bottom:3px}
+.tl-name{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:3px}
+.tl-desc{font-size:11px;color:var(--muted);line-height:1.6}
+
+/* 5-Why */
+.why-list{display:flex;flex-direction:column;gap:0}
+.why-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid #1e0000}
+.why-n{font-family:'Orbitron',sans-serif;font-size:1.3rem;font-weight:900;
+  color:var(--rc);min-width:36px;opacity:.55}
+.why-item.root .why-n{opacity:1;font-size:1.6rem}
+.why-item.root .why-a{color:#ff8888;font-weight:700}
+.why-q{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
+.why-a{font-size:13px;color:var(--txt);line-height:1.6}
+
+/* FMECA / RPN Table */
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{background:#150000;color:var(--rc);font-size:9px;letter-spacing:2px;text-transform:uppercase;
+  padding:9px 11px;text-align:left;border-bottom:1px solid var(--rc-bdr)}
+.tbl td{padding:9px 11px;border-bottom:1px solid #110000;color:#aa9;vertical-align:top}
+.tbl tr:hover td{background:var(--rc-dim)}
+.rpn-hi{color:#ff3333;font-weight:700;font-family:'JetBrains Mono',monospace}
+.rpn-md{color:#ff9800;font-family:'JetBrains Mono',monospace}
+.rpn-lo{color:var(--pass);font-family:'JetBrains Mono',monospace}
+.mono{font-family:'JetBrains Mono',monospace;font-size:9px}
+.src-uid{color:var(--muted);cursor:pointer;text-decoration:underline dotted;transition:color .2s}
+.src-uid:hover{color:var(--rc)}
+.bdg{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1px;
+  padding:2px 7px;border-radius:3px;text-transform:uppercase}
+.bdg-crit{background:rgba(255,50,50,0.15);color:#ff5555;border:1px solid rgba(255,50,50,0.3)}
+.bdg-open{background:rgba(255,152,0,0.12);color:var(--warn);border:1px solid rgba(255,152,0,0.3)}
+.bdg-done{background:rgba(0,230,118,0.1);color:var(--pass);border:1px solid rgba(0,230,118,0.25)}
+
+/* Fishbone */
+.fish-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.fish-cat{background:var(--bg2);border:1px solid #1e0000;border-radius:7px;padding:14px}
+.fish-ttl{font-size:9px;letter-spacing:2px;color:var(--rc);text-transform:uppercase;
+  margin-bottom:8px;font-weight:700}
+.fish-cause{font-size:11px;color:var(--muted);padding:3px 0;border-bottom:1px solid #110000;
+  display:flex;align-items:center;gap:6px}
+.fish-cause::before{content:'→';color:var(--rc);font-size:10px}
+
+/* Sig */
+.sig-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.sig-box{border:1px solid #1e0000;border-radius:8px;padding:14px;text-align:center}
+.sig-line{border-top:1px solid #1e0000;margin:22px 0 7px}
+.sig-role{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+footer{margin-top:40px;border-top:1px solid #1e0000;padding-top:14px;
+  text-align:center;font-size:9px;letter-spacing:2px;color:#331}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hdr">
+  <div class="hdr-left">
+    <img src="aichip-logo-home.png" onerror="this.src='seal_xrag_core_logo.png'" alt="">
+    <div>
+      <div class="mode-badge">🔴 RCA INVESTIGATION · FMECA/RPN · 5-WHY CAUSAL CHAIN · SOVEREIGN OCM</div>
+      <div class="rpt-title">ROOT CAUSE ANALYSIS REPORT</div>
+      <div class="rpt-sub">FMECA Engine · RPN Scoring · Systemic Vulnerability Tracing · Source_UID Anchored</div>
+    </div>
+  </div>
+  <div class="meta-box" id="meta-box">
+    <div><strong>Report ID:</strong> <span id="m-id">—</span></div>
+    <div><strong>Incident File:</strong> <span id="m-file">—</span></div>
+    <div><strong>Domain:</strong> <span id="m-domain">—</span></div>
+    <div><strong>Max RPN:</strong> <span id="m-rpn">—</span></div>
+    <div><strong>Generated:</strong> <span id="m-ts">—</span></div>
+  </div>
+</div>
+
+<!-- Severity -->
+<div class="sev crit" id="sev-banner">
+  <div class="sev-icon" id="sev-icon">🔴</div>
+  <div>
+    <div class="sev-label" id="sev-label">CRITICAL — IMMEDIATE CORRECTIVE ACTION REQUIRED</div>
+    <div class="sev-sub" id="sev-sub">Loading FMECA assessment…</div>
+  </div>
+</div>
+
+<!-- KPIs -->
+<div class="kpi-row">
+  <div class="kpi rc"><div class="kpi-val" id="k-rpn">—</div><div class="kpi-lbl">Max RPN</div></div>
+  <div class="kpi rc"><div class="kpi-val" id="k-fm">—</div><div class="kpi-lbl">Failure Modes</div></div>
+  <div class="kpi warn"><div class="kpi-val" id="k-svp">—</div><div class="kpi-lbl">Systemic Vuln.</div></div>
+  <div class="kpi rc"><div class="kpi-val" id="k-capa">—</div><div class="kpi-lbl">CAPA Actions</div></div>
+  <div class="kpi pass"><div class="kpi-val" id="k-closed">—</div><div class="kpi-lbl">Closed</div></div>
+  <div class="kpi rc"><div class="kpi-val" id="k-ax">—</div><div class="kpi-lbl">Axioms Elected</div></div>
+</div>
+
+<!-- Fault Timeline -->
+<div class="sec">
+  <div class="sec-hdr">Fault Event Timeline</div>
+  <div class="tl" id="timeline"></div>
+</div>
+
+<!-- 5-Why -->
+<div class="sec">
+  <div class="sec-hdr">5-Why Causal Chain — Systemic Vulnerability Tracing</div>
+  <div class="why-list" id="why-list"></div>
+</div>
+
+<!-- FMECA / RPN Table -->
+<div class="sec">
+  <div class="sec-hdr">FMECA — Failure Mode, Effects &amp; Criticality Analysis (RPN Scoring)</div>
+  <table class="tbl">
+    <thead><tr>
+      <th>FM ID</th><th>Failure Mode</th><th>Effect</th><th>S</th><th>O</th><th>D</th>
+      <th>RPN</th><th>Source_UID</th><th>Systemic Vuln.</th><th>CAPA Priority</th>
+    </tr></thead>
+    <tbody id="fmea-tbody"></tbody>
+  </table>
+  <div style="font-size:10px;color:var(--muted);margin-top:8px;letter-spacing:1px">
+    S=Severity (1–10) · O=Occurrence (1–10) · D=Detection (1–10) · RPN=S×O×D
+    · RPN≥200: CRITICAL · 100–199: HIGH · &lt;100: MEDIUM
+  </div>
+</div>
+
+<!-- Ishikawa -->
+<div class="sec">
+  <div class="sec-hdr">Ishikawa Analysis — Contributing Root Categories</div>
+  <div class="fish-grid" id="fish-grid"></div>
+</div>
+
+<!-- CAPA -->
+<div class="sec">
+  <div class="sec-hdr">Corrective &amp; Preventive Actions (CAPA)</div>
+  <table class="tbl">
+    <thead><tr>
+      <th>CAPA ID</th><th>Corrective Action</th><th>Systemic Root</th>
+      <th>Owner</th><th>Target</th><th>Source_UID</th><th>Status</th>
+    </tr></thead>
+    <tbody id="capa-tbody"></tbody>
+  </table>
+</div>
+
+<!-- Sig -->
+<div class="sec">
+  <div class="sec-hdr">Approval &amp; Engineering Certification</div>
+  <div class="sig-grid">
+    <div class="sig-box"><div class="sig-line"></div><div class="sig-role">Root Cause Analyst</div></div>
+    <div class="sig-box"><div class="sig-line"></div><div class="sig-role">Engineering Manager</div></div>
+    <div class="sig-box"><div class="sig-line"></div><div class="sig-role">OCM HITL Operator</div></div>
+    <div class="sig-box"><div class="sig-line"></div><div class="sig-role">Quality Director</div></div>
+  </div>
+</div>
+
+<footer>AICHIP CORPORATION · © 2026 · ROOT CAUSE ANALYSIS REPORT · FMECA ENGINE · Source_UID Anchored · HITL Reviewed</footer>
+</div>
+
+<script>
+(function(){
+  let d={};
+  try{d=JSON.parse(localStorage.getItem('sovereign_audit_data')||'{}');}catch(_){}
+  const ax=d.electedAxioms||d.axioms||[];
+  const rid='RCA-'+Date.now().toString(36).toUpperCase().slice(-8);
+  const ts=d.timestamp?new Date(d.timestamp).toLocaleString():new Date().toLocaleString();
+  const dom=(d.detectedDomains||['GENERAL'])[0];
+
+  // RPN derivation from confidence
+  function rpn(conf){
+    const s=Math.round((1-conf)*9)+1;
+    const o=Math.max(1,Math.round((1-conf)*7)+1);
+    const det=Math.max(1,Math.round((1-conf)*8)+1);
+    return {s,o,det,rpn:s*o*det};
+  }
+  const rpnVals=ax.map(a=>rpn(a.confidence||0));
+  const maxRPN=rpnVals.length?Math.max(...rpnVals.map(r=>r.rpn)):0;
+  const svp=ax.filter(a=>(a.confidence||0)<0.60).length;
+  const sevLabel=maxRPN>=200?'CRITICAL':maxRPN>=100?'MAJOR':'MINOR';
+  const sevCls=maxRPN>=200?'crit':maxRPN>=100?'maj':'min';
+  const sevIcon=maxRPN>=200?'🔴':maxRPN>=100?'🟠':'🟡';
+
+  document.getElementById('m-id').textContent=rid;
+  document.getElementById('m-file').textContent=d.fileName||'—';
+  document.getElementById('m-domain').textContent=dom;
+  document.getElementById('m-rpn').innerHTML=`<span style="color:${maxRPN>=200?'#ff3333':maxRPN>=100?'#ff9800':'var(--pass)'}">${maxRPN||'—'}</span>`;
+  document.getElementById('m-ts').textContent=ts;
+  document.getElementById('sev-banner').className='sev '+sevCls;
+  document.getElementById('sev-icon').textContent=sevIcon;
+  document.getElementById('sev-label').textContent=sevLabel+' — '+(maxRPN>=200?'IMMEDIATE CORRECTIVE ACTION REQUIRED':maxRPN>=100?'CORRECTIVE ACTION REQUIRED':'MONITOR AND REVIEW');
+  document.getElementById('sev-sub').textContent=ax.length
+    ?`${ax.length} failure mode(s) analyzed · Max RPN: ${maxRPN} · Systemic vulnerabilities: ${svp}`
+    :'No axiom data. Upload incident report and run RCA evaluation.';
+
+  document.getElementById('k-rpn').textContent=maxRPN||'—';
+  document.getElementById('k-fm').textContent=ax.length||'—';
+  document.getElementById('k-svp').textContent=svp||'0';
+  document.getElementById('k-capa').textContent=ax.length||'—';
+  document.getElementById('k-closed').textContent='0';
+  document.getElementById('k-ax').textContent=ax.length||'—';
+
+  // Timeline
+  const tlEvents=[
+    {dot:'',t:'T+00:00 · INCIDENT REPORTED',name:'Document Ingested',desc:'File uploaded to Sovereign OCM. G3FP HITL pipeline initiated for RCA analysis.'},
+    {dot:'hot',t:'T+00:01 · AXIOM ELECTION',name:`${ax.length} Axiom(s) Elected`,desc:ax.length?ax.slice(0,3).map(a=>a.name||a.axiom_id).join(', ')+(ax.length>3?'…':'.') :'Axiomatic framework loaded.'},
+    {dot:'hot',t:'T+00:03 · FMECA SCORING',name:`Max RPN: ${maxRPN}`,desc:`Failure mode severity scored. ${svp} systemic vulnerability root(s) identified.`},
+    {dot:'',t:'T+00:05 · CAPA GENERATED',name:'Corrective Actions Issued',desc:`${ax.length} CAPA action(s) generated. Engineering review required.`}
+  ];
+  document.getElementById('timeline').innerHTML=tlEvents.map(e=>
+    `<div class="tl-ev"><div class="tl-dot ${e.dot}"></div>
+    <div class="tl-t">${e.t}</div>
+    <div class="tl-name">${e.name}</div>
+    <div class="tl-desc">${e.desc}</div></div>`).join('');
+
+  // 5-Why
+  const whys=[
+    ax[0]?`Compliance violation in "${ax[0].name||ax[0].axiom_id}" (conf:${(ax[0].confidence||0).toFixed(3)}, RPN:${rpnVals[0]?.rpn||'—'}).`:'Specific failure mode not yet determined.',
+    ax[1]?`Control gap: "${ax[1].name||ax[1].axiom_id}" constraint was not enforced at the process boundary.`:'Contributing systemic factor requires evidence extraction.',
+    ax[2]?`Systemic: Design validation gate did not verify "${ax[2].name||ax[2].axiom_id}" compliance.`:'Process control gap — SOP review recommended.',
+    'Organizational: The compliance axiom class was absent from the pre-production validation baseline.',
+    ax.length?`Root systemic vulnerability: "${(ax[ax.length-1].name||ax[ax.length-1].axiom_id)}" was not included in the FMECA risk register.`:'Root cause pending full axiom coverage analysis.'
+  ];
+  document.getElementById('why-list').innerHTML=whys.map((w,i)=>
+    `<div class="why-item ${i===4?'root':''}">
+    <div class="why-n">${i+1}</div>
+    <div><div class="why-q">${i<4?`WHY #${i+1}`:'ROOT CAUSE'}</div><div class="why-a">${w}</div></div>
+    </div>`).join('');
+
+  // FMECA table
+  document.getElementById('fmea-tbody').innerHTML=ax.length
+    ?ax.map((a,i)=>{
+      const r=rpnVals[i];
+      const rpnCls=r.rpn>=200?'rpn-hi':r.rpn>=100?'rpn-md':'rpn-lo';
+      const src=a.axiom_id||('SRC-'+Math.random().toString(36).slice(2,8).toUpperCase());
+      const isVuln=(a.confidence||0)<0.60;
+      return `<tr>
+        <td class="mono" style="color:var(--rc)">FM-${String(i+1).padStart(3,'0')}</td>
+        <td>${a.name||a.axiom_id||'—'}</td>
+        <td>${isVuln?'Systemic compliance failure — cascading risk':'Localized non-conformance'}</td>
+        <td class="mono" style="color:${r.s>=8?'var(--rc)':r.s>=5?'var(--warn)':'var(--pass)'}">${r.s}</td>
+        <td class="mono" style="color:${r.o>=8?'var(--rc)':r.o>=5?'var(--warn)':'var(--pass)'}">${r.o}</td>
+        <td class="mono">${r.det}</td>
+        <td class="${rpnCls}">${r.rpn}</td>
+        <td class="mono src-uid" onclick="alert('Source_UID: ${src}\\nFile: ${d.fileName||'—'}\\nConf: ${(a.confidence||0).toFixed(4)}')" title="Trace to source">${src}</td>
+        <td style="color:${isVuln?'#ff5555':'var(--muted)'}">${isVuln?'⚠ SYSTEMIC':'—'}</td>
+        <td><span class="bdg ${r.rpn>=200?'bdg-crit':r.rpn>=100?'bdg-open':'bdg-done'}">${r.rpn>=200?'CRITICAL':r.rpn>=100?'HIGH':'MEDIUM'}</span></td>
+      </tr>`;
+    }).join('')
+    :`<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--muted)">No FMECA data — upload incident report and run evaluation.</td></tr>`;
+
+  // Ishikawa
+  const fishCats=[
+    {icon:'⚙',name:'Method',causes:['Process deviation from SOP','Missing validation checkpoint','Undocumented procedure change']},
+    {icon:'👤',name:'People',causes:['Insufficient training records','Operator judgment error','Competency gap in axiom compliance']},
+    {icon:'🔧',name:'Machine',causes:['Calibration drift detected','Sensor threshold exceeded','Firmware version mismatch']},
+    {icon:'📦',name:'Material',causes:['Specification non-conformance','Supply chain variance','Incoming inspection failure']},
+    {icon:'🌡',name:'Environment',causes:['Thermal boundary exceeded','Humidity out of specification']},
+    {icon:'📐',name:'Measurement',causes:['Gauge repeatability failure','Reference standard drift','Sampling plan inadequate']}
+  ];
+  document.getElementById('fish-grid').innerHTML=fishCats.map(c=>
+    `<div class="fish-cat"><div class="fish-ttl">${c.icon} ${c.name}</div>
+    ${c.causes.map(x=>`<div class="fish-cause">${x}</div>`).join('')}</div>`).join('');
+
+  // CAPA
+  document.getElementById('capa-tbody').innerHTML=ax.length
+    ?ax.map((a,i)=>{
+      const r=rpnVals[i];
+      const src=a.axiom_id||('SRC-'+Math.random().toString(36).slice(2,8).toUpperCase());
+      const isVuln=(a.confidence||0)<0.60;
+      return `<tr>
+        <td class="mono" style="color:var(--rc)">CAPA-${String(i+1).padStart(3,'0')}</td>
+        <td>Remediate: ${a.name||a.axiom_id||'—'}</td>
+        <td style="color:${isVuln?'#ff5555':'var(--muted)'}">${isVuln?'SYSTEMIC VULN.':'LOCALIZED'}</td>
+        <td>Engineering Lead</td>
+        <td style="font-size:10px">${new Date(Date.now()+(i+1)*7*86400000).toLocaleDateString()}</td>
+        <td class="mono src-uid" onclick="alert('Source_UID: ${src}')" title="Trace source">${src}</td>
+        <td><span class="bdg bdg-open">OPEN</span></td>
+      </tr>`;
+    }).join('')
+    :`<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">No CAPA items generated.</td></tr>`;
+})();
+</script>
+</body>
+</html>

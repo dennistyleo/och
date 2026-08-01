@@ -1,0 +1,1 @@
+{"id":"FW_002","name":"Interrupt Vector Table Validity","type":"D","level":"L8","statement":"All interrupt vectors must point to valid handlers","severity":"CRITICAL"}

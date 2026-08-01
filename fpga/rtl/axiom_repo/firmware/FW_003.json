@@ -1,0 +1,1 @@
+{"id":"FW_003","name":"Secure Boot Chain","type":"D","level":"L8","statement":"Boot chain must be cryptographically verified","severity":"CRITICAL"}

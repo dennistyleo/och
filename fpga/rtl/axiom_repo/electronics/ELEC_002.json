@@ -1,0 +1,1 @@
+{"id":"ELEC_002","name":"Power Rail Sequencing","type":"D","level":"L8","statement":"Power rails must energize and de-energize in the manufacturer-specified sequence with PGOOD handshake","severity":"CRITICAL"}

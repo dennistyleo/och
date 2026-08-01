@@ -1,0 +1,1 @@
+{"id":"SEC_001","name":"No Hardcoded Secrets","type":"D","level":"L3","statement":"Credentials must not be hardcoded","severity":"CRITICAL"}

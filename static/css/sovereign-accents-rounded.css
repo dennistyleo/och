@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700;800;900&family=Quicksand:wght@300;400;500;600;700;900&display=swap');
+
+/* Apply Quicksand (English) and M PLUS Rounded 1c (Chinese/English) universally */
+html, body, p, span, a, button, input, select, textarea, label, h1, h2, h3, h4, h5, h6, th, td, div {
+    font-family: 'Quicksand', 'M PLUS Rounded 1c', 'PingFang TC', 'Microsoft JhengHei', sans-serif !important;
+}
+
+* {
+    font-family: 'Quicksand', 'M PLUS Rounded 1c', 'PingFang TC', 'Microsoft JhengHei', sans-serif !important;
+}
+
+/* Enforce rounded font for all nested text nodes */
+div *, span *, p *, a *, button *, input *, select *, textarea *, label *, h1 *, h2 *, h3 *, h4 *, h5 *, h6 *, th *, td * {
+    font-family: 'Quicksand', 'M PLUS Rounded 1c', 'PingFang TC', 'Microsoft JhengHei', sans-serif !important;
+}
+
+/* Accent Color System Overrides */
+:root {
+    --gold: #D4AF37 !important;
+    --gold-dim: rgba(212, 175, 55, 0.15) !important;
+    --gold-frame: rgba(212, 175, 55, 0.35) !important;
+    --neon: #39FF14 !important;
+    --neon-green: #39FF14 !important;
+    --tiffany-blue: #0abab5 !important;
+    --hermes-orange: #F37021 !important;
+    --silver: #C0C0C0 !important;
+    --white: #ffffff !important;
+    
+    /* 5L Spectral lane gradients */
+    --lane-l1: linear-gradient(90deg, #ffffff, #c0c0c0) !important; /* White -> Silver */
+    --lane-l2: linear-gradient(90deg, #0abab5, #008080) !important; /* Tiffany Blue -> Teal */
+    --lane-l3: linear-gradient(90deg, #39ff14, #008000) !important; /* Neon Green -> Green */
+    --lane-l4: linear-gradient(90deg, #f37021, #d35400) !important; /* Hermes Orange -> Rust */
+    --lane-l5: linear-gradient(90deg, #d4af37, #f1c40f) !important; /* Metallic Gold -> Yellow */
+}
+
+/* Theme accent color mappings for lists and telemetry */
+.gold-text, .text-gold, .hdr-btn, .ded-phase-tab {
+    color: #D4AF37 !important;
+}
+.neon-text, .text-neon, .text-pass, .pass-v, .bdg-pass, .cb-ok {
+    color: #39FF14 !important;
+}
+.tiffany-text, .text-tiffany {
+    color: #0abab5 !important;
+}
+.hermes-text, .text-hermes {
+    color: #F37021 !important;
+}
+.silver-text, .text-silver {
+    color: #C0C0C0 !important;
+}
+
+/* Tab hover and active state overrides using accents */
+.hdr-btn:hover, .hdr-btn.active, .ded-phase-tab:hover, .ded-phase-tab.active {
+    color: #39FF14 !important;
+    text-shadow: 0 0 8px rgba(57, 255, 20, 0.45) !important;
+}
+
+/* Progress bar overrides */
+.eng-bar-fill[data-lane="1"], .fill-1 {
+    background: var(--lane-l1) !important;
+}
+.eng-bar-fill[data-lane="2"], .fill-2 {
+    background: var(--lane-l2) !important;
+}
+.eng-bar-fill[data-lane="3"], .fill-3 {
+    background: var(--lane-l3) !important;
+}
+.eng-bar-fill[data-lane="4"], .fill-4 {
+    background: var(--lane-l4) !important;
+}
+.eng-bar-fill[data-lane="5"], .fill-5 {
+    background: var(--lane-l5) !important;
+}

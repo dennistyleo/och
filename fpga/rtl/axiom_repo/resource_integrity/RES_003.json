@@ -1,0 +1,1 @@
+{"id":"RES_003","name":"File Handle Integrity","type":"D","level":"L3","statement":"Every opened file must be closed","severity":"MEDIUM"}

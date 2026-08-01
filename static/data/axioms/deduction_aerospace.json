@@ -1,0 +1,531 @@
+[
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "AERO_SF_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "AEROSPACE",
+    "subdomain": "Structural Safety",
+    "name": "Reserve Factor Gate (RF ≥ 1.5)",
+    "description": "Verifies that the structural Reserve Factor RF = F_ultimate / F_applied ≥ 1.5 per FAR 25.303. Any panel, joint, or fitting with RF < 1.5 constitutes an inadmissible structural deficit and triggers a REFUSE verdict.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.96,
+    "hallucination_lock": true,
+    "expression_latex": "RF = \\frac{F_{ultimate}}{F_{applied}} \\geq 1.5",
+    "derivation_formula": {
+      "sympy_expr": "F_ultimate / F_applied - 1.5",
+      "variables": {
+        "F_ultimate": {
+          "maps_to_field": "ultimate_load_kn",
+          "unit": "kN",
+          "bounds": [
+            0,
+            10000000.0
+          ]
+        },
+        "F_applied": {
+          "maps_to_field": "applied_load_kn",
+          "unit": "kN",
+          "bounds": [
+            0,
+            10000000.0
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 1.5,
+          "source_expr": "F_ultimate/F_applied"
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 1.5,
+          "source_expr": "F_ultimate/F_applied"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null or F_applied == 0"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "ultimate_load_kn",
+        "unit": "kN",
+        "bounds": [
+          0,
+          10000000.0
+        ]
+      },
+      {
+        "field": "applied_load_kn",
+        "unit": "kN",
+        "bounds": [
+          0,
+          10000000.0
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "safety_factor",
+        "unit": "dimensionless"
+      },
+      {
+        "field": "material_coupon",
+        "unit": "string"
+      }
+    ],
+    "semantic_fingerprint": "reserve factor structural safety ultimate load FAR 25.303 aerospace composite panel joint fitting",
+    "entity_keywords": [
+      "reserve factor",
+      "RF",
+      "ultimate load",
+      "structural margin",
+      "FAR 25",
+      "safety factor",
+      "composite",
+      "load case"
+    ],
+    "contradiction_axioms": [],
+    "spatial_tension": "HIGH",
+    "cascade_to": [
+      "AERO_DM_001"
+    ],
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "score",
+      "threshold_op": "gt",
+      "threshold_val": 0.0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "DEDUCTION",
+      "semantic_label": "AERO_SF_001",
+      "reasoning_chain": [
+        "Evaluate deduction constraint",
+        "Check threshold compliance",
+        "Flag VIOLATION if not met"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "AERO_DM_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "AEROSPACE",
+    "subdomain": "Damage Mechanics",
+    "name": "Damage Tolerance — Slow Crack Growth Gate",
+    "description": "Validates that the fatigue crack growth rate da/dN = C·(ΔK)^m stays below the critical threshold for the required inspection interval. Exceeding the Paris law limit indicates damage-tolerant life exhaustion and a mandatory structural REFUSE.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.92,
+    "hallucination_lock": true,
+    "expression_latex": "\\frac{da}{dN} = C \\cdot (\\Delta K)^m \\leq \\left(\\frac{da}{dN}\\right)_{crit}",
+    "derivation_formula": {
+      "sympy_expr": "C_paris * (delta_K)**m_paris",
+      "variables": {
+        "C_paris": {
+          "maps_to_field": "paris_law_C",
+          "unit": "dimensionless",
+          "bounds": [
+            0,
+            1
+          ]
+        },
+        "m_paris": {
+          "maps_to_field": "paris_law_m",
+          "unit": "dimensionless",
+          "bounds": [
+            1,
+            6
+          ]
+        },
+        "delta_K": {
+          "maps_to_field": "delta_K_mpa_m",
+          "unit": "MPa·√m",
+          "bounds": [
+            0,
+            200
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value_field": "crack_growth_limit_m_per_cycle"
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value_field": "crack_growth_limit_m_per_cycle"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "paris_law_C",
+        "unit": "dimensionless",
+        "bounds": [
+          0,
+          1
+        ]
+      },
+      {
+        "field": "paris_law_m",
+        "unit": "dimensionless",
+        "bounds": [
+          1,
+          6
+        ]
+      },
+      {
+        "field": "delta_K_mpa_m",
+        "unit": "MPa·√m",
+        "bounds": [
+          0,
+          200
+        ]
+      },
+      {
+        "field": "crack_growth_limit_m_per_cycle",
+        "unit": "m/cycle",
+        "bounds": [
+          0,
+          0.001
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "initial_crack_size_mm",
+        "unit": "mm"
+      },
+      {
+        "field": "inspection_interval_cycles",
+        "unit": "cycles"
+      }
+    ],
+    "semantic_fingerprint": "damage tolerance crack growth Paris law fatigue aerospace structural life inspection interval composite",
+    "entity_keywords": [
+      "damage tolerance",
+      "crack growth",
+      "Paris law",
+      "da/dN",
+      "stress intensity",
+      "delta K",
+      "fatigue life",
+      "inspection interval"
+    ],
+    "contradiction_axioms": [],
+    "spatial_tension": "HIGH",
+    "cascade_to": [
+      "AERO_BK_001"
+    ],
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "score",
+      "threshold_op": "gt",
+      "threshold_val": 0.0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "DEDUCTION",
+      "semantic_label": "AERO_DM_001",
+      "reasoning_chain": [
+        "Evaluate deduction constraint",
+        "Check threshold compliance",
+        "Flag VIOLATION if not met"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "AERO_BK_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "AEROSPACE",
+    "subdomain": "Buckling Stability",
+    "name": "Column Buckling Critical Load Gate (Euler)",
+    "description": "Verifies that the applied compressive load P_applied does not exceed the Euler critical buckling load P_cr = π²·E·I / (K·L)². Buckling failure triggers a catastrophic REFUSE verdict as structural collapse is not recoverable in-flight.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "expression_latex": "P_{cr} = \\frac{\\pi^2 E I}{(KL)^2} \\geq P_{applied}",
+    "derivation_formula": {
+      "sympy_expr": "(3.14159**2 * E_modulus * I_moment) / (K_factor * L_length)**2",
+      "variables": {
+        "E_modulus": {
+          "maps_to_field": "elastic_modulus_gpa",
+          "unit": "GPa",
+          "bounds": [
+            0,
+            500
+          ]
+        },
+        "I_moment": {
+          "maps_to_field": "second_moment_m4",
+          "unit": "m⁴",
+          "bounds": [
+            0,
+            1
+          ]
+        },
+        "K_factor": {
+          "maps_to_field": "effective_length_k",
+          "unit": "dimensionless",
+          "bounds": [
+            0.5,
+            2.0
+          ]
+        },
+        "L_length": {
+          "maps_to_field": "column_length_m",
+          "unit": "m",
+          "bounds": [
+            0,
+            100
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value_field": "applied_compressive_load_kn"
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value_field": "applied_compressive_load_kn"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "elastic_modulus_gpa",
+        "unit": "GPa",
+        "bounds": [
+          0,
+          500
+        ]
+      },
+      {
+        "field": "second_moment_m4",
+        "unit": "m⁴",
+        "bounds": [
+          0,
+          1
+        ]
+      },
+      {
+        "field": "effective_length_k",
+        "unit": "dimensionless",
+        "bounds": [
+          0.5,
+          2.0
+        ]
+      },
+      {
+        "field": "column_length_m",
+        "unit": "m",
+        "bounds": [
+          0,
+          100
+        ]
+      },
+      {
+        "field": "applied_compressive_load_kn",
+        "unit": "kN",
+        "bounds": [
+          0,
+          1000000.0
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "slenderness_ratio",
+        "unit": "dimensionless"
+      },
+      {
+        "field": "material_grade",
+        "unit": "string"
+      }
+    ],
+    "semantic_fingerprint": "Euler buckling critical load column aerospace structural compression slenderness ratio stability",
+    "entity_keywords": [
+      "Euler buckling",
+      "critical load",
+      "buckling",
+      "column stability",
+      "compression",
+      "slenderness",
+      "structural collapse"
+    ],
+    "contradiction_axioms": [],
+    "spatial_tension": "HIGH",
+    "cascade_to": [],
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "score",
+      "threshold_op": "gt",
+      "threshold_val": 0.0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "DEDUCTION",
+      "semantic_label": "AERO_BK_001",
+      "reasoning_chain": [
+        "Evaluate deduction constraint",
+        "Check threshold compliance",
+        "Flag VIOLATION if not met"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "AERO_TS_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "AEROSPACE",
+    "subdomain": "Thermal Stress",
+    "name": "Thermal Stress Admissibility Gate",
+    "description": "Validates that thermal stress σ_th = E·α·ΔT remains below the material yield strength σ_y. Exceeding yield in aerostructures due to thermal gradient constitutes a structural admissibility violation.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.89,
+    "hallucination_lock": true,
+    "expression_latex": "\\sigma_{th} = E \\cdot \\alpha \\cdot \\Delta T \\leq \\sigma_y",
+    "derivation_formula": {
+      "sympy_expr": "E_gpa * alpha_cte * delta_T - sigma_yield_mpa",
+      "variables": {
+        "E_gpa": {
+          "maps_to_field": "elastic_modulus_gpa",
+          "unit": "GPa",
+          "bounds": [
+            0,
+            500
+          ]
+        },
+        "alpha_cte": {
+          "maps_to_field": "thermal_expansion_1_K",
+          "unit": "1/K",
+          "bounds": [
+            0,
+            5e-05
+          ]
+        },
+        "delta_T": {
+          "maps_to_field": "temperature_delta_K",
+          "unit": "K",
+          "bounds": [
+            0,
+            500
+          ]
+        },
+        "sigma_yield_mpa": {
+          "maps_to_field": "yield_strength_mpa",
+          "unit": "MPa",
+          "bounds": [
+            0,
+            2000
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value_field": "yield_strength_mpa"
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value_field": "yield_strength_mpa"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "elastic_modulus_gpa",
+        "unit": "GPa",
+        "bounds": [
+          0,
+          500
+        ]
+      },
+      {
+        "field": "thermal_expansion_1_K",
+        "unit": "1/K",
+        "bounds": [
+          0,
+          5e-05
+        ]
+      },
+      {
+        "field": "temperature_delta_K",
+        "unit": "K",
+        "bounds": [
+          0,
+          500
+        ]
+      },
+      {
+        "field": "yield_strength_mpa",
+        "unit": "MPa",
+        "bounds": [
+          0,
+          2000
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "thermal_gradient_k_m",
+        "unit": "K/m"
+      }
+    ],
+    "semantic_fingerprint": "thermal stress CTE yield strength elastic modulus aerospace thermal gradient structural admissibility",
+    "entity_keywords": [
+      "thermal stress",
+      "CTE",
+      "coefficient of thermal expansion",
+      "yield strength",
+      "thermal gradient",
+      "structural integrity"
+    ],
+    "contradiction_axioms": [],
+    "spatial_tension": "MEDIUM",
+    "cascade_to": [
+      "AERO_SF_001"
+    ],
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "score",
+      "threshold_op": "gt",
+      "threshold_val": 0.0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "DEDUCTION",
+      "semantic_label": "AERO_TS_001",
+      "reasoning_chain": [
+        "Evaluate deduction constraint",
+        "Check threshold compliance",
+        "Flag VIOLATION if not met"
+      ]
+    }
+  }
+]

@@ -1,0 +1,47 @@
+{
+  "axiom_repo": {
+    "version": "3.0",
+    "name": "AXIOM GENERATOR MASTER REPOSITORY",
+    "description": "33 axioms for software/firmware evaluation across 9 categories",
+    "last_updated": "2026-04-14",
+    "total_axioms": 33,
+    "categories": {
+      "causality": {
+        "name": "Causality Axioms",
+        "axiom_count": 4
+      },
+      "determinism": {
+        "name": "Determinism Axioms",
+        "axiom_count": 3
+      },
+      "resource_integrity": {
+        "name": "Resource Integrity Axioms",
+        "axiom_count": 4
+      },
+      "data_integrity": {
+        "name": "Data Integrity Axioms",
+        "axiom_count": 4
+      },
+      "control_flow": {
+        "name": "Control Flow Axioms",
+        "axiom_count": 4
+      },
+      "concurrency": {
+        "name": "Concurrency Axioms",
+        "axiom_count": 3
+      },
+      "security": {
+        "name": "Security Axioms",
+        "axiom_count": 3
+      },
+      "firmware": {
+        "name": "Firmware Axioms",
+        "axiom_count": 4
+      },
+      "common_sense": {
+        "name": "Common Sense Axioms",
+        "axiom_count": 4
+      }
+    }
+  }
+}

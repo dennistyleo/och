@@ -1,0 +1,94 @@
+/* --- OP-02 ANALYSIS MODE SPECIFIC (v1.37) --- */
+
+.mode-op-02 {
+    background: #e0e0e0; /* Bible grey background */
+}
+
+/* HEADER: ANALYSIS WEDGE */
+.op02-header-geometry {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    z-index: 1;
+}
+
+/* STAGE: 25/75 SPLIT */
+.op02-stage {
+    display: flex;
+    gap: 30px;
+    padding: 0 40px;
+}
+
+.op02-left-col {
+    flex: 0 0 25%;
+}
+
+.op02-right-col {
+    flex: 0 0 75%;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* ANALYSIS CARDS: INTERNAL SPLIT */
+.analysis-card {
+    height: 380px;
+    display: flex;
+    background: #fff;
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    border-radius: var(--r15);
+    overflow: hidden;
+}
+
+.analysis-subbox-left {
+    flex: 0 0 45%;
+    border-right: 1px solid rgba(212, 175, 55, 0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.analysis-subbox-right {
+    flex: 0 0 55%;
+    background: #000;
+    position: relative;
+}
+
+.analysis-subbox-right video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* FORMULA STYLING */
+.formula-container {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.formula-img {
+    max-width: 80%;
+    opacity: 0.8;
+}
+
+/* PILL BUTTONS (OP-02 SPEC) */
+.op02-btn-manual {
+    background: #1a3d24 !important;
+    color: #fff !important;
+    border: 1px solid #2d5a3a !important;
+    padding: 10px 40px !important;
+    letter-spacing: 1px;
+}
+
+.op02-btn-generate {
+    background: #00c853 !important;
+    color: #000 !important;
+    padding: 10px 40px !important;
+    letter-spacing: 1px;
+    box-shadow: 0 0 20px rgba(0, 200, 83, 0.3);
+}

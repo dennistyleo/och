@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sovereign Matrix — Pricing & Membership</title>
+<meta name="description" content="Choose the Sovereign Matrix plan that fits your organisation. From free ontology previews to full 3D export and Apple Vision Pro support.">
+<link rel="stylesheet" href="css/pricing.css">
+<link rel="stylesheet" href="css/sovereign-header.css">
+</head>
+<body>
+
+<div class="pricing-wrap">
+
+  <!-- Back nav -->
+  <div class="back-nav" onclick="history.back()">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3L5 8l5 5"/></svg>
+    Back to Sovereign Matrix
+  </div>
+
+  <!-- Header -->
+  <div class="pricing-header">
+    <h1>Choose Your Plan</h1>
+    <p>Ontology-grounded AI analysis — from individual analysts to enterprise deployments.</p>
+
+    <div class="billing-toggle annual" id="billing-toggle">
+      <span id="billing-monthly-label" style="color:var(--muted)">Monthly</span>
+      <div class="toggle-switch" onclick="toggleBilling()">
+        <div class="toggle-knob" id="toggle-knob"></div>
+      </div>
+      <span id="billing-annual-label" style="color:#fff">Annual</span>
+      <span class="save-badge">Save 20%</span>
+    </div>
+  </div>
+
+  <!-- Pricing grid -->
+  <div class="pricing-grid">
+
+    <!-- FREE -->
+    <div class="plan-card free">
+      <span class="plan-badge gray">START HERE</span>
+      <div class="plan-name">Free</div>
+      <div class="plan-price">
+        <span class="amount">$0</span>
+        <span class="period">/ forever</span>
+      </div>
+      <div class="plan-annual-note">&nbsp;</div>
+
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li class="section-label-row"><span class="section-label">Audit Reports</span></li>
+        <li class="included"><span class="fi"></span>5 audit reports / month</li>
+        <li class="included"><span class="fi"></span>1 file × 5 purpose forms</li>
+        <li class="section-label-row"><span class="section-label">Analysis</span></li>
+        <li class="included"><span class="fi"></span>Purpose 1: Ontology Analysis</li>
+        <li class="included"><span class="fi"></span>Static 3D visualization preview</li>
+        <li class="included"><span class="fi"></span>HITL review (standard queue)</li>
+        <li class="excluded"><span class="fi"></span>AI Credits</li>
+        <li class="excluded"><span class="fi"></span>Purposes 2–6</li>
+        <li class="excluded"><span class="fi"></span>3D in-browser rotation</li>
+        <li class="section-label-row"><span class="section-label">Export</span></li>
+        <li class="included"><span class="fi"></span>Watermarked HTML preview</li>
+        <li class="excluded"><span class="fi"></span>PDF export</li>
+        <li class="section-label-row"><span class="section-label">History & Storage</span></li>
+        <li class="excluded"><span class="fi"></span>Audit history (session only)</li>
+        <li class="excluded"><span class="fi"></span>Evaluation comparison</li>
+        <li class="section-label-row"><span class="section-label">RFP Generator</span></li>
+        <li class="excluded"><span class="fi"></span>RFP proposal generation</li>
+      </ul>
+
+      <button class="plan-cta ghost" onclick="window.location.href='/'">Get Started Free</button>
+    </div>
+
+    <!-- PREMIUM -->
+    <div class="plan-card premium">
+      <span class="plan-badge blue">POPULAR</span>
+      <div class="plan-name">Premium</div>
+      <div class="plan-price">
+        <span class="amount" id="price-premium">$49</span>
+        <span class="period">/month</span>
+      </div>
+      <div class="plan-annual-note" id="note-premium">Billed $470/year (save $118)</div>
+
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li class="section-label-row"><span class="section-label">Audit Reports</span></li>
+        <li class="included"><span class="fi"></span>20 audit reports / month</li>
+        <li class="included"><span class="fi"></span>500 AI Credits / month</li>
+        <li class="section-label-row"><span class="section-label">Analysis</span></li>
+        <li class="included"><span class="fi"></span>All 6 purposes unlocked</li>
+        <li class="included"><span class="fi"></span>3D preview + in-browser rotation</li>
+        <li class="included"><span class="fi"></span>Causal drift history (30 days)</li>
+        <li class="included"><span class="fi"></span>Priority HITL queue</li>
+        <li class="excluded"><span class="fi"></span>Custom report branding</li>
+        <li class="excluded"><span class="fi"></span>SSO / SAML login</li>
+        <li class="section-label-row"><span class="section-label">Export</span></li>
+        <li class="included"><span class="fi"></span>Standard PDF (watermarked)</li>
+        <li class="excluded"><span class="fi"></span>3D file downloads (.glb, .usdz)</li>
+        <li class="excluded"><span class="fi"></span>MP4 auto-tour</li>
+        <li class="section-label-row"><span class="section-label">History & Storage</span></li>
+        <li class="included"><span class="fi"></span>Last 5 audits · 30-day retention</li>
+        <li class="included"><span class="fi"></span>~1 credit / save</li>
+        <li class="excluded"><span class="fi"></span>Evaluation comparison view</li>
+        <li class="section-label-row"><span class="section-label">RFP Generator</span></li>
+        <li class="excluded"><span class="fi"></span>RFP generation (SSO+ only)</li>
+      </ul>
+
+      <button class="plan-cta solid-blue" onclick="showUpgradeModal('premium')">Start Free Trial</button>
+    </div>
+
+    <!-- SSO ENTERPRISE -->
+    <div class="plan-card sso">
+      <span class="plan-badge gold">★ RECOMMENDED</span>
+      <div class="plan-name gold-text">SSO Enterprise</div>
+      <div class="plan-price">
+        <span class="amount" id="price-sso">$149</span>
+        <span class="period">/seat/mo</span>
+      </div>
+      <div class="plan-seat-note">Minimum 3 seats · <span id="note-sso">Billed $1,432/seat/year</span></div>
+
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li class="section-label-row"><span class="section-label">Audit Reports</span></li>
+        <li class="included"><span class="fi"></span>50 audit reports / seat / month</li>
+        <li class="included"><span class="fi"></span>1,500 AI Credits / seat / month</li>
+        <li class="section-label-row"><span class="section-label">Analysis</span></li>
+        <li class="included"><span class="fi"></span>All 6 purposes + full reasoning</li>
+        <li class="included"><span class="fi"></span>Causal drift history (12 months)</li>
+        <li class="included"><span class="fi"></span>Centralized team dashboard</li>
+        <li class="included"><span class="fi"></span>Custom report header &amp; logo</li>
+        <li class="included"><span class="fi"></span>Sovereign Audit Seal (authenticated)</li>
+        <li class="included"><span class="fi"></span>SSO / SAML login</li>
+        <li class="included"><span class="fi"></span>API access (100 calls/mo)</li>
+        <li class="addon"><span class="fi"></span>3D file downloads (add-on +$50/seat)</li>
+        <li class="section-label-row"><span class="section-label">Export</span></li>
+        <li class="included"><span class="fi"></span>Full PDF — no watermark</li>
+        <li class="excluded"><span class="fi"></span>3D files included (add-on only)</li>
+        <li class="section-label-row"><span class="section-label">History & Storage</span></li>
+        <li class="included"><span class="fi"></span>Last 20 audits · 90-day retention</li>
+        <li class="included"><span class="fi"></span>Side-by-side comparison view</li>
+        <li class="excluded"><span class="fi"></span>Diff export</li>
+        <li class="section-label-row"><span class="section-label">RFP Generator</span></li>
+        <li class="included"><span class="fi"></span>20 RFP proposals / seat / month</li>
+        <li class="included"><span class="fi"></span>Custom header &amp; logo on RFP</li>
+        <li class="excluded"><span class="fi"></span>Multi-file RFP batch</li>
+      </ul>
+
+      <button class="plan-cta solid-gold" onclick="showUpgradeModal('sso')">Contact Sales</button>
+    </div>
+
+    <!-- SOVEREIGN PRO -->
+    <div class="plan-card pro">
+      <span class="plan-badge purple">👑 ELITE</span>
+      <div class="plan-name purple-text">Sovereign Pro</div>
+      <div class="plan-price">
+        <span class="amount" id="price-pro">$399</span>
+        <span class="period">/seat/mo</span>
+      </div>
+      <div class="plan-seat-note"><span id="note-pro">Billed $3,830/seat/year · or custom annual</span></div>
+
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li class="section-label-row"><span class="section-label">Audit Reports</span></li>
+        <li class="included"><span class="fi"></span>Unlimited audit reports</li>
+        <li class="included"><span class="fi"></span>5,000 AI Credits / month</li>
+        <li class="section-label-row"><span class="section-label">Analysis</span></li>
+        <li class="included"><span class="fi"></span>Everything in SSO Enterprise</li>
+        <li class="included"><span class="fi"></span>Unlimited API access</li>
+        <li class="included"><span class="fi"></span>Custom ontology domain setup</li>
+        <li class="included"><span class="fi"></span>White-label option available</li>
+        <li class="included"><span class="fi"></span>Dedicated account manager</li>
+        <li class="included"><span class="fi"></span>SLA 99.9% uptime guarantee</li>
+        <li class="section-label-row"><span class="section-label">3D Export</span></li>
+        <li class="included"><span class="fi"></span>.glb / GLTF (Blender, Unity, VR)</li>
+        <li class="included"><span class="fi"></span>.usdz — Apple Vision Pro ready</li>
+        <li class="included"><span class="fi"></span>Interactive HTML (no watermark)</li>
+        <li class="included"><span class="fi"></span>MP4 auto-tour (1080p)</li>
+        <li class="included"><span class="fi"></span>Axiom metadata embedded in files</li>
+        <li class="section-label-row"><span class="section-label">History & Storage</span></li>
+        <li class="included"><span class="fi"></span>Unlimited audit history · 365 days</li>
+        <li class="included"><span class="fi"></span>Full comparison + diff export (.json)</li>
+        <li class="included"><span class="fi"></span>Timeline view across evaluations</li>
+        <li class="section-label-row"><span class="section-label">RFP Generator</span></li>
+        <li class="included"><span class="fi"></span>Unlimited RFP proposals</li>
+        <li class="included"><span class="fi"></span>Multi-file batch RFP generation</li>
+        <li class="included"><span class="fi"></span>White-label RFP templates</li>
+      </ul>
+
+      <button class="plan-cta gradient-pro" onclick="showUpgradeModal('pro')">Get Sovereign Pro</button>
+    </div>
+
+  </div><!-- /pricing-grid -->
+
+  <!-- AI Credits explainer -->
+  <div class="credits-explainer">
+    <div class="ce-icon">⚡</div>
+    <div>
+      <h3>What are AI Credits?</h3>
+      <p>Credits abstract the computational cost of G3FP reasoning. 1 credit ≈ 1 reasoning step.
+         They reset monthly and unused credits do not roll over. Overages are billed at $0.12/credit.</p>
+      <table class="credit-table">
+        <thead>
+          <tr><th>Purpose</th><th>Name</th><th>Credits Used</th><th>Example output</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>P1</td><td>Ontology Analysis</td><td><span class="credit-pill">20 cr</span></td><td>Axiom match report</td></tr>
+          <tr><td>P2</td><td>Clinical / Domain Inference</td><td><span class="credit-pill">80 cr</span></td><td>Clinical reasoning with doctor lens</td></tr>
+          <tr><td>P3</td><td>Data Integrity Verification</td><td><span class="credit-pill">40 cr</span></td><td>QC flags + calibration check</td></tr>
+          <tr><td>P4</td><td>Procedure Eligibility</td><td><span class="credit-pill">60 cr</span></td><td>Cross-axiom eligibility matrix</td></tr>
+          <tr><td>P5</td><td>Causal Drift Analysis</td><td><span class="credit-pill">100 cr</span></td><td>Temporal comparison, drift flags</td></tr>
+          <tr><td>P6</td><td>Full 6-Purpose Suite</td><td><span class="credit-pill">300 cr</span></td><td>All above in one report</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="pricing-footnote">
+    All plans include HITL verification, trace_id audit logs, GDPR compliance, and 256-bit encryption at rest.<br>
+    Sovereign Pro includes custom SLA and private deployment options. All prices in USD. Taxes may apply.
+  </div>
+
+  <!-- Audit History Storage explainer -->
+  <div class="credits-explainer" style="margin-top:24px">
+    <div class="ce-icon">📂</div>
+    <div>
+      <h3>Audit History &amp; Comparison Storage</h3>
+      <p>Save evaluations server-side to revisit, compare, and track changes over time.
+         Free users get session-only storage (cleared on tab close).
+         Storage is metered per evaluation saved.</p>
+      <table class="credit-table">
+        <thead>
+          <tr><th>Plan</th><th>Max Records</th><th>Retention</th><th>Comparison</th><th>Cost</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Free</td><td>—</td><td>Session only</td><td>—</td><td>—</td></tr>
+          <tr><td>Premium</td><td>5</td><td>30 days</td><td>—</td><td>~1 credit/save</td></tr>
+          <tr><td>SSO Enterprise</td><td>20</td><td>90 days</td><td>Side-by-side</td><td>Included</td></tr>
+          <tr><td>Sovereign Pro</td><td>Unlimited</td><td>365 days</td><td>Full diff export</td><td>Included</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- RFP Generator explainer -->
+  <div class="credits-explainer" style="margin-top:24px">
+    <div class="ce-icon">📄</div>
+    <div>
+      <h3>RFP Proposal Generator</h3>
+      <p>Upload your source documents and let Sovereign Matrix generate a structured,
+         ontology-grounded Request for Proposal. Each proposal is axiom-backed and auditable.
+         Premium proposals carry a light watermark; SSO/Pro proposals are clean and brandable.</p>
+      <table class="credit-table">
+        <thead>
+          <tr><th>Plan</th><th>Monthly RFPs</th><th>Branding</th><th>Batch</th><th>Credits</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Free</td><td>—</td><td>—</td><td>—</td><td>Not included</td></tr>
+          <tr><td>Premium</td><td>—</td><td>—</td><td>—</td><td>Not included</td></tr>
+          <tr><td>SSO Enterprise</td><td>20/seat</td><td>Custom header &amp; logo</td><td>—</td><td>100 cr/RFP</td></tr>
+          <tr><td>Sovereign Pro</td><td>Unlimited</td><td>White-label</td><td>✓ Multi-file</td><td>Included</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px">
+        <a href="/rfp_generator.html" style="display:inline-block;padding:8px 20px;
+           background:rgba(212,175,55,.12);border:0.5px solid rgba(212,175,55,.4);
+           border-radius:6px;color:#D4AF37;font-size:11px;letter-spacing:2px;text-decoration:none;"
+           target="_blank">OPEN RFP GENERATOR →</a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /pricing-wrap -->
+
+<!-- ── SSO Upsell Modal (reused from export gate) ── -->
+<div id="sov-upsell-overlay" class="sov-upgrade-overlay" style="display:none" aria-modal="true" role="dialog" aria-label="Upgrade plan">
+  <div class="sov-upgrade-modal" id="sov-upsell-modal">
+    <button class="close-btn" onclick="hideUpgradeModal()" aria-label="Close">✕</button>
+    <div class="upgrade-icon" id="upsell-icon">🔓</div>
+    <div class="upgrade-title" id="upsell-title">Unlock Interactive 3D Export</div>
+    <div class="upgrade-sub"  id="upsell-sub">Sovereign Pro Membership</div>
+
+    <ul class="upgrade-features" id="upsell-features">
+      <li><span class="ufi">✦</span>Download rotatable 3D scenes (.glb, .usdz, HTML)</li>
+      <li><span class="ufi">✦</span>MP4 Auto-Tour export (1080p)</li>
+      <li><span class="ufi">✦</span>Apple Vision Pro holographic display</li>
+      <li><span class="ufi">✦</span>Axiom metadata embedded in every file</li>
+      <li><span class="ufi">✦</span>Unlimited G3FP reasoning — all 6 purposes</li>
+      <li><span class="ufi">✦</span>Dedicated account manager + SLA 99.9%</li>
+    </ul>
+
+    <div class="tier-compare">
+      <div class="tc-box">
+        <div class="tc-title">FREE / PREMIUM</div>
+        <ul>
+          <li>Static 3D preview only</li>
+          <li>P1 purpose (Free)</li>
+          <li>Watermarked exports</li>
+          <li>No 3D downloads</li>
+        </ul>
+      </div>
+      <div class="tc-box sso-box">
+        <div class="tc-title">SOVEREIGN PRO</div>
+        <ul>
+          <li>Full 3D download suite</li>
+          <li>All 6 purposes</li>
+          <li>No watermarks</li>
+          <li>Vision Pro ready</li>
+        </ul>
+      </div>
+    </div>
+
+    <button class="upgrade-cta-primary" id="upsell-cta-primary" onclick="window.location.href='/pricing.html'">View Plans &amp; Pricing →</button>
+    <button class="upgrade-cta-secondary" onclick="hideUpgradeModal()">Continue with Current Plan</button>
+    <div class="upgrade-footnote">Secure login via SSO · GDPR compliant · Cancel anytime</div>
+  </div>
+</div>
+
+<script>
+// ── Billing toggle ──────────────────────────────────────────────────────────
+let isAnnual = true;
+
+const PRICES = {
+  premium: { monthly: 49,  annual: 39  },
+  sso:     { monthly: 149, annual: 119 },
+  pro:     { monthly: 399, annual: 319 }
+};
+const ANNUAL_NOTES = {
+  premium: m => isAnnual ? `Billed $${m*12}/year (save $${(49-m)*12})` : '&nbsp;',
+  sso:     m => isAnnual ? `Billed $${m*12}/seat/year` : '',
+  pro:     m => isAnnual ? `Billed $${m*12}/seat/year · or custom annual` : 'or custom annual'
+};
+
+function toggleBilling() {
+  isAnnual = !isAnnual;
+  const tog = document.getElementById('billing-toggle');
+  tog.classList.toggle('annual', isAnnual);
+  tog.classList.toggle('monthly', !isAnnual);
+  document.getElementById('toggle-knob').style.transform = isAnnual ? 'translateX(20px)' : 'translateX(0)';
+  document.getElementById('billing-monthly-label').style.color = isAnnual ? 'var(--muted)' : '#fff';
+  document.getElementById('billing-annual-label').style.color  = isAnnual ? '#fff' : 'var(--muted)';
+
+  ['premium','sso','pro'].forEach(tier => {
+    const p = isAnnual ? PRICES[tier].annual : PRICES[tier].monthly;
+    const el = document.getElementById('price-'+tier);
+    if (el) el.textContent = '$'+p;
+    const ne = document.getElementById('note-'+tier);
+    if (ne) ne.innerHTML = isAnnual
+      ? `Billed $${p*12}${tier!=='premium'?'/seat':''}/year`
+      : (tier==='premium' ? '&nbsp;' : '');
+  });
+}
+
+// ── Upgrade modal ───────────────────────────────────────────────────────────
+const MODAL_CONFIGS = {
+  premium: {
+    icon: '⚡', title: 'Unlock Premium Analysis',
+    sub: 'Premium Membership — $49/month',
+    features: [
+      '20 audit reports / month',
+      '500 AI Credits / month',
+      'All 6 G3FP purposes unlocked',
+      'In-browser 3D rotation (OrbitControls)',
+      'Priority HITL review queue',
+      'Causal drift history (30 days)'
+    ],
+    cta: 'Start Free Trial →'
+  },
+  sso: {
+    icon: '🏢', title: 'Unlock SSO Enterprise',
+    sub: 'SSO Enterprise — $149/seat/month (min 3 seats)',
+    features: [
+      '50 audit reports / seat / month',
+      '1,500 AI Credits / seat / month',
+      'Custom report header, logo & branding',
+      'Sovereign Audit Seal (cryptographically authenticated)',
+      'Organization SSO / SAML login',
+      'Centralized team dashboard + full PDF export'
+    ],
+    cta: 'Contact Sales →'
+  },
+  pro: {
+    icon: '🔓', title: 'Unlock Interactive 3D Export',
+    sub: 'Sovereign Pro — $399/seat/month',
+    features: [
+      'Download rotatable 3D scenes (.glb, .usdz, HTML)',
+      'MP4 Auto-Tour export (1080p)',
+      'Apple Vision Pro holographic display',
+      'Axiom metadata embedded in every file',
+      'Unlimited API access + custom ontology domain',
+      'Dedicated account manager + SLA 99.9%'
+    ],
+    cta: 'Get Sovereign Pro →'
+  }
+};
+
+function showUpgradeModal(tier) {
+  const cfg = MODAL_CONFIGS[tier] || MODAL_CONFIGS.pro;
+  document.getElementById('upsell-icon').textContent  = cfg.icon;
+  document.getElementById('upsell-title').textContent = cfg.title;
+  document.getElementById('upsell-sub').textContent   = cfg.sub;
+  const ul = document.getElementById('upsell-features');
+  ul.innerHTML = cfg.features.map(f => `<li><span class="ufi">✦</span>${f}</li>`).join('');
+  document.getElementById('upsell-cta-primary').textContent = cfg.cta;
+  document.getElementById('sov-upsell-overlay').style.display = 'flex';
+  document.getElementById('sov-upsell-modal').focus();
+}
+
+function hideUpgradeModal() {
+  document.getElementById('sov-upsell-overlay').style.display = 'none';
+}
+
+// Close on backdrop click
+document.getElementById('sov-upsell-overlay').addEventListener('click', function(e){
+  if (e.target === this) hideUpgradeModal();
+});
+
+// Keyboard: Esc closes
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') hideUpgradeModal();
+});
+
+// Expose globally for external trigger (export gate, 3D engine)
+window.SovUpgradeModal = { show: showUpgradeModal, hide: hideUpgradeModal };
+</script>
+</body>
+</html>

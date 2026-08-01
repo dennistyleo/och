@@ -1,0 +1,1 @@
+{"id":"RES_004","name":"Bounded Resource Growth","type":"D","level":"L3","statement":"Resource usage must not grow unbounded","severity":"CRITICAL"}

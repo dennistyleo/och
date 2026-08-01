@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920">
+    <title>Sovereign Matrix · OP-04 Aerospace &amp; Composite Integrity</title>
+    <meta name="description" content="Sovereign OCM OP-04 — Aerospace Composite Manufacturing Audit (OCM V4.1)">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+    :root {
+        --gold:    #D4AF37; --gold-lt: #f0d060; --gold-dk: #7a5c10;
+        --orange:  #ff914d; --green:   #00C853; --green2:  #00bf63;
+        --amber:   #ffb300; --blue-dp: #0d47a1;
+        --black:   #000000; --bg:      #f2f2f2;
+        --breathe: 15%;
+        --wing-w:  220px;  --wing-h: 212px;
+        --nav-h:   62px;   --bridge-h: 72px; --hdr-h: 284px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { width: 1920px; background: var(--bg); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--gold-dk) #111; }
+    html::-webkit-scrollbar       { width: 10px; }
+    html::-webkit-scrollbar-track { background: #111; border-left: 1px solid #1e1e1e; }
+    html::-webkit-scrollbar-thumb { background: var(--gold-dk); border-radius: 5px; border: 2px solid #111; }
+    html::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+    body { width: 1920px; min-height: 1080px; background: var(--bg); font-family: Calibri, '微軟正黑體', sans-serif; font-size: 12px; overflow-x: hidden; padding-bottom: 36px; }
+    body, div, span, p, a, h1, h2, h3, h4, h5, h6, input, button, textarea, select { font-family: Calibri, '微軟正黑體', sans-serif !important; }
+
+    .scroll-zone { overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--gold-dk) var(--gold); }
+    .scroll-zone::-webkit-scrollbar { width: 10px; }
+    .scroll-zone::-webkit-scrollbar-track { background: var(--gold); border-radius: 5px; }
+    .scroll-zone::-webkit-scrollbar-thumb { background: var(--gold-dk); border-radius: 5px; border: 2px solid var(--gold); }
+
+    /* ── Media containers ── */
+    .model-visual, .gnn-visual {
+        overflow: hidden; background: #030508 !important;
+        border-radius: 15px !important;
+    }
+    .model-visual > video, .gnn-visual > video {
+        width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 15px;
+    }
+
+    /* ── HEADER (identical geometry to OP-02) ── */
+    .sm-header { position: relative; width: 100%; height: var(--hdr-h); background: var(--black); flex-shrink: 0; }
+    .hdr-wing { position: absolute; top: 0; width: var(--wing-w); height: var(--wing-h); overflow: hidden; z-index: 2; }
+    .hdr-wing.left { left: 0; } .hdr-wing.right { right: 0; }
+    .hdr-wing video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .hdr-engines { position: absolute; left: var(--wing-w); right: var(--wing-w); top: 0; height: 218px; display: flex; flex-direction: column; padding: 20px 0; }
+    .eng-bars { display: flex; height: 38px; border-bottom: 1px solid #1e1e1e; flex-shrink: 0; }
+    .eng-bar-col { flex: 1; border-left: 1px solid #1c1c1c; padding: 6px 12px 5px; display: flex; flex-direction: column; justify-content: space-between; }
+    .eng-bar-col:last-child { border-right: 1px solid #1c1c1c; }
+    .eng-bar-top { display: flex; justify-content: flex-end; }
+    .eng-bar-pct { font-size: 12px; font-weight: 700; color: var(--amber); }
+    .eng-bar-track { height: 3px; background: #1e1e1e; border-radius: 2px; margin-top: 3px; }
+    .eng-bar-fill  { height: 100%; border-radius: 2px; }
+    .eng-descs { display: flex; flex: 1; }
+    .eng-desc-col { flex: 1; border-left: 1px solid #1a1a1a; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .eng-desc-col:last-child { border-right: 1px solid #1a1a1a; }
+    .eng-desc-id { font-size: 12px; font-weight: 700; color: #ffcc66; text-transform: uppercase; }
+    .eng-desc-body { font-size: 12px; color: #888; line-height: 1.4; max-height: 80px; overflow-y: auto; padding-right: 4px; }
+    .hdr-bottom { position: absolute; left: var(--wing-w); right: var(--wing-w); top: 218px; height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 90px; gap: 20px; z-index: 25; }
+    .hdr-brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .hdr-logo  { width: 36px; height: 36px; object-fit: contain; }
+    .hdr-brand-text { font-weight: 900; font-size: 20px; letter-spacing: 3px; color: var(--gold); white-space: nowrap; }
+    .hdr-nav { display: flex; gap: 12px; flex: 1; justify-content: flex-end; }
+    .hdr-btn-wide { padding: 10px 40px; background: #1c1c0a; border: 2px solid var(--amber); border-radius: 7px; color: var(--amber); font-weight: 800; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; white-space: nowrap; transition: background 0.15s, color 0.15s; }
+    .hdr-btn-wide:hover, .hdr-btn-wide.active { background: var(--amber); color: #000; }
+    .hdr-btn-wide.gold { border-color: var(--gold); color: var(--gold); background: transparent; }
+    .hdr-btn-wide.gold:hover { background: var(--gold); color: #000; }
+    .hdr-tongue { position: absolute; bottom: 0; left: 0; right: 0; height: var(--bridge-h); z-index: 20; pointer-events: none; line-height: 0; font-size: 0; }
+    .hdr-tongue svg { display: block; width: 100%; height: 72px; }
+
+    /* ── OPERATION STAGE ── */
+    .op-stage { width: 100%; padding: 16px var(--breathe) 24px; background: var(--bg); min-height: calc(1080px - var(--hdr-h) - 42px); display: flex; gap: 14px; align-items: stretch; }
+
+    /* ── LEFT SIDEBAR (SAA Axiom Cards) ── */
+    .zone-left { flex: 0 0 280px; border: 2px solid var(--gold); border-radius: 15px; overflow: hidden; background: #000000; display: flex; flex-direction: column; }
+    .zone-left-hdr { background: #000; color: var(--amber); font-weight: 700; font-size: 12px; padding: 9px 12px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #222; flex-shrink: 0; }
+    .zone-left-body { flex: 1; min-height: 0; padding: 6px 4px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--gold-dk) #111; }
+    .zone-left-body::-webkit-scrollbar { width: 6px; }
+    .zone-left-body::-webkit-scrollbar-track { background: #111; border-radius: 3px; }
+    .zone-left-body::-webkit-scrollbar-thumb { background: var(--gold-dk); border-radius: 3px; }
+
+    .saa-card { margin: 6px 6px 10px; border: 1px solid #2a2000; border-radius: 8px; background: #0d0d00; overflow: hidden; }
+    .saa-card-hdr { background: #1a1200; padding: 6px 10px; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .saa-card-id { font-size: 11px; font-weight: 700; color: var(--amber); letter-spacing: 0.5px; }
+    .saa-card-layer { font-size: 10px; color: #666; }
+    .saa-card-type { font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px; }
+    .saa-card-type.INVARIANT { background: #001a33; color: #66aaff; }
+    .saa-card-type.STOCHASTIC { background: #1a0033; color: #cc88ff; }
+    .saa-card-type.CAUSAL    { background: #001a0d; color: #44dd88; }
+    .saa-card-body { padding: 7px 10px 8px; }
+    .saa-card-title { font-size: 11px; font-weight: 700; color: #eee; margin-bottom: 4px; }
+    .saa-card-formula { font-family: 'JetBrains Mono', monospace !important; font-size: 11px; color: var(--gold-lt); background: #111; border-radius: 3px; padding: 3px 6px; margin-bottom: 5px; }
+    .saa-card-desc { font-size: 11px; color: #888; line-height: 1.5; margin-bottom: 5px; }
+    .saa-card-verdict { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 3px; }
+    .verdict-PASS    { background: #002200; color: #00C853; border: 1px solid #006600; }
+    .verdict-REFUSE  { background: #220000; color: #ff4444; border: 1px solid #660000; }
+    .verdict-WARNING { background: #221100; color: var(--amber); border: 1px solid #664400; }
+
+    /* ── ZONE RIGHT: stacked rows ── */
+    .zone-right { flex: 1; display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+
+    /* Gold-framed row (shared by all zones) */
+    .model-row { flex: 1; display: flex; gap: 0; min-height: 0; border: 2px solid var(--gold); border-radius: 15px; background: #fff; overflow: hidden; }
+
+    /* Panels inside each row */
+    .gold-panel { border: none; display: flex; flex-direction: column; background: #fff; min-height: 0; }
+    .gold-panel-tab { font-weight: 700; font-size: 12px; color: #111; padding: 9px 18px; text-align: center; letter-spacing: 1px; background: #fff !important; flex-shrink: 0; border: 2px solid var(--gold); border-radius: 15px; margin: 10px 10px 6px; }
+
+    /* Zone 1: UIF ingestion split */
+    .panel-upload { flex: 0 0 40%; display: flex; flex-direction: column; border-right: 1px solid #e8d890; }
+    .panel-uif    { flex: 1; display: flex; flex-direction: column; }
+
+    .upload-drop { flex: 1; margin: 8px 12px; border: 2px dashed var(--gold); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: #fffdf0; cursor: pointer; transition: background 0.2s; }
+    .upload-drop:hover { background: #fff8d0; }
+    .upload-icon { font-size: 32px; color: var(--gold); }
+    .upload-label { font-size: 12px; font-weight: 700; color: #555; text-align: center; }
+    .upload-sub   { font-size: 11px; color: #aaa; text-align: center; }
+    .upload-formats { font-size: 10px; color: #bbb; text-align: center; }
+
+    .uif-log { flex: 1; margin: 8px 12px; background: #0a0a0a; border-radius: 8px; border: 1px solid #2a2000; overflow-y: auto; padding: 8px 10px; scrollbar-width: thin; scrollbar-color: var(--gold-dk) #111; }
+    .uif-log::-webkit-scrollbar { width: 5px; }
+    .uif-log::-webkit-scrollbar-thumb { background: var(--gold-dk); border-radius: 3px; }
+    .uif-line { font-family: 'JetBrains Mono', monospace !important; font-size: 11px; line-height: 1.7; }
+    .uif-key   { color: #88ccff; }
+    .uif-val   { color: #aaffaa; }
+    .uif-str   { color: var(--amber); }
+    .uif-label { color: #666; }
+
+    /* Zone 2: Cycle 1 metrics */
+    .panel-metrics { flex: 1; display: flex; flex-direction: column; padding: 10px 16px; gap: 10px; }
+    .cycle-title { font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; padding: 4px 0; border-bottom: 1px solid #e8d890; }
+    .metric-pills { display: flex; gap: 10px; flex: 1; align-items: stretch; }
+    .metric-pill { flex: 1; border: 1px solid #ddd; border-radius: 10px; background: #fafafa; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 10px 6px; }
+    .metric-pill-label { font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+    .metric-pill-pct { font-size: 22px; font-weight: 900; color: #111; }
+    .metric-pill-bar { width: 80%; height: 4px; background: #eee; border-radius: 2px; overflow: hidden; }
+    .metric-pill-fill { height: 100%; border-radius: 2px; transition: width 1.5s ease; }
+    .metric-pill-sub { font-size: 10px; color: #aaa; text-align: center; }
+    .l1-fill { background: #4caf50; }
+    .l2-fill { background: var(--amber); }
+    .l3-fill { background: #2196f3; }
+    .l4-fill { background: #9c27b0; }
+
+    .panel-3d-sm { flex: 0 0 38%; display: flex; flex-direction: column; border-left: 1px solid #e8d890; }
+
+    /* Zone 3: Conflict engine */
+    .panel-conflict { flex: 0 0 55%; display: flex; flex-direction: column; border-right: 1px solid #e8d890; padding: 10px 14px; gap: 8px; }
+    .conflict-title { font-size: 11px; font-weight: 700; color: #c0392b; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid #fdd; padding-bottom: 4px; }
+    .conflict-row { display: flex; gap: 10px; flex: 1; align-items: stretch; }
+    .saa-verdict-card { flex: 1; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 5px; }
+    .saa-verdict-card.pass-card   { background: #e8fff0; border: 2px solid #4caf50; }
+    .saa-verdict-card.fail-card   { background: #fff0f0; border: 2px solid #e53935; }
+    .saa-verdict-card-title { font-size: 11px; font-weight: 700; }
+    .saa-verdict-card.pass-card .saa-verdict-card-title { color: #2e7d32; }
+    .saa-verdict-card.fail-card .saa-verdict-card-title { color: #b71c1c; }
+    .saa-verdict-card-id   { font-size: 10px; color: #888; }
+    .saa-verdict-card-body { font-size: 11px; color: #555; line-height: 1.5; }
+    .saa-verdict-badge { display: inline-flex; font-size: 12px; font-weight: 900; padding: 3px 10px; border-radius: 4px; margin-top: auto; }
+    .badge-pass   { background: #2e7d32; color: #fff; }
+    .badge-fail   { background: #b71c1c; color: #fff; }
+    .ocg-decision { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; flex: 0 0 90px; }
+    .ocg-vs       { font-size: 18px; font-weight: 900; color: #c0392b; }
+    .ocg-badge    { font-size: 10px; font-weight: 700; background: #fff3cd; color: #7a4f00; border: 2px solid var(--amber); border-radius: 6px; padding: 4px 8px; text-align: center; line-height: 1.4; }
+    .conflict-resolution { background: #fff8e1; border: 1px solid var(--amber); border-radius: 6px; padding: 7px 10px; font-size: 11px; color: #555; }
+    .conflict-resolution strong { color: #7a4f00; }
+
+    /* Zone 3 right: causal model */
+    .panel-causal-z3 { flex: 1; display: flex; flex-direction: column; }
+
+    /* Zone 4: Audit Report */
+    .panel-report { flex: 1; display: flex; flex-direction: column; padding: 10px 16px; }
+    .report-title { font-size: 11px; font-weight: 700; color: #111; letter-spacing: 2px; text-transform: uppercase; border-bottom: 2px solid var(--gold); padding-bottom: 5px; margin-bottom: 8px; }
+    .report-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .report-table th { background: #f5f0d8; color: #111; font-weight: 700; padding: 7px 10px; text-align: left; border: 1px solid #e0d090; letter-spacing: 0.5px; font-size: 11px; text-transform: uppercase; }
+    .report-table td { padding: 8px 10px; border: 1px solid #eee; vertical-align: top; }
+    .report-table tr:nth-child(even) td { background: #fafaf5; }
+    .badge-report { display: inline-flex; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 4px; white-space: nowrap; }
+    .badge-rpass   { background: #e8f5e9; color: #2e7d32; border: 1px solid #4caf50; }
+    .badge-rrefuse { background: #ffebee; color: #b71c1c; border: 1px solid #e53935; }
+    .badge-rwarn   { background: #fff8e1; color: #7a4f00; border: 1px solid var(--amber); }
+    .report-axiom  { font-size: 11px; color: #666; }
+    .report-finding { font-size: 11px; color: #333; line-height: 1.5; }
+    .report-formula { font-family: 'JetBrains Mono', monospace !important; font-size: 10px; color: var(--gold-dk); background: #f5f0d8; padding: 1px 4px; border-radius: 2px; }
+    .evidence-chain { margin-top: 10px; background: #0a0a0a; border-radius: 6px; padding: 8px 10px; }
+    .evidence-chain-title { font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: 1px; margin-bottom: 5px; }
+    .evidence-item { font-size: 11px; color: #888; line-height: 1.7; }
+    .evidence-item .ev-id { color: var(--amber); font-weight: 700; }
+    .evidence-item .ev-src { color: #aaffaa; }
+
+    .panel-gnn-z4 { flex: 0 0 32%; display: flex; flex-direction: column; border-left: 1px solid #e8d890; }
+
+    /* divider between sub-panels inside a row */
+    .row-divider { width: 1px; background: #e8d890; flex-shrink: 0; }
+
+    /* ── PAGE NAV BAR ── */
+    .page-nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 36px; z-index: 200; background: rgba(0,0,0,0.94); border-top: 1px solid #7a5c10; display: flex; align-items: center; justify-content: space-between; padding: 0 48px; backdrop-filter: blur(6px); }
+    .pnb-label { font-size: 12px; font-weight: 700; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; }
+    .pnb-btn { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; background: transparent; border: 1px solid #333; border-radius: 4px; color: #666; padding: 5px 18px; transition: border-color 0.2s, color 0.2s; }
+    .pnb-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* Metric animation */
+    @keyframes bar-grow { from { width: 0%; } }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     HEADER — Aerospace amber accent, same geometry as OP-02
+════════════════════════════════════════════════════ -->
+<header class="sm-header" id="sm-header-op04">
+    <div class="hdr-wing left"><video autoplay muted loop playsinline><source src="P01Header_L.mp4" type="video/mp4"></video></div>
+    <div class="hdr-wing right"><video autoplay muted loop playsinline><source src="P01header_R.mp4" type="video/mp4"></video></div>
+
+    <div class="hdr-engines">
+        <div class="eng-bars">
+            <div class="eng-bar-col"><div class="eng-bar-top"><span class="eng-bar-pct" id="bar-l1-pct">87%</span></div><div class="eng-bar-track"><div class="eng-bar-fill" id="bar-l1" style="width:87%;background:var(--green2);"></div></div></div>
+            <div class="eng-bar-col"><div class="eng-bar-top"><span class="eng-bar-pct" id="bar-l2-pct">74%</span></div><div class="eng-bar-track"><div class="eng-bar-fill" id="bar-l2" style="width:74%;background:var(--amber);"></div></div></div>
+            <div class="eng-bar-col"><div class="eng-bar-top"><span class="eng-bar-pct" id="bar-l3-pct">61%</span></div><div class="eng-bar-track"><div class="eng-bar-fill" id="bar-l3" style="width:61%;background:#2196f3;"></div></div></div>
+            <div class="eng-bar-col"><div class="eng-bar-top"><span class="eng-bar-pct" id="bar-l4-pct">55%</span></div><div class="eng-bar-track"><div class="eng-bar-fill" id="bar-l4" style="width:55%;background:#9c27b0;"></div></div></div>
+            <div class="eng-bar-col"><div class="eng-bar-top"><span class="eng-bar-pct">LOCK</span></div><div class="eng-bar-track"><div class="eng-bar-fill" style="width:100%;background:var(--gold);"></div></div></div>
+        </div>
+        <div class="eng-descs">
+            <div class="eng-desc-col"><div class="eng-desc-id">[L1] Characterization</div><div class="eng-desc-body">RAG Agent extracts entities from AFP log: Curing T, Pressure P, Resin Viscosity μ. L1 Confidence % = extraction completeness.</div></div>
+            <div class="eng-desc-col"><div class="eng-desc-id">[L2] Pathway Generation</div><div class="eng-desc-body">Semantic Routing Agent maps extracted variables to Composite SAA corpus. L2 Match % = axiom alignment strength.</div></div>
+            <div class="eng-desc-col"><div class="eng-desc-id">[L3] Entropy Evaluation</div><div class="eng-desc-body">GNN Agent filters contradictory pathways. Circuit Breaker triggers if Survival % &lt; 40%. T-XYZ scalar field rendered.</div></div>
+            <div class="eng-desc-col"><div class="eng-desc-id">[L4] Axiom Election</div><div class="eng-desc-body">XAI Agent finalises hypothesis set. OCG validates 1:1 against Sovereign Axiom DB. Hallucinated axioms flagged.</div></div>
+            <div class="eng-desc-col"><div class="eng-desc-id">[L5] Deduction Lock</div><div class="eng-desc-body">OCM Audit Agent locks findings. Generates tamper-proof Audit Report. Cumulative L1–L5 Compliance %.</div></div>
+        </div>
+    </div>
+
+    <div class="hdr-bottom" id="hdr-bottom-op04">
+        <div class="hdr-brand">
+            <a href="/" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
+                <img src="aichip-logo-home.png" alt="Sovereign Matrix" class="hdr-logo">
+                <span class="hdr-brand-text">ONTOLOGY COMPLIANCE MATRIX</span>
+            </a>
+        </div>
+        <nav class="hdr-nav" id="hdr-nav-op04">
+            <button class="hdr-btn-wide gold" id="btn-home-op04" onclick="window.location.href='/'">&#8592; HOME</button>
+            <button class="hdr-btn-wide active" id="btn-op04-audit">AEROSPACE COMPOSITE AUDIT</button>
+            <button class="hdr-btn-wide" id="btn-op04-report" onclick="document.getElementById('zone4-row').scrollIntoView({behavior:'smooth'})">GENERATE AUDIT REPORT</button>
+        </nav>
+    </div>
+
+    <div class="hdr-tongue">
+        <svg viewBox="0 0 1920 72" preserveAspectRatio="none" shape-rendering="geometricPrecision" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 0,0 H 220 C 276,56 282,72 302,72 H 0 Z" fill="#f2f2f2"/>
+            <path d="M 1920,0 H 1700 C 1644,56 1638,72 1618,72 H 1920 Z" fill="#f2f2f2"/>
+        </svg>
+    </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════
+     MAIN STAGE
+════════════════════════════════════════════════════ -->
+<main class="op-stage" id="op04-stage">
+
+    <!-- ── LEFT: SAA Axiom Cards ── -->
+    <div class="zone-left" id="zone-left-op04">
+        <div class="zone-left-hdr">&#9660; SAA AXIOM REGISTRY · AEROSPACE</div>
+        <div class="zone-left-body" id="saa-body">
+
+            <!-- SAA Card: COMP_ILSS_001 -->
+            <div class="saa-card">
+                <div class="saa-card-hdr">
+                    <span class="saa-card-id">COMP_ILSS_001</span>
+                    <span class="saa-card-type INVARIANT">INVARIANT</span>
+                </div>
+                <div class="saa-card-body">
+                    <div class="saa-card-layer">L2 · Engineering · Composite Integrity SAA</div>
+                    <div class="saa-card-title">Griffith Fracture Criterion</div>
+                    <div class="saa-card-formula">Gc = (2γs·E)/(1−ν²)</div>
+                    <div class="saa-card-desc">Critical energy release rate for delamination onset. Extracts E, γs, ν from AFP UIF; computes exact delamination threshold.</div>
+                    <span class="saa-card-verdict verdict-PASS">&#10003; PASS — Gc ≥ 350 J/m²</span>
+                </div>
+            </div>
+
+            <!-- SAA Card: SCM_LEAD_001 -->
+            <div class="saa-card">
+                <div class="saa-card-hdr">
+                    <span class="saa-card-id">SCM_LEAD_001</span>
+                    <span class="saa-card-type STOCHASTIC">STOCHASTIC</span>
+                </div>
+                <div class="saa-card-body">
+                    <div class="saa-card-layer">L1 · Scout · SCM Efficiency SAA</div>
+                    <div class="saa-card-title">Supply Chain Lead Time</div>
+                    <div class="saa-card-formula">Lead_Time &lt; 28 days</div>
+                    <div class="saa-card-desc">Flags PASS for project lead-time reduction. Conflict detected: faster prepreg curing uses non-validated resin chemistry.</div>
+                    <span class="saa-card-verdict verdict-REFUSE">&#10007; REFUSE — Non-validated resin</span>
+                </div>
+            </div>
+
+            <!-- SAA Card: STRUCT_STRESS_001 -->
+            <div class="saa-card">
+                <div class="saa-card-hdr">
+                    <span class="saa-card-id">STRUCT_STRESS_001</span>
+                    <span class="saa-card-type INVARIANT">INVARIANT</span>
+                </div>
+                <div class="saa-card-body">
+                    <div class="saa-card-layer">L2 · Engineering · Structural Mechanics SAA</div>
+                    <div class="saa-card-title">Axial Stress Interaction</div>
+                    <div class="saa-card-formula">σ = E·ε → Z-axis asymmetry</div>
+                    <div class="saa-card-desc">Detects FAIL when faster cure cycle raises entropy and causes micro-cracking. Triggers negotiate_contradiction node in OCG Gateway.</div>
+                    <span class="saa-card-verdict verdict-WARNING">&#9888; WARNING — Asymmetric Z-stress</span>
+                </div>
+            </div>
+
+            <!-- SAA Card: THERM_CURE_001 -->
+            <div class="saa-card">
+                <div class="saa-card-hdr">
+                    <span class="saa-card-id">THERM_CURE_001</span>
+                    <span class="saa-card-type CAUSAL">CAUSAL</span>
+                </div>
+                <div class="saa-card-body">
+                    <div class="saa-card-layer">L3 · Entropy · Cure Cycle SAA</div>
+                    <div class="saa-card-title">Thermal Entropy Evaluation</div>
+                    <div class="saa-card-formula">ΔS = (ΔP/T)·Δt_cure</div>
+                    <div class="saa-card-desc">Evaluates curing cycle entropy from AFP log. Ambient humidity (confounder X) modulates ILSS (outcome Y) via viscosity drift.</div>
+                    <span class="saa-card-verdict verdict-PASS">&#10003; PASS — ΔS &lt; 0.12 kJ/mol</span>
+                </div>
+            </div>
+
+        </div>
+    </div><!-- /zone-left -->
+
+    <!-- ── RIGHT: Stacked Zones ── -->
+    <div class="zone-right" id="zone-right-op04">
+
+        <!-- ═══ ZONE 1: L0 UIF Ingestion ═══ -->
+        <div class="model-row" id="zone1-row" style="flex:0 0 180px;">
+
+            <div class="gold-panel panel-upload">
+                <div class="gold-panel-tab">L0 · AFP LOG INGESTION</div>
+                <div class="upload-drop" id="upload-drop-op04" onclick="document.getElementById('file-input-op04').click()">
+                    <div class="upload-icon">&#128196;</div>
+                    <div class="upload-label">DROP AFP PRODUCTION LOG<br>or STRESS TEST CERTIFICATE</div>
+                    <div class="upload-sub">Gemini 3 Flash Vision → JSON-LD UIF</div>
+                    <div class="upload-formats">PDF · JSON · XLS · CSV · PNG · MP4</div>
+                </div>
+                <input type="file" id="file-input-op04" style="display:none" accept=".pdf,.json,.csv,.xlsx,.png,.mp4">
+            </div>
+
+            <div class="row-divider"></div>
+
+            <div class="gold-panel panel-uif">
+                <div class="gold-panel-tab">UIF · JSON-LD SOVEREIGN SEMANTICS</div>
+                <div class="uif-log" id="uif-log-op04">
+                    <div class="uif-line"><span class="uif-label">// Universal Ingestion Format — OCM V4.1 L0 Output</span></div>
+                    <div class="uif-line"><span class="uif-key">"@context"</span><span class="uif-label">: </span><span class="uif-str">"sovereign://aerospace/v4.1"</span><span class="uif-label">,</span></div>
+                    <div class="uif-line"><span class="uif-key">"domain"</span><span class="uif-label">: </span><span class="uif-str">"AEROSPACE_COMPOSITE"</span><span class="uif-label">,</span></div>
+                    <div class="uif-line"><span class="uif-key">"treatment_T"</span><span class="uif-label">: { </span><span class="uif-key">"variable"</span><span class="uif-label">: </span><span class="uif-str">"Curing_Pressure_Temp"</span><span class="uif-label">, </span><span class="uif-key">"unit"</span><span class="uif-label">: </span><span class="uif-str">"°C / bar"</span><span class="uif-label"> },</span></div>
+                    <div class="uif-line"><span class="uif-key">"outcome_Y"</span><span class="uif-label">: { </span><span class="uif-key">"variable"</span><span class="uif-label">: </span><span class="uif-str">"ILSS"</span><span class="uif-label">, </span><span class="uif-key">"unit"</span><span class="uif-label">: </span><span class="uif-str">"MPa"</span><span class="uif-label"> },</span></div>
+                    <div class="uif-line"><span class="uif-key">"confounder_X"</span><span class="uif-label">: { </span><span class="uif-key">"variable"</span><span class="uif-label">: </span><span class="uif-str">"Ambient_Humidity"</span><span class="uif-label">, </span><span class="uif-key">"unit"</span><span class="uif-label">: </span><span class="uif-str">"%RH"</span><span class="uif-label"> },</span></div>
+                    <div class="uif-line"><span class="uif-key">"Z_compliance_depth"</span><span class="uif-label">: </span><span class="uif-val">2.847</span><span class="uif-label">,</span></div>
+                    <div class="uif-line"><span class="uif-key">"entropy_flag"</span><span class="uif-label">: </span><span class="uif-val">false</span><span class="uif-label">,</span></div>
+                    <div class="uif-line"><span class="uif-key">"L0_status"</span><span class="uif-label">: </span><span class="uif-str">"NORMALISED"</span></div>
+                </div>
+            </div>
+        </div><!-- /zone1-row -->
+
+        <!-- ═══ ZONE 2: Cycle 1 Metrics + GNN Model ═══ -->
+        <div class="model-row" id="zone2-row" style="flex:0 0 200px;">
+
+            <div class="gold-panel" style="flex:1;border-right:1px solid #e8d890;">
+                <div class="gold-panel-tab">CYCLE 1 · SEMANTIC PLASTICITY METRICS</div>
+                <div class="panel-metrics">
+                    <div class="cycle-title">L1 → L4 Live Confidence Pipeline</div>
+                    <div class="metric-pills">
+                        <div class="metric-pill">
+                            <div class="metric-pill-label">L1 Characterization<br>Confidence</div>
+                            <div class="metric-pill-pct" style="color:#2e7d32;">87%</div>
+                            <div class="metric-pill-bar"><div class="metric-pill-fill l1-fill" style="width:87%;animation:bar-grow 1.5s ease;"></div></div>
+                            <div class="metric-pill-sub">RAG Agent · AFP Log</div>
+                        </div>
+                        <div class="metric-pill">
+                            <div class="metric-pill-label">L2 Axiom Match<br>Percentage</div>
+                            <div class="metric-pill-pct" style="color:#e65100;">74%</div>
+                            <div class="metric-pill-bar"><div class="metric-pill-fill l2-fill" style="width:74%;animation:bar-grow 1.5s ease 0.2s;"></div></div>
+                            <div class="metric-pill-sub">Semantic Router · SAA Corpus</div>
+                        </div>
+                        <div class="metric-pill">
+                            <div class="metric-pill-label">L3 Pathway Survival<br>Percentage</div>
+                            <div class="metric-pill-pct" style="color:#1565c0;">61%</div>
+                            <div class="metric-pill-bar"><div class="metric-pill-fill l3-fill" style="width:61%;animation:bar-grow 1.5s ease 0.4s;"></div></div>
+                            <div class="metric-pill-sub">GNN Agent · Entropy Filter</div>
+                        </div>
+                        <div class="metric-pill">
+                            <div class="metric-pill-label">L4 Axiom Election<br>Percentage</div>
+                            <div class="metric-pill-pct" style="color:#6a1b9a;">55%</div>
+                            <div class="metric-pill-bar"><div class="metric-pill-fill l4-fill" style="width:55%;animation:bar-grow 1.5s ease 0.6s;"></div></div>
+                            <div class="metric-pill-sub">XAI Agent · OCG Check</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gold-panel panel-3d-sm">
+                <div class="gold-panel-tab">GNN MODEL</div>
+                <div class="model-visual" style="flex:1;margin:0 10px 10px;">
+                    <video autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block">
+                        <source src="3D GNN.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div><!-- /zone2-row -->
+
+        <!-- ═══ ZONE 3: Conflict Engine + Causal Model ═══ -->
+        <div class="model-row" id="zone3-row" style="flex:0 0 220px;">
+
+            <div class="gold-panel panel-conflict">
+                <div class="gold-panel-tab" style="border-color:#e53935;">OCG GATEWAY · SAA NEGOTIATE CONTRADICTION</div>
+                <div class="conflict-title">&#9888; MANUFACTURED CONFLICT: SCM EFFICIENCY vs. STRUCTURAL MECHANICS</div>
+                <div class="conflict-row">
+                    <div class="saa-verdict-card pass-card">
+                        <div class="saa-verdict-card-title">SAA_A · SCM Efficiency</div>
+                        <div class="saa-verdict-card-id">SCM_LEAD_001</div>
+                        <div class="saa-verdict-card-body">Prepreg supplier offers 20% faster curing cycle. Lead time reduced by 6 days. SCM audit path: <strong>PASS</strong> for project timeline.</div>
+                        <span class="saa-verdict-badge badge-pass">&#10003; PASS</span>
+                    </div>
+                    <div class="ocg-decision">
+                        <div class="ocg-vs">VS</div>
+                        <div class="ocg-badge">OCG<br>HALTED<br>&#9654; negotiate_<br>contradiction</div>
+                    </div>
+                    <div class="saa-verdict-card fail-card">
+                        <div class="saa-verdict-card-title">SAA_B · Structural Mechanics</div>
+                        <div class="saa-verdict-card-id">STRUCT_STRESS_001</div>
+                        <div class="saa-verdict-card-body">Faster curing causes entropy spike. Micro-cracking detected in Z-axis compliance field. Griffith Criterion violated in 2/7 plies.</div>
+                        <span class="saa-verdict-badge badge-fail">&#10007; FAIL</span>
+                    </div>
+                </div>
+                <div class="conflict-resolution">
+                    <strong>OCG Resolution:</strong> Time savings negated by material degradation. Evidence Watcher Node injected CAUSAL_MATRIX_READY event. Forcing L5 Deduction Lock with REFUSE verdict on SCM_LEAD_001. Remediation: re-validate resin chemistry under standard cure profile.
+                </div>
+            </div>
+
+            <div class="row-divider"></div>
+
+            <div class="gold-panel panel-causal-z3">
+                <div class="gold-panel-tab">CAUSAL MODEL</div>
+                <div class="model-visual" style="flex:1;margin:0 10px 10px;">
+                    <video autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block">
+                        <source src="Causal_Sample.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div><!-- /zone3-row -->
+
+        <!-- ═══ ZONE 4: L5 OCM Audit Report + World Model ═══ -->
+        <div class="model-row" id="zone4-row">
+
+            <div class="gold-panel panel-report">
+                <div class="gold-panel-tab">L5 · DEDUCTION LOCK — OCM AUDIT REPORT</div>
+                <div class="report-title">Matched Axiom Compliance Matrix</div>
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Domain</th>
+                            <th>Axiom</th>
+                            <th>Validation Formula</th>
+                            <th>Auditor Judgment</th>
+                            <th>Finding</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Material Bond</strong></td>
+                            <td><span class="report-axiom">COMP_ILSS_001</span></td>
+                            <td><span class="report-formula">Gc = (2γs·E)/(1−ν²) ≥ 350 J/m²</span></td>
+                            <td><span class="badge-report badge-rpass">&#10003; PASS</span></td>
+                            <td><span class="report-finding">Laminate energy release rate exceeds fracture threshold. All 7 ply interfaces within bounds. ILSS = 48.3 MPa (Ref: 42 MPa min).</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Supply Chain</strong></td>
+                            <td><span class="report-axiom">SCM_LEAD_001</span></td>
+                            <td><span class="report-formula">Lead_Time &lt; 28 days → resin chemistry validated</span></td>
+                            <td><span class="badge-report badge-rrefuse">&#10007; REFUSE</span></td>
+                            <td><span class="report-finding">Faster delivery (22 days) used non-validated resin batch PN-7742A. Cure kinetics untested. OCG halted. Remediation: resubmit with standard PN-6601 profile.</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Structural</strong></td>
+                            <td><span class="report-axiom">STRUCT_STRESS_001</span></td>
+                            <td><span class="report-formula">E·ε interaction, σ_asymmetric &lt; 0.05σ_nominal</span></td>
+                            <td><span class="badge-report badge-rwarn">&#9888; WARNING</span></td>
+                            <td><span class="report-finding">Asymmetric stress field detected in Z-axis volume (plies 3–5). σ_asym = 0.08σ_nominal. Amber pulse nodes: curing temp. fluctuated ±12°C during placement.</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="evidence-chain">
+                    <div class="evidence-chain-title">&#128203; EVIDENCE CITATION CHAIN</div>
+                    <div class="evidence-item"><span class="ev-id">[E-001]</span> AFP Log p.4 §2.1 — <span class="ev-src">Curing cycle: T=180°C, P=6.2 bar, Δt=90 min. μ=12.4 Pa·s</span></div>
+                    <div class="evidence-item"><span class="ev-id">[E-002]</span> Stress Certificate §3 — <span class="ev-src">ILSS test result: 48.3 MPa @ 23°C ambient, RH=62%</span></div>
+                    <div class="evidence-item"><span class="ev-id">[E-003]</span> Supplier Invoice #PO-7742 — <span class="ev-src">Resin batch PN-7742A: cure time 72 min (non-validated). Standard profile: PN-6601 @ 90 min</span></div>
+                    <div class="evidence-item"><span class="ev-id">[E-004]</span> AFP Log p.7 §4.2 — <span class="ev-src">Z-axis thermocouple log: T fluctuated ±12°C at t=42–58 min during ply 3–5 placement</span></div>
+                </div>
+            </div>
+
+            <div class="row-divider"></div>
+
+            <div class="gold-panel panel-gnn-z4">
+                <div class="gold-panel-tab">WORLD MODEL</div>
+                <div class="model-visual" style="flex:1;margin:0 10px 10px;">
+                    <video autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block">
+                        <source src="WM.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div><!-- /zone4-row -->
+
+    </div><!-- /zone-right -->
+</main>
+
+<!-- ═══ PAGE NAV BAR ═══ -->
+<nav class="page-nav-bar" id="page-nav-bar-op04">
+    <button class="pnb-btn" onclick="window.location.href='/op_03.html'">&#8593; OP-03 DEDUCTION</button>
+    <span class="pnb-label">&#9679; OP-04 · AEROSPACE &amp; COMPOSITE INTEGRITY</span>
+    <button class="pnb-btn" onclick="window.location.href='/'">HOME &#8594;</button>
+</nav>
+
+<script src="data/aerospace_axioms.js"></script>
+<script>
+(function(){
+    // Animate metric bars on load
+    document.querySelectorAll('.metric-pill-fill').forEach(function(el){
+        var w = el.style.width;
+        el.style.width = '0%';
+        setTimeout(function(){ el.style.width = w; }, 300);
+    });
+    // File drop zone
+    var drop = document.getElementById('upload-drop-op04');
+    if(drop){
+        drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.style.background='#fff0c0'; });
+        drop.addEventListener('dragleave', function(){ drop.style.background=''; });
+        drop.addEventListener('drop', function(e){
+            e.preventDefault(); drop.style.background='';
+            var f = e.dataTransfer.files[0];
+            if(f){ drop.querySelector('.upload-label').textContent = f.name + ' — L0 processing…'; }
+        });
+        document.getElementById('file-input-op04').addEventListener('change', function(e){
+            var f = e.target.files[0];
+            if(f){ drop.querySelector('.upload-label').textContent = f.name + ' — L0 processing…'; }
+        });
+    }
+})();
+</script>
+    <script src="js/bridge.js"></script>
+</body>
+</html>

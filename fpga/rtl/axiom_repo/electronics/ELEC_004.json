@@ -1,0 +1,1 @@
+{"id":"ELEC_004","name":"Voltage Rail Margin","type":"D","level":"L8","statement":"Operating voltage on every rail must remain within ±10% of nominal under all load and temperature conditions","severity":"HIGH"}

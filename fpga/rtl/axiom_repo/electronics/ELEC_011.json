@@ -1,0 +1,1 @@
+{"id":"ELEC_011","name":"Current Limiting","type":"D","level":"L8","statement":"Every power output must have overcurrent protection; short-circuit current must be limited within SOA","severity":"CRITICAL"}

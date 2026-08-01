@@ -1,0 +1,375 @@
+[
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "DEDUCT_DOE_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "GENERAL",
+    "subdomain": "Ontological Design of Experiments",
+    "name": "Exhaustive Admissibility Scan",
+    "description": "Defines the Ontological DOE tuple: DOE_onto = (V, R, {T(r)}_{r in R}, CausalMatrix). For each root cause r in R, a test function T(r) maps the node subset U_(r in R)[T(r)] to a verdict set. All node verdicts in the union must resolve to ALLOW for the overall DOE scan to pass. This axiom verifies that the CausalMatrix is populated and that every root cause r has a corresponding test function T(r) before the scan proceeds.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.9,
+    "hallucination_lock": true,
+    "expression_latex": "DOE_{onto} = \\left(V,\\, \\mathcal{R},\\, \\{T(r)\\}_{r \\in \\mathcal{R}},\\, CausalMatrix\\right)",
+    "derivation_formula": {
+      "sympy_expr": "root_causes_with_test - root_causes_total",
+      "variables": {
+        "root_causes_with_test": {
+          "maps_to_field": "doe_root_causes_covered",
+          "unit": "integer",
+          "bounds": [
+            0,
+            null
+          ]
+        },
+        "root_causes_total": {
+          "maps_to_field": "doe_root_causes_total",
+          "unit": "integer",
+          "bounds": [
+            0,
+            null
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "expr": "causal_matrix_populated",
+          "condition": "== true",
+          "label": "causal_matrix_guard"
+        }
+      ],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "==",
+          "value": 0,
+          "note": "Every root cause r has a test function T(r) — scan is complete"
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0,
+          "note": "Some root causes lack a test function — scan incomplete"
+        },
+        "UNDERDETERMINED": {
+          "condition": "causal_matrix_populated == false or any count is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "doe_root_causes_covered",
+        "unit": "integer",
+        "bounds": [
+          0,
+          null
+        ]
+      },
+      {
+        "field": "doe_root_causes_total",
+        "unit": "integer",
+        "bounds": [
+          0,
+          null
+        ]
+      },
+      {
+        "field": "causal_matrix_populated",
+        "unit": "boolean",
+        "bounds": []
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "doe_node_vector_size",
+        "unit": "integer",
+        "bounds": [
+          1,
+          null
+        ]
+      },
+      {
+        "field": "uncovered_root_causes",
+        "unit": "array_string",
+        "bounds": []
+      }
+    ],
+    "semantic_fingerprint": "ontological DOE design of experiments admissibility scan causal matrix root cause test function exhaustive",
+    "contradiction_axioms": [],
+    "spatial_tension": "HIGH",
+    "layer_2_summary": {
+      "explains": [
+        "DOE_SCAN_COMPLETENESS",
+        "TEST_FUNCTION_COVERAGE"
+      ],
+      "fails_to_explain": [
+        "INDIVIDUAL_NODE_VERDICT"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "effect_significance",
+      "threshold_op": "lt",
+      "threshold_val": 0.05,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "DESIGN_OF_EXPERIMENTS",
+      "semantic_label": "DOE Statistical Significance",
+      "reasoning_chain": [
+        "Extract p-value for main effect",
+        "Verify p < 0.05",
+        "Flag VIOLATION if not significant"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "DEDUCT_DOE_002",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "GENERAL",
+    "subdomain": "Ontological Design of Experiments",
+    "name": "Computational Advantage Bound",
+    "description": "Verifies that the Ontological DOE completes within the time bound T_onto ~ milliseconds * N, where N is the node vector size. Traditional experimental DOE requires days to weeks; the Ontological DOE must complete in sub-second time. A completion time exceeding the bound signals either an implementation defect or an unexpectedly large node graph requiring architectural review.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "hallucination_lock": true,
+    "expression_latex": "T_{onto} \\sim ms \\cdot N \\ll T_{traditional}",
+    "derivation_formula": {
+      "sympy_expr": "doe_actual_ms - doe_budget_ms_per_node * N_nodes",
+      "variables": {
+        "doe_actual_ms": {
+          "maps_to_field": "doe_execution_time_ms",
+          "unit": "milliseconds",
+          "bounds": [
+            0.0,
+            null
+          ]
+        },
+        "doe_budget_ms_per_node": {
+          "maps_to_field": "doe_time_budget_ms_per_node",
+          "unit": "milliseconds",
+          "bounds": [
+            0.0,
+            null
+          ]
+        },
+        "N_nodes": {
+          "maps_to_field": "doe_node_vector_size",
+          "unit": "integer",
+          "bounds": [
+            1,
+            null
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "expr": "N_nodes",
+          "condition": "> 0",
+          "label": "non_empty_graph_guard"
+        }
+      ],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value": 0,
+          "note": "Actual time <= budget — computational advantage confirmed"
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value": 0,
+          "note": "Actual time > budget — implementation or scale issue"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "doe_execution_time_ms",
+        "unit": "milliseconds",
+        "bounds": [
+          0.0,
+          null
+        ]
+      },
+      {
+        "field": "doe_time_budget_ms_per_node",
+        "unit": "milliseconds",
+        "bounds": [
+          0.0,
+          null
+        ]
+      },
+      {
+        "field": "doe_node_vector_size",
+        "unit": "integer",
+        "bounds": [
+          1,
+          null
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "doe_traditional_estimate_days",
+        "unit": "days",
+        "bounds": [
+          0.0,
+          null
+        ]
+      }
+    ],
+    "semantic_fingerprint": "computational advantage DOE execution time milliseconds node vector performance bound ontological",
+    "contradiction_axioms": [],
+    "spatial_tension": "LOW",
+    "layer_2_summary": {
+      "explains": [
+        "DOE_PERFORMANCE_COMPLIANCE",
+        "SCALE_FEASIBILITY"
+      ],
+      "fails_to_explain": [
+        "CAUSE_OF_SLOW_EXECUTION"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "effect_significance",
+      "threshold_op": "lt",
+      "threshold_val": 0.05,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "DESIGN_OF_EXPERIMENTS",
+      "semantic_label": "DOE Statistical Significance",
+      "reasoning_chain": [
+        "Extract p-value for main effect",
+        "Verify p < 0.05",
+        "Flag VIOLATION if not significant"
+      ]
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "DEDUCT_DOE_003",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "domain": "GENERAL",
+    "subdomain": "Ontological Design of Experiments",
+    "name": "ALLOW-Forcing Condition",
+    "description": "Verifies the ALLOW-forcing theorem: resolving all root causes r in R — either by redesign or by evidence acquisition — forces every node verdict in the union U_(r in R)[T(r)] to ALLOW. This axiom checks that the set of proposed remediations covers all identified root causes. A complete remediation set is the exit condition from the DOE branch back to an ALLOW verdict.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.92,
+    "hallucination_lock": true,
+    "expression_latex": "\\forall h \\in \\bigcup_{r \\in \\mathcal{R}} T(r) : v_h \\rightarrow \\text{ALLOW}",
+    "derivation_formula": {
+      "sympy_expr": "remediations_covering_all - root_causes_total",
+      "variables": {
+        "remediations_covering_all": {
+          "maps_to_field": "allow_forcing_remediations_count",
+          "unit": "integer",
+          "bounds": [
+            0,
+            null
+          ]
+        },
+        "root_causes_total": {
+          "maps_to_field": "doe_root_causes_total",
+          "unit": "integer",
+          "bounds": [
+            0,
+            null
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "expr": "doe_root_causes_total",
+          "condition": "> 0",
+          "label": "non_empty_root_cause_guard"
+        }
+      ],
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0,
+          "note": "All root causes have a remediation — ALLOW forcing is achievable"
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0,
+          "note": "Some root causes lack a remediation — ALLOW forcing incomplete"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null or doe_root_causes_total == 0"
+        }
+      }
+    },
+    "required_fields": [
+      {
+        "field": "allow_forcing_remediations_count",
+        "unit": "integer",
+        "bounds": [
+          0,
+          null
+        ]
+      },
+      {
+        "field": "doe_root_causes_total",
+        "unit": "integer",
+        "bounds": [
+          0,
+          null
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "remediation_actions",
+        "unit": "array_string",
+        "bounds": []
+      },
+      {
+        "field": "projected_verdict_post_remediation",
+        "unit": "string",
+        "bounds": []
+      }
+    ],
+    "semantic_fingerprint": "ALLOW forcing remediation root cause resolution redesign evidence acquisition DOE exit condition verdict",
+    "contradiction_axioms": [],
+    "spatial_tension": "HIGH",
+    "layer_2_summary": {
+      "explains": [
+        "REMEDIATION_COMPLETENESS",
+        "DOE_EXIT_CONDITION"
+      ],
+      "fails_to_explain": [
+        "FEASIBILITY_OF_EACH_REMEDIATION"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "effect_significance",
+      "threshold_op": "lt",
+      "threshold_val": 0.05,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "DESIGN_OF_EXPERIMENTS",
+      "semantic_label": "DOE Statistical Significance",
+      "reasoning_chain": [
+        "Extract p-value for main effect",
+        "Verify p < 0.05",
+        "Flag VIOLATION if not significant"
+      ]
+    }
+  }
+]

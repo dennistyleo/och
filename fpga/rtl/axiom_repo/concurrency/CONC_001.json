@@ -1,0 +1,1 @@
+{"id":"CONC_001","name":"No Race Conditions","type":"D","level":"L3","statement":"Concurrent access must be synchronized","severity":"CRITICAL"}

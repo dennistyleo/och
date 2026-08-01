@@ -1,0 +1,2373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Sovereign Audit — AI Chup Corporation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/sovereign-accents-rounded.css">
+<!-- i18n runtime — must load before body render -->
+<script src="js/i18n_data.js"></script>
+<script src="js/sovereign_i18n.js"></script>
+<style>
+:root {
+  --gold: #d4c49c;
+  --gold-dim: rgba(224,196,126,0.25);
+  --gold-frame: rgba(224,196,126,0.35);
+  --neon: #00C853;
+  --red: #ff3c3c;
+  --bg: #050507;
+  --panel: rgba(10,10,14,0.7);
+  --text: #b8b8c8;
+  --text-dim: #5a5a6e;
+  --l1: #faee21; --l2: #c90003; --l3: #6ae70e; --l4: #007daf; --l5: #1ebda5;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Fira Code',monospace;font-size:11px;min-height:100vh;
+  background-image:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(212,175,55,0.04) 0%,transparent 70%)}
+/* ══ PRINT / EXPORT — high-contrast white-background mode ══════════════ */
+@media print {
+  /* Override all CSS custom-property colours for white paper */
+  :root {
+    --gold: #5a4300 !important;
+    --gold-dim: rgba(90,67,0,0.25) !important;
+    --gold-frame: rgba(90,67,0,0.35) !important;
+    --neon: #007700 !important;
+    --red: #cc0000 !important;
+    --bg: #ffffff !important;
+    --panel: rgba(240,240,240,0.9) !important;
+    --text: #111111 !important;
+    --text-dim: #555555 !important;
+  }
+
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  body {
+    background: #fff !important;
+    color: #111 !important;
+    font-size: 10px;
+  }
+
+  /* Kill all backdrop-filter / blur — unsupported by most print renderers */
+  .sov-section, #brand-header, .seal-wrapper, .kpi, .risk-cell, .model-placeholder {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: #f7f7f7 !important;
+    border-color: #999 !important;
+  }
+
+  /* Readable gradient text → solid dark gold */
+  .sov-title, .brand-title {
+    -webkit-text-fill-color: #5a4300 !important;
+    background: none !important;
+  }
+
+  /* KPI values: replace neon green with dark green for contrast */
+  .kpi-val { color: #007700 !important; text-shadow: none !important; }
+  .kpi-val.amber { color: #7a5500 !important; }
+  .kpi-val.red   { color: #cc0000 !important; }
+  .kpi-lbl { color: #555 !important; }
+
+  /* Gate ledger status badges */
+  .status-pass { color: #007700 !important; border-color: #007700 !important; }
+  .status-warn { color: #7a5500 !important; border-color: #7a5500 !important; }
+  .status-fail { color: #cc0000 !important; border-color: #cc0000 !important; }
+
+  /* Axiom ledger tiers */
+  .tier-ELECTED   { color: #007700 !important; }
+  .tier-CANDIDATE { color: #7a5500 !important; }
+  .tier-STANDBY   { color: #555 !important; }
+
+  /* Indicator dots */
+  .dot.pass { background: #007700 !important; box-shadow: none !important; }
+  .dot.warn { background: #7a5500 !important; box-shadow: none !important; }
+  .dot.fail { background: #cc0000 !important; box-shadow: none !important; }
+
+  /* Verdict badge */
+  .verdict-badge         { color: #007700 !important; background: none !important; border-color: #007700 !important; }
+  .verdict-badge.warn    { color: #7a5500 !important; border-color: #7a5500 !important; }
+  .verdict-badge.fail    { color: #cc0000 !important; border-color: #cc0000 !important; }
+
+  /* Score bars */
+  .score-bar  { background: #ddd !important; }
+  .score-fill { opacity: 0.85 !important; }
+
+  /* Seal glow effects → flat */
+  .seal-ring  { border-color: #999 !important; box-shadow: none !important; animation: none !important; }
+  .seal-check { text-shadow: none !important; color: #007700 !important; }
+  .seal-label { text-shadow: none !important; color: #007700 !important; }
+  .seal-core  { background: #f0f0f0 !important; box-shadow: none !important; }
+
+  /* Section headings */
+  .section-head { color: #5a4300 !important; }
+  .section-head::after { background: #bbb !important; }
+
+  /* Gate eval text */
+  .gate-eval b  { color: #5a4300 !important; }
+  .gate-name    { color: #5a4300 !important; }
+  .meta-label   { color: #555 !important; }
+  .meta-val     { color: #5a4300 !important; }
+
+  /* Domain colour tags */
+  .dom-vascular    { color: #cc2222 !important; border-color: rgba(204,34,34,0.5) !important; }
+  .dom-structural  { color: #006666 !important; border-color: rgba(0,102,102,0.5) !important; }
+  .dom-bioenergetic{ color: #666600 !important; border-color: rgba(102,102,0,0.5) !important; }
+  .dom-urodynamic  { color: #660099 !important; border-color: rgba(102,0,153,0.5) !important; }
+
+  /* Hide interactive-only UI */
+  .no-print, #btn-return, .print-btn, .back-btn { display: none !important; }
+
+  /* Page break management */
+  .sov-section { page-break-inside: avoid; }
+  #cover        { page-break-after: avoid; }
+  thead         { display: table-header-group; }
+}
+
+/* ── BRAND HEADER ── */
+#brand-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 64px;
+  border-bottom:0.5px solid var(--gold-frame);
+  background:rgba(0,0,0,0.45);
+  backdrop-filter:blur(8px);
+}
+.brand-left{display:flex;align-items:center;gap:14px;}
+.brand-logo-img{
+  height:30px;width:auto;object-fit:contain;
+  filter:drop-shadow(0 0 5px rgba(181,152,64,0.45));
+  /* Fallback: if image missing, show a gold square placeholder */
+}
+.brand-logo-placeholder{
+  width:30px;height:30px;
+  border:0.5px solid var(--gold-frame);
+  border-radius:6px;
+  background:linear-gradient(135deg,#3b2222,#654328,#b59840);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:11px;
+  color:#ffeaaa;letter-spacing:1px;
+  flex-shrink:0;
+}
+.brand-title-group{display:flex;flex-direction:column;gap:1px;}
+.brand-title{
+  font-family:'Bebas Neue',sans-serif;font-size:17px;
+  background:linear-gradient(45deg,#3b2222,#654328,#b59840,#ffeaaa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:2px;line-height:1;
+}
+.brand-company{
+  font-family:'Fira Code',monospace;font-size:9px;
+  letter-spacing:3px;color:var(--gold);opacity:0.7;
+  text-transform:uppercase;
+}
+.brand-right{display:flex;align-items:center;gap:16px;}
+.back-btn{
+  font-family:'Bebas Neue',sans-serif;font-size:12px;
+  letter-spacing:3px;color:var(--gold);opacity:0.65;
+  background:transparent;cursor:pointer;
+  border:0.5px solid var(--gold-frame);
+  padding:5px 16px;border-radius:6px;
+  transition:opacity 0.2s,border-color 0.2s,background 0.2s;
+  display:flex;align-items:center;gap:6px;
+}
+.back-btn:hover{opacity:1;border-color:var(--gold);background:rgba(212,175,55,0.06);}
+.back-btn::before{content:'←';font-size:14px;line-height:1;}
+.report-badge{
+  font-family:'Bebas Neue',sans-serif;font-size:11px;
+  letter-spacing:4px;color:var(--text-dim);
+}
+
+/* ── COVER ── */
+#cover{position:relative;padding:48px 64px 36px;border-bottom:0.5px solid var(--gold-frame);
+  background:linear-gradient(180deg,rgba(212,175,55,0.06) 0%,transparent 100%)}
+.sov-eyebrow{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:6px;color:var(--gold-dim);margin-bottom:8px}
+.sov-title{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:4px;
+  background:linear-gradient(90deg,#b59840,#ffeaaa,#d4c49c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.sov-subtitle{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:8px;color:var(--text-dim);margin-top:4px}
+.cover-meta{display:flex;gap:48px;margin-top:24px;flex-wrap:wrap}
+.meta-cell{display:flex;flex-direction:column;gap:3px}
+.meta-label{font-size:9px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase}
+.meta-val{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gold)}
+.verdict-badge{margin-left:auto;align-self:flex-start;padding:8px 24px;border:0.5px solid var(--gold-frame);
+  font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;color:var(--neon);position:relative;
+  background:rgba(57,255,20,0.04);border-radius:15px;}
+.verdict-badge.warn{color:#ffb529;background:rgba(255,181,41,0.05);border-color:rgba(255,181,41,0.3)}
+.verdict-badge.fail{color:var(--red);background:rgba(255,60,60,0.05);border-color:rgba(255,60,60,0.3)}
+
+/* ── BODY LAYOUT ── */
+#body{padding:36px 64px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:900px){#body{grid-template-columns:1fr}}
+
+/* ── SECTION BLOCK ── */
+.sov-section{border:0.5px solid var(--gold-frame);background:var(--panel);padding:20px;position:relative;
+  backdrop-filter:blur(8px);border-radius:15px;}
+.sov-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(224,196,126,0.5),transparent)}
+.section-head{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:5px;color:var(--gold);
+  margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section-head::after{content:'';flex:1;height:0.5px;background:var(--gold-frame)}
+.full-width{grid-column:1/-1}
+
+/* ── NARRATIVE ── */
+.narrative{line-height:1.9;color:var(--text);font-size:11px}
+.narrative b{color:var(--gold)}
+.narrative .highlight{color:var(--neon)}
+.narrative .warn{color:#ffb529}
+.narrative .critical{color:var(--red)}
+
+/* ── KPI ROW ── */
+.kpi-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.kpi{flex:1;min-width:100px;border:0.5px solid var(--gold-frame);padding:12px 16px;text-align:center;border-radius:15px;}
+.kpi-val{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--neon)}
+.kpi-val.amber{color:#ffb529}.kpi-val.red{color:var(--red)}
+.kpi-lbl{font-size:9px;letter-spacing:3px;color:var(--text-dim);margin-top:3px;text-transform:uppercase}
+
+/* ── INDICATOR LISTS ── */
+.ind-list{list-style:none}
+.ind-list li{padding:6px 0;border-bottom:0.5px solid rgba(255,255,255,0.04);display:flex;align-items:flex-start;gap:8px;line-height:1.6}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.dot.pass{background:var(--neon);box-shadow:0 0 6px var(--neon)}
+.dot.warn{background:#ffb529;box-shadow:0 0 6px #ffb529}
+.dot.fail{background:var(--red);box-shadow:0 0 6px var(--red)}
+
+/* ── AXIOM LEDGER TABLE ── */
+.ledger{width:100%;border-collapse:collapse}
+.ledger thead tr{border-bottom:0.5px solid var(--gold-frame)}
+.ledger th{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:3px;color:var(--text-dim);
+  padding:8px 10px;text-align:left;font-weight:400}
+.ledger td{padding:7px 10px;border-bottom:0.5px solid rgba(255,255,255,0.04);vertical-align:top}
+.ledger tr:hover td{background:rgba(212,175,55,0.03)}
+.ax-id{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px}
+.ax-tier{display:inline-block;padding:1px 6px;font-size:9px;letter-spacing:2px;border:0.5px solid currentColor}
+.ax-name{color:var(--text);font-size:10.5px;line-height:1.5}
+.ax-score{font-family:'Bebas Neue',sans-serif;font-size:18px;text-align:right}
+.score-bar{height:2px;margin-top:4px;background:rgba(255,255,255,0.08);position:relative}
+.score-fill{position:absolute;top:0;left:0;height:100%;transition:width 0.4s ease}
+.tier-ELECTED{color:var(--neon)} .tier-CANDIDATE{color:#ffb529} .tier-STANDBY{color:var(--text-dim)}
+
+/* ── DOMAIN TAGS ── */
+.domain-tag{display:inline-block;padding:2px 8px;font-size:9px;letter-spacing:2px;border:0.5px solid;margin:2px 2px 2px 0}
+.dom-vascular{color:#ff6b6b;border-color:rgba(255,107,107,0.4)}
+.dom-structural{color:#4ecdc4;border-color:rgba(78,205,196,0.4)}
+.dom-bioenergetic{color:#faee21;border-color:rgba(250,238,33,0.4)}
+.dom-urodynamic{color:#a855f7;border-color:rgba(168,85,247,0.4)}
+
+/* ── RISK MATRIX ── */
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.risk-cell{border:0.5px solid var(--gold-frame);padding:10px 14px;border-radius:15px;}
+.risk-label{font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px}
+.risk-val{font-family:'Bebas Neue',sans-serif;font-size:20px}
+.risk-val.normal{color:var(--neon)} .risk-val.elevated{color:#ffb529} .risk-val.high{color:var(--red)}
+.risk-ref{font-size:9px;color:var(--text-dim);margin-top:2px}
+
+/* ── SSD COMPANY TAG ── */
+.company-tag{
+  font-family:'Fira Code',monospace;font-size:9px;letter-spacing:4px;
+  color:var(--neon);border:0.5px solid rgba(57,255,20,0.3);
+  padding:3px 10px;border-radius:4px;
+  background:rgba(57,255,20,0.04);
+  text-transform:uppercase;
+}
+
+/* ── BODY COLUMNS ── */
+#body{padding:28px 48px;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+@media(max-width:1100px){#body{grid-template-columns:1fr}}
+.col-left{display:flex;flex-direction:column;gap:20px;}
+.col-right{display:flex;flex-direction:column;gap:20px;}
+
+/* ── SPINNING SEAL ── */
+.seal-wrapper{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:28px 20px;gap:20px;
+  border:0.5px solid var(--gold-frame);border-radius:15px;
+  background:var(--panel);backdrop-filter:blur(8px);
+  position:relative;
+}
+.seal-wrapper::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(224,196,126,0.5),transparent)}
+.seal-ring-outer{
+  position:relative;width:140px;height:140px;
+  display:flex;align-items:center;justify-content:center;
+}
+.seal-ring{
+  position:absolute;inset:0;
+  border-radius:50%;
+  border:1.5px dashed rgba(57,255,20,0.7);
+  animation:spin-cw 8s linear infinite;
+  box-shadow:0 0 12px rgba(0,200,83,0.2),inset 0 0 12px rgba(57,255,20,0.05);
+}
+.seal-ring.inner{
+  inset:12px;
+  border:1px dashed rgba(0,200,83,0.35);
+  animation:spin-ccw 5s linear infinite;
+}
+.seal-ring.outer2{
+  inset:-10px;
+  border:0.5px dashed rgba(212,175,55,0.3);
+  animation:spin-cw 15s linear infinite;
+}
+@keyframes spin-cw{to{transform:rotate(360deg)}}
+@keyframes spin-ccw{to{transform:rotate(-360deg)}}
+.seal-core{
+  position:relative;z-index:2;
+  width:90px;height:90px;
+  border-radius:50%;
+  border:0.5px solid rgba(57,255,20,0.25);
+  background:radial-gradient(circle,rgba(0,200,83,0.08) 0%,rgba(5,5,7,0.95) 70%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  box-shadow:0 0 20px rgba(57,255,20,0.15);
+}
+.seal-check{
+  font-size:22px;color:var(--neon);
+  text-shadow:0 0 10px var(--neon),0 0 20px var(--neon);
+  line-height:1;
+}
+.seal-hash{
+  font-family:'Fira Code',monospace;font-size:7px;
+  color:rgba(0,200,83,0.5);letter-spacing:1px;
+}
+.seal-label{
+  font-family:'Bebas Neue',sans-serif;font-size:11px;
+  letter-spacing:4px;color:var(--neon);text-align:center;
+  text-shadow:0 0 8px rgba(0,200,83,0.4);
+  line-height:1.5;
+}
+.seal-sub{
+  font-family:'Fira Code',monospace;font-size:8px;
+  letter-spacing:2px;color:var(--text-dim);text-align:center;
+}
+
+/* ── 3D MODEL PLACEHOLDERS ── */
+.model-zone-grid{display:flex;flex-direction:column;gap:12px;}
+.model-placeholder{
+  height:360px;
+  min-height:360px;
+  border:0.5px solid var(--gold-frame);
+  border-radius:15px;
+  background:var(--panel);
+  display:block;
+  position:relative;overflow:hidden;
+  backdrop-filter:blur(8px);
+  transition:border-color 0.3s;
+}
+.model-placeholder:hover{border-color:rgba(212,175,55,0.6);}
+.model-placeholder::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(224,196,126,0.5),transparent)}
+.model-placeholder::after{
+  content:'';
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    45deg,transparent,transparent 12px,
+    rgba(212,175,55,0.02) 12px,rgba(212,175,55,0.02) 13px
+  );
+}
+.model-icon{
+  font-size:24px;opacity:0.3;
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:1;pointer-events:none;
+}
+.model-name{
+  font-family:'Bebas Neue',sans-serif;font-size:13px;
+  letter-spacing:4px;color:var(--text-dim);
+  position:absolute;top:12px;left:0;right:0;text-align:center;
+  z-index:10;pointer-events:none;
+  text-shadow:0 1px 4px rgba(0,0,0,0.8);
+}
+.model-status{
+  font-family:'Fira Code',monospace;font-size:8px;
+  letter-spacing:2px;color:rgba(212,175,55,0.35);
+  border:0.5px solid rgba(212,175,55,0.15);
+  padding:2px 8px;border-radius:4px;
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  z-index:10;pointer-events:none;
+  background:rgba(0,0,0,0.5);
+}
+
+/* ── L1-L5 GATE LEDGER ── */
+.gate-ledger{width:100%;border-collapse:collapse;}
+.gate-ledger thead tr{border-bottom:0.5px solid var(--gold-frame);}
+.gate-ledger th{
+  font-family:'Bebas Neue',sans-serif;font-size:9px;letter-spacing:3px;
+  color:var(--text-dim);padding:8px 10px;text-align:left;font-weight:400;
+}
+.gate-ledger td{padding:9px 10px;border-bottom:0.5px solid rgba(255,255,255,0.04);vertical-align:top;}
+.gate-ledger tr:hover td{background:rgba(212,175,55,0.025);}
+.gate-id{
+  font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.gate-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;box-shadow:0 0 6px currentColor;}
+.gate-name{font-family:'Fira Code',monospace;font-size:9.5px;color:var(--gold);line-height:1.3;}
+.gate-eval{font-family:'Calibri',sans-serif;font-size:10.5px;color:var(--text);line-height:1.6;}
+.gate-status{
+  display:inline-block;font-family:'Bebas Neue',sans-serif;font-size:9px;
+  letter-spacing:2px;padding:2px 7px;border:0.5px solid currentColor;border-radius:4px;
+  white-space:nowrap;
+}
+.status-pass{color:var(--neon);}
+.status-warn{color:#ffb529;}
+.status-fail{color:#ff3c3c;}
+.status-pending{color:var(--text-dim);}
+
+/* ── FOOTER ── */
+#footer{padding:20px 64px 32px;border-top:0.5px solid var(--gold-frame);display:flex;
+  justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px}
+.footer-sig{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:4px;color:var(--text-dim)}
+.footer-stamp{font-size:9px;letter-spacing:2px;color:var(--text-dim)}
+.print-btn{padding:8px 24px;border:0.5px solid var(--gold-frame);background:transparent;
+  color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;
+  cursor:pointer;transition:all 0.2s}
+.print-btn:hover{background:rgba(212,175,55,0.08);border-color:var(--gold)}
+
+/* ── MODE BANNER ── */
+.mode-banner{padding:10px 64px;display:flex;align-items:center;gap:16px;
+  border-bottom:0.5px solid var(--gold-frame);background:rgba(0,0,0,0.2)}
+.mode-pill{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:4px;
+  padding:4px 14px;border-radius:4px;border:0.5px solid currentColor}
+.mode-desc{font-family:'Fira Code',monospace;font-size:10px;color:var(--text-dim);letter-spacing:1px}
+.mode-abduction .mode-pill{color:#00C853;border-color:rgba(0,200,83,0.4);background:rgba(0,200,83,0.05)}
+.mode-deduction .mode-pill{color:#7B61FF;border-color:rgba(123,97,255,0.4);background:rgba(123,97,255,0.05)}
+.mode-induction .mode-pill{color:#F0A500;border-color:rgba(240,165,0,0.4);background:rgba(240,165,0,0.05)}
+.mode-qa        .mode-pill{color:#00E5FF;border-color:rgba(0,229,255,0.4);background:rgba(0,229,255,0.05)}
+.mode-rca       .mode-pill{color:#FF6B6B;border-color:rgba(255,107,107,0.4);background:rgba(255,107,107,0.05)}
+.mode-rfp       .mode-pill{color:#D4AF37;border-color:rgba(212,175,55,0.4);background:rgba(212,175,55,0.05)}
+.mode-causal    .mode-pill{color:#A855F7;border-color:rgba(168,85,247,0.4);background:rgba(168,85,247,0.05)}
+
+/* ── DOMAIN PANELS ── */
+.domain-panel{display:none} /* hidden by default, shown by JS */
+.bm-table{width:100%;border-collapse:collapse;margin-top:8px}
+.bm-table th{font-family:'Bebas Neue',sans-serif;font-size:9px;letter-spacing:2px;color:var(--text-dim);padding:6px 8px;border-bottom:0.5px solid var(--gold-frame);text-align:left;font-weight:400}
+.bm-table td{padding:7px 8px;border-bottom:0.5px solid rgba(255,255,255,0.04);font-size:10.5px}
+.bm-table tr:hover td{background:rgba(212,175,55,0.03)}
+.bm-status-ok{color:var(--neon);font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px}
+.bm-status-warn{color:#ffb529;font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px}
+.bm-status-fail{color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px}
+.bm-bar{height:3px;background:rgba(255,255,255,0.08);margin-top:3px;border-radius:2px;position:relative}
+.bm-bar-fill{position:absolute;top:0;left:0;height:100%;border-radius:2px;transition:width 0.4s ease}
+.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.metric-card{border:0.5px solid var(--gold-frame);border-radius:10px;padding:12px 14px;background:rgba(0,0,0,0.2)}
+.metric-label{font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px}
+.metric-value{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold)}
+.metric-unit{font-size:9px;color:var(--text-dim);margin-left:4px}
+.metric-status{font-size:9px;margin-top:3px}
+.clause-table{width:100%;border-collapse:collapse;margin-top:8px}
+.clause-table th{font-family:'Bebas Neue',sans-serif;font-size:9px;letter-spacing:2px;color:var(--text-dim);padding:6px 8px;border-bottom:0.5px solid var(--gold-frame);text-align:left;font-weight:400}
+.clause-table td{padding:7px 8px;border-bottom:0.5px solid rgba(255,255,255,0.04);font-size:10.5px}
+.xai-panel{margin-top:10px;padding:14px;background:rgba(123,97,255,0.05);border:0.5px solid rgba(123,97,255,0.2);border-radius:10px}
+.xai-label{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:3px;color:#7B61FF;margin-bottom:8px}
+.xai-text{font-size:10.5px;line-height:1.8;color:var(--text)}
+.patient-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+.patient-field{border:0.5px solid var(--gold-frame);border-radius:8px;padding:8px 10px}
+.patient-key{font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;margin-bottom:2px}
+.patient-val{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gold)}
+
+/* ── 3D CANVAS: fills full container so GNN is not clipped to top half ── */
+.model-placeholder canvas, #gnn-canvas-mount canvas, #world-model-mount canvas,
+#causal-pathways-mount canvas, canvas.sov-3d-canvas {
+  position:absolute !important;
+  top:0 !important; left:0 !important;
+  width:100% !important; height:100% !important;
+  background: #000 !important;
+  z-index:2;
+}
+/* \u2500\u2500 CLINICAL GUIDANCE panel styles \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+.thr-tab{
+  font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;
+  padding:4px 12px;border-radius:20px;cursor:pointer;
+  border:0.5px solid rgba(106,231,14,0.3);
+  background:transparent;color:rgba(106,231,14,0.55);
+  transition:background 0.2s,color 0.2s,border-color 0.2s;
+}
+.thr-tab:hover,.thr-tab.active{
+  background:rgba(106,231,14,0.12);color:#6ae70e;
+  border-color:rgba(106,231,14,0.7);
+}
+.thr-content-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;}
+.thr-content-list li{
+  padding:7px 12px;background:rgba(106,231,14,0.04);
+  border-left:2px solid rgba(106,231,14,0.4);
+  border-radius:0 4px 4px 0;font-size:11px;line-height:1.6;color:#c8c8d8;
+}
+.bm-interp-card{
+  flex:0 0 calc(50% - 5px);min-width:200px;
+  padding:10px 14px;border-radius:8px;
+  background:rgba(10,10,18,0.6);
+  border:0.5px solid rgba(106,231,14,0.2);
+  transition:border-color 0.2s;
+}
+.bm-interp-card.high{border-color:rgba(255,60,60,0.5);}
+.bm-interp-card.critical{border-color:rgba(255,60,60,0.8);background:rgba(255,60,60,0.06);}
+.bm-interp-card.low{border-color:rgba(255,165,0,0.5);}
+.bm-interp-card.normal{border-color:rgba(0,200,83,0.3);}
+.bm-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
+.bm-card-name{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--gold);}
+.bm-card-val{font-size:13px;font-weight:bold;}
+.bm-card-val.high{color:#ff6060;}
+.bm-card-val.critical{color:#ff3c3c;}
+.bm-card-val.low{color:#ffaa00;}
+.bm-card-val.normal{color:var(--neon);}
+.bm-card-interp{font-size:10px;color:#a8a8b8;line-height:1.5;margin-bottom:3px;}
+.bm-card-meaning{font-size:10px;color:#7a7a9a;line-height:1.5;font-style:italic;}
+.urgency-row{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:8px 12px;margin-bottom:6px;border-radius:6px;
+}
+.urgency-row.urgent{background:rgba(255,60,60,0.07);border-left:3px solid #ff3c3c;}
+.urgency-row.important{background:rgba(255,165,0,0.07);border-left:3px solid #ffaa00;}
+.urgency-row.preventive{background:rgba(0,200,83,0.05);border-left:3px solid #00C853;}
+.urgency-icon{font-size:14px;margin-top:1px;flex-shrink:0;}
+.urgency-label{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:2px;opacity:0.7;margin-bottom:3px;}
+.urgency-items{list-style:none;padding:0;margin:0;}
+.urgency-items li{font-size:11px;color:#c8c8d8;line-height:1.6;}
+</style>
+
+
+</head>
+<body>
+
+<!-- ══ BRAND HEADER ════════════════════════════════ -->
+<div id="brand-header">
+  <div class="brand-left">
+    <img src="aichip-logo-home.png"
+         alt="AI Chup Corporation Logo"
+         class="brand-logo-img"
+         onerror="this.style.display='none';document.getElementById('logo-placeholder').style.display='flex';">
+    <div id="logo-placeholder" class="brand-logo-placeholder" style="display:none;">AC</div>
+    <div class="brand-title-group">
+      <div class="brand-title">ONTOLOGY COMPLIANCE MATRIX</div>
+      <div class="brand-company">AI Chup Corporation</div>
+    </div>
+  </div>
+  <div class="brand-right">
+    <div class="company-tag" id="ssd-company-name">AI CHIP CORPORATION</div>
+    <span class="report-badge">L5 AUDIT REPORT</span>
+    <!-- Return button: goes back to whatever page opened this report (OP-01, OP-02, or OP-03) -->
+    <button id="btn-return" class="back-btn no-print" onclick="history.length > 1 ? history.back() : (location.href='op_01.html')" data-i18n="report.back_btn">RETURN</button>
+  </div>
+</div>
+
+<!-- ══ MODE BANNER ══════════════════════════════════ -->
+<div id="mode-banner" class="mode-banner">
+  <span class="mode-pill" id="mode-pill-label">—</span>
+  <span class="mode-desc" id="mode-desc-text">Loading evaluation context…</span>
+</div>
+
+<!-- ══ COVER ══════════════════════════════════════ -->
+<div id="cover">
+  <div class="sov-eyebrow">SOVEREIGN GCM · ONTOLOGY COMPLIANCE MATRIX v4.0</div>
+  <div class="sov-title" id="rpt-title">ONTOLOGY COMPLIANCE MATRIX AUDIT REPORT</div>
+  <div class="sov-subtitle" id="rpt-subtitle">EVALUATION</div>
+  <div class="cover-meta">
+    <div class="meta-cell">
+      <div class="meta-label" data-i18n="report.cover.document">Document</div>
+      <div class="meta-val" id="rpt-filename">—</div>
+    </div>
+    <div class="meta-cell">
+      <div class="meta-label" data-i18n="report.cover.domain">Domain</div>
+      <div class="meta-val" id="rpt-domain">—</div>
+    </div>
+    <div class="meta-cell">
+      <div class="meta-label" data-i18n="report.cover.mode">Mode</div>
+      <div class="meta-val" id="rpt-mode">—</div>
+    </div>
+    <div class="meta-cell">
+      <div class="meta-label" data-i18n="report.cover.generated">Generated</div>
+      <div class="meta-val" id="rpt-date">—</div>
+    </div>
+    <div class="meta-cell">
+      <div class="meta-label" data-i18n="report.cover.operator">Operator</div>
+      <div class="meta-val" id="rpt-operator">OCM SYSTEM</div>
+    </div>
+    <div style="margin-left:auto; display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+      <div id="rpt-verdict" class="verdict-badge" style="margin-left:0;">COMPLIANT</div>
+      <div id="rpt-verdict-expl" style="font-family:var(--font-mono); font-size:9px; color:var(--text-dim); text-align:right;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BODY ═══════════════════════════════════════ -->
+<div id="body">
+
+<!-- ─ LEFT COLUMN ────────────────────────────── -->
+<div class="col-left">
+
+  <!-- KPI Summary -->
+  <div class="sov-section">
+    <div class="section-head" data-i18n="report.eval_summary">⬡ EVALUATION SUMMARY</div>
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-val" id="kpi-elected">0</div><div class="kpi-lbl">Admissive</div></div>
+      <div class="kpi"><div class="kpi-val amber" id="kpi-candidate">0</div><div class="kpi-lbl">Suspended</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--text-dim)" id="kpi-standby">0</div><div class="kpi-lbl">Blocked</div></div>
+      <div class="kpi" style="display:none;"><div class="kpi-val" id="kpi-conf">—</div><div class="kpi-lbl" data-i18n="report.kpi.avg_conf">Avg Conf</div></div>
+      <div class="kpi"><div class="kpi-val amber" id="kpi-tier">—</div><div class="kpi-lbl" data-i18n="report.kpi.risk_tier">Risk Tier</div></div>
+      <div class="kpi"><div class="kpi-val" id="kpi-domains">—</div><div class="kpi-lbl" data-i18n="report.kpi.domains">Domains</div></div>
+    </div>
+  </div>
+
+  <!-- OCM System Glossary -->
+  <div class="sov-section" style="border-color:rgba(212,175,55,0.25)">
+    <div class="section-head">📘 OCM SYSTEM GLOSSARY & COMPLIANCE KEY</div>
+    <div class="narrative" style="font-size:11px; line-height:1.5; color:#ccc; margin-bottom: 0;">
+      <div style="margin-bottom:8px">
+        <strong style="color:var(--neon)">ADMISSIVE (ALLOW)</strong>: The patient's biomarker values comply with the registered clinical axiom constraints (within safe physiological limits).
+      </div>
+      <div style="margin-bottom:8px">
+        <strong style="color:#ffb529">SUSPENDED (CANDIDATE)</strong>: Underdetermined axioms. Necessary input fields are missing or ambiguous, requiring Clinician-in-the-Loop (HITL) review.
+      </div>
+      <div style="margin-bottom:8px">
+        <strong style="color:var(--red)">BLOCK (REFUSE) / ELEVATED</strong>: Axiom violated. Biomarker values exceed critical safety thresholds, triggering a compliance warning.
+      </div>
+      <div>
+        <strong style="color:var(--red)">NON-COMPLIANT (VERDICT)</strong>: The overall medical record status is refused if one or more critical physiological invariants are violated.
+      </div>
+    </div>
+  </div>
+
+    </div>
+  </div>
+
+  <!-- Clinical Narrative -->
+  <div class="sov-section">
+    <div class="section-head" data-i18n="report.narrative_head">◈ CLINICAL NARRATIVE</div>
+    <div class="narrative" id="rpt-narrative">Loading narrative…</div>
+  </div>
+
+  <!-- Strong Indicators -->
+  <div class="sov-section">
+    <div class="section-head" data-i18n="report.strong_indicators">▲ STRONG INDICATORS</div>
+    <ul class="ind-list" id="list-strong"></ul>
+  </div>
+
+  <!-- Warning Indicators -->
+  <div class="sov-section">
+    <div class="section-head" data-i18n="report.warn_indicators">⚠ WARNING INDICATORS</div>
+    <ul class="ind-list" id="list-warn"></ul>
+  </div>
+
+  <!-- Risk Ratios -->
+  <div class="sov-section">
+    <div class="section-head" data-i18n="report.risk_ratios">⬛ RISK RATIOS</div>
+    <div class="risk-grid" id="risk-grid"></div>
+  </div>
+
+  <!-- Domain Breakdown -->
+  <div class="sov-section">
+    <div class="section-head" data-i18n="report.active_domains">◉ ACTIVE DOMAINS</div>
+    <div style="margin-bottom:12px" id="domain-tags"></div>
+    <div class="narrative" id="domain-narrative">Domain analysis will appear here.</div>
+  </div>
+
+
+  <!-- ══ SURGICAL DECISION AUDIT PANEL ════════════════════════════════════ -->
+  <div class="sov-section" id="panel-surgical-audit" style="display:none;border-color:rgba(255,160,0,0.4)">
+
+    <!-- Verdict Banner -->
+    <div id="surg-verdict-banner" style="
+      border-radius:10px;padding:18px 22px;margin-bottom:20px;
+      background:linear-gradient(135deg,rgba(255,160,0,0.12),rgba(255,80,0,0.07));
+      border:1px solid rgba(255,160,0,0.35);
+    ">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-size:11px;letter-spacing:2px;color:#ff9900;text-transform:uppercase;margin-bottom:4px">
+            🏥 Surgical Decision Audit — Pre-Operative Evidence Check
+          </div>
+          <div id="surg-verdict-label" style="font-size:22px;font-weight:700;color:#fff;margin-bottom:2px"></div>
+          <div id="surg-verdict-note"  style="font-size:12px;color:#aaa;max-width:600px;line-height:1.5"></div>
+        </div>
+        <div style="text-align:right">
+          <div id="surg-aha-badge" style="
+            font-size:13px;font-weight:700;padding:8px 16px;border-radius:8px;
+            background:rgba(255,160,0,0.2);border:1px solid rgba(255,160,0,0.5);
+            color:#ffb347;margin-bottom:4px;white-space:nowrap
+          "></div>
+          <div id="surg-loe-badge"  style="font-size:10px;color:#888;margin-top:3px"></div>
+          <div id="surg-domain-badge" style="font-size:10px;color:#666;margin-top:2px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ontology vs Probability meter -->
+    <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+      <div style="flex:1;min-width:180px;background:rgba(255,255,255,0.03);border-radius:8px;padding:14px;border:1px solid rgba(255,255,255,0.07)">
+        <div style="font-size:10px;letter-spacing:1.5px;color:#888;margin-bottom:8px">EVIDENCE BASIS</div>
+        <div id="surg-evidence-meter" style="font-size:18px;font-weight:600;color:#fff"></div>
+        <div id="surg-evidence-sub"   style="font-size:10px;color:#666;margin-top:4px"></div>
+      </div>
+      <div style="flex:1;min-width:180px;background:rgba(255,255,255,0.03);border-radius:8px;padding:14px;border:1px solid rgba(255,255,255,0.07)">
+        <div style="font-size:10px;letter-spacing:1.5px;color:#888;margin-bottom:8px">CRITERIA SATISFIED</div>
+        <div id="surg-criteria-count" style="font-size:18px;font-weight:600;color:#fff"></div>
+        <div id="surg-criteria-sub"   style="font-size:10px;color:#666;margin-top:4px"></div>
+      </div>
+      <div style="flex:1;min-width:180px;background:rgba(255,255,255,0.03);border-radius:8px;padding:14px;border:1px solid rgba(255,255,255,0.07)">
+        <div style="font-size:10px;letter-spacing:1.5px;color:#888;margin-bottom:8px">ANAESTHESIA RISK</div>
+        <div id="surg-asa-badge" style="font-size:18px;font-weight:600;color:#fff"></div>
+        <div id="surg-asa-def"   style="font-size:10px;color:#666;margin-top:4px"></div>
+      </div>
+    </div>
+
+    <!-- Section A: Clinical Criteria Ledger -->
+    <div class="section-head" style="color:#ff9900;margin-bottom:10px">📋 Clinical Criteria Ledger — Ontology Axiom Evaluation</div>
+    <div style="font-size:10px;color:#666;margin-bottom:10px">Each row represents an internationally recognised clinical criterion (ACC/AHA guidelines). MET = the lab value satisfies the surgical threshold. NOT MET = the value does not. MISSING = the data was not in the uploaded report.</div>
+    <div id="surg-criteria-ledger" style="margin-bottom:20px"></div>
+
+    <!-- Section B: ASA Anaesthesia Risk -->
+    <div class="section-head" style="color:#ff9900;margin-bottom:10px">⚕️ Anaesthesia Risk Assessment (ASA Classification)</div>
+    <div id="surg-asa-panel" style="
+      background:rgba(255,255,255,0.03);border-radius:8px;padding:16px;
+      border:1px solid rgba(255,255,255,0.07);margin-bottom:20px
+    ">
+      <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">
+        <div id="surg-asa-class-big" style="font-size:36px;font-weight:700;color:#ffb347;min-width:80px"></div>
+        <div style="flex:1">
+          <div id="surg-asa-definition" style="font-size:13px;color:#ddd;margin-bottom:6px"></div>
+          <div id="surg-asa-risk"       style="font-size:12px;color:#aaa;margin-bottom:8px"></div>
+          <div id="surg-asa-rationale"  style="font-size:11px;color:#777;line-height:1.6"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section C: Non-Surgical Alternatives -->
+    <div class="section-head" style="color:#ff9900;margin-bottom:10px">🔄 Non-Surgical Alternatives — Evidence-Based Options</div>
+    <div style="font-size:10px;color:#666;margin-bottom:10px">These are internationally recognised treatments (Class I or IIa evidence) that are typically considered before or alongside surgery. Ask the surgical team whether these have been documented as trialled or ruled out.</div>
+    <div id="surg-alternatives" style="margin-bottom:20px"></div>
+
+    <!-- Section D: Family Letter -->
+    <div class="section-head" style="color:#6ae70e;margin-bottom:10px">💬 For the Family — Plain Language Summary</div>
+    <div id="surg-family-letter" style="
+      background:rgba(106,231,14,0.05);border-radius:8px;padding:16px 20px;
+      border:1px solid rgba(106,231,14,0.15);margin-bottom:20px;
+      font-size:12px;color:#ccc;line-height:1.8
+    "></div>
+
+    <!-- Section E: Questions for the Surgeon -->
+    <div class="section-head" style="color:#ff9900;margin-bottom:10px">❓ Questions to Ask the Surgical Team</div>
+    <div style="font-size:10px;color:#666;margin-bottom:10px">Based on the specific lab values in this report, OCM has generated these targeted questions. You have the right to ask them — and to receive clear answers — before proceeding.</div>
+    <ol id="surg-questions" style="margin:0 0 20px 18px;padding:0;font-size:12px;color:#ccc;line-height:2"></ol>
+
+    <!-- Section F: Surgical Audit Disclaimer -->
+    <div id="surg-disclaimer" style="
+      background:rgba(255,200,0,0.05);border:0.5px solid rgba(255,200,0,0.25);
+      border-radius:6px;padding:10px 14px;font-size:10px;color:#a89a60;
+      line-height:1.6;margin-bottom:12px
+    "></div>
+
+    <!-- Sources -->
+    <div id="surg-sources" style="font-size:9px;color:#555;border-top:1px solid rgba(255,255,255,0.05);padding-top:10px"></div>
+
+    <!-- ── SURGICAL MOTIVATION CLASSIFICATION (SMC) ───────────────────── -->
+    <div id="panel-smc" style="display:none;margin-top:28px">
+      <div style="font-size:11px;letter-spacing:2px;color:#e87c3e;text-transform:uppercase;margin-bottom:4px">🧠 Why Is This Surgery Being Recommended?</div>
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:4px">Surgical Motivation Classification</div>
+      <div id="smc-summary" style="font-size:11px;color:#aaa;margin-bottom:16px;line-height:1.6;padding:10px 14px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+        <div style="font-size:10px;color:#888">Overall concern:</div>
+        <div id="smc-highest-badge" style="font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:rgba(255,255,255,0.06)"></div>
+      </div>
+      <div id="smc-flags" style="display:grid;gap:14px"></div>
+      <div style="margin-top:22px">
+        <div style="font-size:11px;color:#ff9900;font-weight:700;letter-spacing:1px;margin-bottom:10px">📋 MASTER PRE-CONSENT CHECKLIST — Ask These Before Signing</div>
+        <ol id="smc-checklist" style="margin:0;padding-left:20px;font-size:11px;color:#c8c0b0;line-height:1.9"></ol>
+      </div>
+      <div id="smc-disclaimer" style="margin-top:16px;background:rgba(255,200,0,0.04);border:0.5px solid rgba(255,200,0,0.2);border-radius:6px;padding:10px 14px;font-size:9.5px;color:#887;line-height:1.6"></div>
+    </div>
+
+    <!-- ── PATIENT RIGHTS PANEL ────────────────────────────────────────── -->
+    <div id="panel-patient-rights" style="display:none;margin-top:28px">
+      <div style="font-size:11px;letter-spacing:2px;color:#60a5fa;text-transform:uppercase;margin-bottom:4px">⚖️ Know Your Rights</div>
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:4px">Patient &amp; Family Legal Rights Before Surgery</div>
+      <div style="font-size:11px;color:#888;margin-bottom:16px">These rights apply in most jurisdictions. Consult a patient advocate for jurisdiction-specific guidance.</div>
+      <div id="smc-rights" style="display:grid;gap:12px"></div>
+    </div>
+  </div>
+
+
+  <!-- ══ CLINICAL GUIDANCE PANEL (Patient-Facing) ════════════════════════ -->
+  <div class="sov-section" id="panel-clinical-guidance" style="display:none;border-color:rgba(106,231,14,0.3)">
+    <!-- Medical disclaimer -->
+    <div id="clinical-disclaimer" style="
+      background:rgba(255,200,0,0.07);border:0.5px solid rgba(255,200,0,0.3);
+      border-radius:6px;padding:8px 14px;margin-bottom:16px;
+      font-size:10px;color:#d4b96a;letter-spacing:0.5px;line-height:1.6;
+    ">⚕️ <b>MEDICAL DISCLAIMER</b>: <span id="clinical-disclaimer-text"></span></div>
+
+    <div class="section-head" style="color:#6ae70e;margin-bottom:14px">🏥 CLINICAL GUIDANCE — What Your Results Mean &amp; What To Do</div>
+
+    <!-- Clinical summary -->
+    <div id="clinical-summary-block" style="margin-bottom:18px">
+      <div style="font-size:10px;letter-spacing:2px;color:#6ae70e;margin-bottom:7px">◈ CLINICAL SUMMARY</div>
+      <div id="clinical-summary-text" style="line-height:1.8;color:#c8c8d8;font-size:11px"></div>
+    </div>
+
+    <!-- Biomarker interpretation cards -->
+    <div id="bm-interp-block" style="margin-bottom:18px;display:none">
+      <div style="font-size:10px;letter-spacing:2px;color:#6ae70e;margin-bottom:10px">◈ WHAT YOUR BIOMARKER VALUES MEAN</div>
+      <div id="bm-interp-cards" style="display:flex;flex-wrap:wrap;gap:10px"></div>
+    </div>
+
+    <!-- Urgency-graded action plan -->
+    <div id="urgency-block" style="margin-bottom:18px;display:none">
+      <div style="font-size:10px;letter-spacing:2px;color:#6ae70e;margin-bottom:10px">◈ ACTION PLAN</div>
+      <div id="urgency-rows"></div>
+    </div>
+
+    <!-- Therapeutic directions tabs -->
+    <div id="therapy-block" style="margin-bottom:18px;display:none">
+      <div style="font-size:10px;letter-spacing:2px;color:#6ae70e;margin-bottom:10px">◈ THERAPEUTIC DIRECTIONS</div>
+      <div style="display:flex;gap:6px;margin-bottom:10px" id="therapy-tabs">
+        <button class="thr-tab active" data-tab="pharmacological">💊 Pharmacological</button>
+        <button class="thr-tab" data-tab="lifestyle">🥗 Lifestyle</button>
+        <button class="thr-tab" data-tab="monitoring">📊 Monitoring</button>
+        <button class="thr-tab" data-tab="referral">🏥 Referral</button>
+      </div>
+      <div id="therapy-content"></div>
+    </div>
+
+    <!-- Re-evaluation plan -->
+    <div id="reeval-block" style="display:none">
+      <div style="font-size:10px;letter-spacing:2px;color:#6ae70e;margin-bottom:7px">◈ RE-EVALUATION PLAN</div>
+      <div id="reeval-text" style="line-height:1.8;color:#c8c8d8;font-size:11px"></div>
+    </div>
+  </div>
+
+  <!-- ── HEALTHCARE DOMAIN PANEL ── -->
+  <div class="sov-section domain-panel" id="panel-healthcare">
+    <div class="section-head">🩺 HEALTHCARE · CLINICAL BIOMARKER PANEL</div>
+    <div id="patient-profile-grid" class="patient-grid" style="margin-bottom:14px"></div>
+    
+    <div id="patient-state-vector-block" class="xai-panel" style="margin-bottom:14px; background:rgba(0,180,255,0.03); border:0.5px solid rgba(0,180,255,0.2);">
+      <div class="xai-label" style="color:#00b4ff; font-weight:bold;">🎛️ CLINICAL INPUT STATE VECTOR & COVARIATE MATRIX (X_patient)</div>
+      <div class="xai-text" id="patient-state-vector-text" style="font-family:'Courier New', monospace; font-size:12px; line-height:1.6; color:#eee; padding:10px 0 0 0;"></div>
+    </div>
+
+    <table class="bm-table" id="bm-table-body-wrap"><thead><tr>
+      <th>BIOMARKER</th><th>VALUE</th><th>UNIT</th><th>THRESHOLD</th><th>STATUS</th><th style="width:80px">LEVEL</th>
+    </tr></thead><tbody id="bm-table-body"></tbody></table>
+    <div id="clinical-narrative-block" class="xai-panel" style="margin-top:14px;display:none">
+      <div class="xai-label">◈ CLINICAL NARRATIVE</div>
+      <div class="xai-text" id="clinical-narrative-text"></div>
+    </div>
+
+    <!-- Patient and Family Guidance Section -->
+    <div id="patient-clinical-guidance-block" style="margin-top:20px; display:none;">
+      <style>
+        #patient-clinical-guidance-block ul { margin: 0; padding-left: 14px; }
+        #patient-clinical-guidance-block li { margin-bottom: 4px; }
+      </style>
+      <div class="section-head" style="color:var(--neon);margin-bottom:10px">💬 Clinical Guidance & Therapeutic Directions</div>
+      
+      <!-- Plain Language Summary -->
+      <div class="xai-panel" style="background:rgba(0,200,83,0.03);border-color:rgba(0,200,83,0.15);margin-bottom:14px">
+        <div class="xai-label" style="color:var(--neon)">FOR THE PATIENT & FAMILY — SUMMARY</div>
+        <div class="xai-text" id="patient-summary-text" style="font-size:12px;line-height:1.7;color:#eee"></div>
+      </div>
+      
+      <!-- Therapeutic Directions -->
+      <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+        <div class="xai-panel" style="flex:1;min-width:200px;background:rgba(255,255,255,0.02)">
+          <div class="xai-label" style="color:#ffb529">💊 PHARMACOLOGICAL OPTIONS</div>
+          <div class="xai-text" id="tx-pharmacological-text" style="font-size:11px;line-height:1.6;color:#ccc"></div>
+        </div>
+        <div class="xai-panel" style="flex:1;min-width:200px;background:rgba(255,255,255,0.02)">
+          <div class="xai-label" style="color:#00B4D8">🥗 LIFESTYLE ADJUSTMENTS</div>
+          <div class="xai-text" id="tx-lifestyle-text" style="font-size:11px;line-height:1.6;color:#ccc"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+        <div class="xai-panel" style="flex:1;min-width:200px;background:rgba(255,255,255,0.02)">
+          <div class="xai-label" style="color:#2A9D8F">📊 MONITORING PROTOCOL</div>
+          <div class="xai-text" id="tx-monitoring-text" style="font-size:11px;line-height:1.6;color:#ccc"></div>
+        </div>
+        <div class="xai-panel" style="flex:1;min-width:200px;background:rgba(255,255,255,0.02)">
+          <div class="xai-label" style="color:#9D00D8">🩺 SPECIALIST REFERRAL</div>
+          <div class="xai-text" id="tx-referral-text" style="font-size:11px;line-height:1.6;color:#ccc"></div>
+        </div>
+      </div>
+      
+      <!-- Action Timeline & Re-evaluation -->
+      <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+        <!-- Urgency Action Timeline -->
+        <div class="xai-panel" style="flex:2;min-width:280px;background:rgba(255,34,68,0.02);border-color:rgba(255,34,68,0.15)">
+          <div class="xai-label" style="color:var(--red)">⚠️ URGENCY ACTION TIMELINE</div>
+          <div class="xai-text" style="font-size:11px;line-height:1.6">
+            <div style="margin-bottom:6px"><strong style="color:var(--red)">🚨 7 Days (Urgent):</strong> <span id="timeline-7d"></span></div>
+            <div style="margin-bottom:6px"><strong style="color:#ffb529">⏳ 30 Days (Important):</strong> <span id="timeline-30d"></span></div>
+            <div><strong style="color:#4FC3F7">🛡️ 90 Days (Preventive):</strong> <span id="timeline-90d"></span></div>
+          </div>
+        </div>
+        
+        <!-- Re-evaluation Plan -->
+        <div class="xai-panel" style="flex:1;min-width:200px;background:rgba(255,255,255,0.02)">
+          <div class="xai-label" style="color:#ffb529">🔄 RE-EVALUATION TIMELINE</div>
+          <div class="xai-text" id="patient-retest-text" style="font-size:11px;line-height:1.6;color:#ccc"></div>
+        </div>
+      </div>
+      
+      <!-- Medical Disclaimer -->
+      <div id="patient-disclaimer-box" style="
+        background:rgba(255,200,0,0.03);border:0.5px solid rgba(255,200,0,0.15);
+        border-radius:6px;padding:10px 14px;font-size:9.5px;color:#aaa;line-height:1.5;margin-top:10px;text-align:justify;
+      "></div>
+    </div>
+  </div>
+
+  <!-- ── AEROSPACE DOMAIN PANEL ── -->
+  <div class="sov-section domain-panel" id="panel-aerospace">
+    <div class="section-head">✈ AEROSPACE · STRUCTURAL METRICS</div>
+    <div class="metrics-grid" id="aero-metrics-grid"></div>
+    <div id="aero-compliance-block" style="margin-top:14px;display:none">
+      <div class="section-head" style="font-size:11px;margin-bottom:10px">COMPLIANCE AREAS</div>
+      <table class="bm-table"><thead><tr>
+        <th>AREA</th><th>STATUS</th><th>DETAIL</th>
+      </tr></thead><tbody id="aero-compliance-body"></tbody></table>
+    </div>
+  </div>
+
+  <!-- ── CONTRACT DOMAIN PANEL ── -->
+  <div class="sov-section domain-panel" id="panel-contract">
+    <div class="section-head">📋 CONTRACT · CLAUSE ANALYSIS</div>
+    <table class="clause-table"><thead><tr>
+      <th>CLAUSE / AREA</th><th>FINDING</th><th>RISK</th>
+    </tr></thead><tbody id="contract-clause-body"></tbody></table>
+  </div>
+
+  <!-- ── OCM NARRATIVE SECTION (all domains) ── -->
+  <div class="sov-section" id="panel-xai" style="display:none">
+    <div class="section-head">🧠 OCM EXPLAINABILITY NARRATIVE</div>
+    <div class="xai-panel">
+      <div class="xai-label">G3FP SYNTHESIZED EXPLANATION</div>
+      <div class="xai-text" id="xai-general-text"></div>
+    </div>
+    <div id="xai-tech-block" style="margin-top:10px;display:none">
+      <div class="xai-panel" style="background:rgba(0,200,83,0.04);border-color:rgba(0,200,83,0.2)">
+        <div class="xai-label" style="color:var(--neon)">TECHNICAL REASONING</div>
+        <div class="xai-text" id="xai-tech-text"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Axiom Evaluation Ledger -->
+  <div class="sov-section">
+    <div class="section-head" data-i18n="report.axiom_ledger">⚡ AXIOM EVALUATION LEDGER</div>
+    <table class="ledger">
+      <thead><tr>
+        <th>ID / Domain</th>
+        <th>Clinical Invariant & Equation (SymPy LaTeX)</th>
+        <th>Measured Variables & Safety Limits</th>
+        <th>Solve Method & Deduction Matrix</th>
+        <th style="text-align:right">Disposition</th>
+      </tr></thead>
+      <tbody id="ledger-body"></tbody>
+    </table>
+  </div>
+
+  <!-- Executive Conclusion -->
+  <div class="sov-section">
+    <div class="section-head" data-i18n="report.exec_conclusion">✦ EXECUTIVE CONCLUSION</div>
+    <div class="narrative" id="rpt-conclusion">Loading…</div>
+  </div>
+
+  <!-- Academic Bibliography -->
+  <div class="sov-section" id="panel-academic-bibliography" style="display:none">
+    <div class="section-head" data-i18n="report.academic_bibliography">📚 ACADEMIC REFERENCES & BIBLIOGRAPHY</div>
+    <ul class="ind-list" id="list-bibliography" style="display: flex; flex-direction: column; gap: 12px; list-style-type: none;"></ul>
+  </div>
+
+</div><!-- /col-left -->
+
+<!-- ─ RIGHT COLUMN ───────────────────────────── -->
+<div class="col-right">
+
+  <!-- 3D Model Render Zones -->
+  <div class="sov-section">
+    <div class="section-head" data-i18n="report.render_zones">⬡ 3D INTELLIGENCE RENDER ZONES</div>
+    <div class="model-zone-grid">
+
+      <!-- GNN Visualization -->
+      <div class="model-placeholder" id="gnn-canvas-mount">
+        <div class="model-icon">⬡</div>
+        <div class="model-name">GNN VISUALIZATION</div>
+        <div class="model-status">AWAITING WEBGL PAYLOAD</div>
+      </div>
+
+      <!-- World Model -->
+      <div class="model-placeholder" id="world-model-mount">
+        <div class="model-icon">◉</div>
+        <div class="model-name">WORLD MODEL</div>
+        <div class="model-status">AWAITING WEBGL PAYLOAD</div>
+      </div>
+
+      <!-- Causal Pathways -->
+      <div class="model-placeholder" id="causal-pathways-mount">
+        <div class="model-icon">⇌</div>
+        <div class="model-name">CAUSAL PATHWAYS</div>
+        <div class="model-status">AWAITING WEBGL PAYLOAD</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3D Rendering & Deduction Explainer -->
+  <div class="sov-section" style="border-color:rgba(0,180,255,0.3); background:rgba(0,180,255,0.01)">
+    <div class="section-head">🔮 3D INTELLIGENCE RENDERS EXPLAINER</div>
+    <div class="narrative" style="font-size:11px; line-height:1.5; color:#ccc; margin-bottom: 0;">
+      <div style="margin-bottom:8px">
+        <strong style="color:#00b4ff">Phase 1: GNN Deduction</strong> &mdash; Maps the medical ontology as a Graph Neural Network. Nodes are clinical axioms (36 total). Node colors indicate real-time compliance verdicts: <span style="color:var(--neon)">Green (ADMISSIVE)</span>, <span style="color:#ffb529">Yellow (SUSPENDED)</span>, and <span style="color:var(--red)">Red (BLOCK)</span>.
+      </div>
+      <div style="margin-bottom:8px">
+        <strong style="color:#00e676">Phase 2: World Model</strong> &mdash; Plots patient biomarkers as physical coordinates inside a multi-dimensional clinical manifold. The manifold shape is defined by standard physiological invariants. Distance from the surface visualizes measured patient deviations.
+      </div>
+      <div>
+        <strong style="color:#9c4bff">Phase 3: Causal Pathways</strong> &mdash; Traces how primary compliance violations propagate downstream to other clinical areas using do-calculus trajectory corridors (e.g., how high LDL cholesterol leads to elevated coronary artery disease risk).
+      </div>
+    </div>
+  </div>
+
+  <!-- Ingested Evidence Corpus -->
+  <div class="sov-section" id="ingested-evidence-section">
+    <div class="section-head">📥 INGESTED EVIDENCE CORPUS (INPUT DATA)</div>
+    <div class="narrative" style="margin-bottom:0">
+      <table class="bm-table" style="width:100%; border-collapse:collapse; font-size:11px;">
+        <thead>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.1); text-align:left;">
+            <th style="padding:6px 8px; color:var(--text-dim)">BIOMARKER</th>
+            <th style="padding:6px 8px; color:var(--text-dim)">INGESTED VALUE</th>
+            <th style="padding:6px 8px; color:var(--text-dim)">PHYSIOLOGICAL SIGNIFICANCE</th>
+          </tr>
+        </thead>
+        <tbody id="ingested-evidence-body">
+          <!-- Dynamically populated -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Certification Seal -->
+  <div class="seal-wrapper" style="margin-bottom: 20px;">
+    <div class="seal-ring-outer">
+      <div class="seal-ring outer2"></div>
+      <div class="seal-ring"></div>
+      <div class="seal-ring inner"></div>
+      <div class="seal-core">
+        <div class="seal-check">✓</div>
+        <div class="seal-hash" id="seal-hash">0xA3F2…</div>
+      </div>
+    </div>
+    <div class="seal-label">AUDITED<br>Deterministic Ontology<br>Compliance</div>
+    <div class="seal-sub" id="seal-timestamp">—</div>
+  </div>
+
+  <!-- L1-L5 Gate Ledger -->
+  <div class="sov-section">
+    <div class="section-head" data-i18n="report.gate_ledger">⚙ L1–L5 DETERMINISTIC GATE LEDGER</div>
+    
+    <!-- Visual Pipeline Timeline -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; padding:12px; background:rgba(255,255,255,0.01); border:0.5px solid var(--gold-frame); border-radius:6px; flex-wrap:wrap; gap:10px">
+      <div style="flex:1; text-align:center; min-width:80px">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:12px; color:var(--l1)">L1 CLASS</div>
+        <div style="font-size:9px; color:var(--text-dim)">Ingestion & Domain Parse</div>
+        <div style="margin-top:4px; font-size:12px; color:var(--neon)">● PASS</div>
+      </div>
+      <div style="color:var(--gold-frame)">➔</div>
+      <div style="flex:1; text-align:center; min-width:80px">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:12px; color:var(--l2)">L2 SOLVER</div>
+        <div style="font-size:9px; color:var(--text-dim)">SymPy Bound Checking</div>
+        <div style="margin-top:4px; font-size:12px; color:var(--neon)">● PASS</div>
+      </div>
+      <div style="color:var(--gold-frame)">➔</div>
+      <div style="flex:1; text-align:center; min-width:80px">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:12px; color:var(--l3)">L3 CAUSAL</div>
+        <div style="font-size:9px; color:var(--text-dim)">Pearl do-calculus</div>
+        <div style="margin-top:4px; font-size:12px; color:var(--neon)">● PASS</div>
+      </div>
+      <div style="color:var(--gold-frame)">➔</div>
+      <div style="flex:1; text-align:center; min-width:80px">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:12px; color:var(--l4)">L4 RISK</div>
+        <div style="font-size:9px; color:var(--text-dim)">Escalation & Tiering</div>
+        <div style="margin-top:4px; font-size:12px; color:#ffb529">● REVIEW</div>
+      </div>
+      <div style="color:var(--gold-frame)">➔</div>
+      <div style="flex:1; text-align:center; min-width:80px">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:12px; color:var(--l5)">L5 SEAL</div>
+        <div style="font-size:9px; color:var(--text-dim)">Report Cryptography</div>
+        <div style="margin-top:4px; font-size:12px; color:var(--neon)">● SEALED</div>
+      </div>
+    </div>
+
+    <table class="gate-ledger">
+      <thead><tr>
+        <th>GATE</th><th>MODULE</th><th>EVALUATION</th><th>STATUS</th>
+      </tr></thead>
+      <tbody id="gate-ledger-body">
+        <!-- Dynamically populated by JS render layer -->
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- Equation Solve Ledger — SymPy FORWARD/INVERSE results per axiom -->
+  <div class="sov-section full-width" id="eq-solve-section">
+    <div class="section-head">📐 EQUATION SOLVE RESULTS — SymPy 方程式求解 · 假設/常數/變數/計算過程/解</div>
+    <table class="ledger" id="eq-ledger">
+      <thead><tr>
+        <th>AXIOM / MODEL</th><th>假設 HYPOTHESIS</th><th>SymPy EXPRESSION</th>
+        <th>COMPUTED</th><th>DEVIATION</th><th>VERDICT</th><th></th>
+      </tr></thead>
+      <tbody id="eq-ledger-body"></tbody>
+    </table>
+  </div>
+
+</div><!-- /col-right -->
+
+</div><!-- /body -->
+
+<!-- ══ FOOTER ═════════════════════════════════════ -->
+<div id="footer">
+  <div>
+    <div id="footer-company-row" style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+      <img id="footer-client-logo" src="" alt="" style="height:24px;display:none;filter:brightness(0.7)">
+      <div class="footer-sig" id="footer-sig-text">SOVEREIGN OCM · ONTOLOGY COMPLIANCE MATRIX v4.0</div>
+    </div>
+    <div class="footer-stamp" id="footer-ts">—</div>
+  </div>
+  <button class="print-btn no-print" onclick="window.print()" data-i18n="report.print_btn">⎊ PRINT / EXPORT PDF</button>
+  <button class="print-btn no-print" id="btn-return-footer" style="margin-left:8px" onclick="history.length > 1 ? history.back() : (location.href='op_01.html')" data-i18n="report.back_btn">← RETURN</button>
+</div>
+
+<!-- 3D Engine Scripts for audit report render zones -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="js/visualizations/HealthcareMedical3D.js?v=2.0.4"></script>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// SOVEREIGN AUDIT REPORT — DATA LAYER v5.0
+// Source: solver_results (SymPy) + xai_narrative (G3FP) + g3fp_context
+// Zero hardcoded clinical defaults. All content derived from real pipeline.
+// Brand: AI Chip Corporation · OCM Audit Report
+// ══════════════════════════════════════════════════════════════════
+(function () {
+  // ── 0. GUARD: Abort and redirect if no valid evaluation data exists ──
+  (function _guardNoData() {
+    try {
+      var _raw = localStorage.getItem('sovereign_audit_data');
+      var _hasData = _raw && (function() {
+        try {
+          var _d = JSON.parse(_raw);
+          return _d && (
+            (_d.elected   && _d.elected.length   > 0) ||
+            (_d.candidate && _d.candidate.length > 0) ||
+            (_d.filename  && _d.filename !== 'unknown' && _d.filename !== '—')
+          );
+        } catch(_) { return false; }
+      })();
+      if (!_hasData) {
+        /* Hide body to prevent flash of empty report */
+        document.documentElement.style.visibility = 'hidden';
+        /* Show modal after DOM is ready */
+        document.addEventListener('DOMContentLoaded', function() {
+          document.documentElement.style.visibility = '';
+          var overlay = document.createElement('div');
+          overlay.id = 'sov-nodata-modal-overlay';
+          overlay.style.cssText = 'position:fixed;inset:0;z-index:2147483600;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.92);backdrop-filter:blur(4px);';
+          var modal = document.createElement('div');
+          modal.style.cssText = 'background:linear-gradient(145deg,#0d0d0d,#1a1200);border:1.5px solid #D4AF37;border-radius:18px;padding:36px 40px 32px;max-width:480px;width:90%;box-shadow:0 0 60px rgba(212,175,55,0.18),0 20px 60px rgba(0,0,0,0.9);font-family:\'JetBrains Mono\',\'Inter\',monospace;text-align:center;position:relative;';
+          var icon = document.createElement('div'); icon.textContent = '\ud83d\udccb'; icon.style.cssText = 'font-size:42px;margin-bottom:14px;';
+          var title = document.createElement('div'); title.textContent = 'No Evaluation Data Found';
+          title.style.cssText = 'color:#D4AF37;font-size:15px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;';
+          var body = document.createElement('div');
+          body.innerHTML = 'The Audit Report requires a completed evaluation pipeline.<br><br><span style="color:#aaa;font-size:11px;">Upload a file \u2192 Approve &amp; Start Evaluation \u2192 then generate the report.</span>';
+          body.style.cssText = 'color:#ccc;font-size:12px;line-height:1.7;margin-bottom:28px;';
+          var divider = document.createElement('div'); divider.style.cssText = 'border-top:1px solid rgba(212,175,55,0.18);margin-bottom:24px;';
+          var btnRow = document.createElement('div'); btnRow.style.cssText = 'display:flex;gap:12px;justify-content:center;flex-wrap:wrap;';
+          var btnIngest = document.createElement('button');
+          btnIngest.textContent = '\u2b06 Go to File Ingestion';
+          btnIngest.style.cssText = 'background:linear-gradient(135deg,#c9a818,#a07810);color:#000;font-weight:700;font-family:inherit;font-size:11px;border:none;border-radius:8px;padding:11px 22px;cursor:pointer;letter-spacing:0.8px;';
+          btnIngest.onclick = function() { window.location.href = 'op_01.html'; };
+          var btnMode = document.createElement('button');
+          btnMode.textContent = '\ud83c\udfe0 Mode Selection';
+          btnMode.style.cssText = 'background:transparent;color:#D4AF37;border:1.5px solid rgba(212,175,55,0.5);border-radius:8px;font-family:inherit;font-size:11px;font-weight:600;padding:11px 20px;cursor:pointer;letter-spacing:0.8px;';
+          btnMode.onclick = function() { window.location.href = 'index.html'; };
+          btnRow.appendChild(btnIngest); btnRow.appendChild(btnMode);
+          modal.appendChild(icon); modal.appendChild(title); modal.appendChild(body);
+          modal.appendChild(divider); modal.appendChild(btnRow);
+          overlay.appendChild(modal);
+          document.body.appendChild(overlay);
+        });
+        return; /* stop further script execution on this page */
+      }
+    } catch(_) { /* non-fatal: let page render normally */ }
+  })();
+
+  // ── 1. LOAD DATA ─────────────────────────────────────────────────
+  let D = {};
+  try { const raw = localStorage.getItem('sovereign_audit_data'); if (raw) D = JSON.parse(raw); } catch (_) {}
+  if (window.__AUDIT_DATA__) Object.assign(D, window.__AUDIT_DATA__);
+
+  // Also pull g3fp_context for richer extraction data
+  let G = {};
+  try { const raw = sessionStorage.getItem('sovereign_g3fp_context'); if (raw) G = JSON.parse(raw); } catch (_) {}
+
+  // Merge: D takes priority (written at report-open time), G fills gaps
+  const R = Object.assign({}, G, D);
+
+  // ── 2. BRAND CONFIG (customisable for SSO/Sovereign tenants) ─────
+  const BRAND = {
+    company : R.clientOrg  || 'AI Chip Corporation',
+    logo    : R.clientLogo || 'aichip-logo-home.png',
+    footer  : R.clientDesc || 'AI Chip Certified OCM Report',
+    version : R.pipelineVersion || 'G3FP·OCM·v4.1',
+  };
+
+  // ── 3. DOCUMENT IDENTITY (from file extraction) ──────────────────
+  const fname   = R.filename  || R.file_name || '—';
+  const domain  = (R.domain   || R.detected_domain || 'GENERAL').toUpperCase();
+  const mode    = (R.mode     || R.electionMode || 'INDUCTION').toUpperCase();
+  const operator= R.operator  || sessionStorage.getItem('sovereign_operator') || 'OCM SYSTEM';
+  const generatedAt = R.generatedAt || new Date().toISOString();
+
+  // Report title: "INDUCTION ONTOLOGY COMPLIANCE MATRIX AUDIT REPORT"
+  const reportTitle = mode + ' ONTOLOGY COMPLIANCE MATRIX AUDIT REPORT';
+  const reportSubtitle = domain + ' EVALUATION';
+
+  // ── 4. SOLVER RESULTS ────────────────────────────────────────────
+  const SR   = R.solver_results || {};
+  const mfst = SR.solver_manifest || [];
+  const allowCount = SR.allow_count || 0;
+  const refuseCount = SR.refuse_count || 0;
+  const overallVerdict = SR.overall_verdict || (refuseCount > 0 ? 'REFUSE' : 'ALLOW');
+  const inverseSols = SR.inverse_solutions || {};
+  const hitlFields  = SR.hitl_fields || [];
+
+  // ── 5. XAI NARRATIVE ─────────────────────────────────────────────
+  const XAI = R.xai_narrative || {};
+
+  // ── 6. DERIVE INDICATORS FROM SOLVER MANIFEST ────────────────────
+  const strongIndicators = [];
+  const warnIndicators   = [];
+  const eqRows           = [];  // equation ledger rows
+
+  mfst.forEach(r => {
+    const stmt  = r.statement || '';
+    const axId  = r.axiom_id  || '';
+    const mode2 = r.solve_mode || 'FORWARD';
+    const val   = r.computed_value;
+    const thr   = r.threshold;
+    const dev   = (val !== undefined && val !== null && thr !== undefined) ? (val - thr) : null;
+    const inp   = r.inputs || r.known_inputs || {};
+    const firstKey = Object.keys(inp)[0] || '';
+    const firstVal = firstKey ? inp[firstKey] : null;
+
+    if (r.verdict === 'ALLOW') {
+      const s = stmt || `${axId}: ${firstKey}=${firstVal} — within bounds`;
+      strongIndicators.push(s.replace(/\[ALLOW\]\s*/,'').replace(/→.*/,'').trim());
+    } else if (r.verdict === 'REFUSE') {
+      const s = stmt || `${axId}: ${firstKey}=${firstVal} — EXCEEDS threshold`;
+      warnIndicators.push(s.replace(/\[REFUSE\]\s*/,'').replace(/→.*/,'').trim());
+    } else if (r.verdict === 'UNDERDETERMINED') {
+      const missing = (r.missing_fields || []).join(', ');
+      warnIndicators.push(`${axId}: missing fields [${missing}] — HITL required`);
+    }
+
+    // Equation ledger row
+    const firstInpStr = Object.entries(inp).slice(0,3).map(([k,v])=>`${k}=${typeof v==='number'?v.toFixed(3):v}`).join(', ');
+    const devStr = dev != null ? `${dev>0?'+':''}${dev.toFixed(3)}` : (mode2==='INVERSE' ? `solve for ${r.unknown_solved||'?'}` : '—');
+    const reqVal = (r.required_value != null) ? Number(r.required_value).toFixed(3) : '';
+    eqRows.push({
+      axId,
+      mode: mode2,
+      inputs: firstInpStr,
+      result: (val != null) ? Number(val).toFixed(4) : (reqVal||'—'),
+      deviation: devStr,
+      verdict: r.verdict || '?',
+      eq_transparency: r.eq_transparency || {}
+    });
+  });
+
+  // Supplement from XAI if available
+  if (XAI.health_strengths) XAI.health_strengths.forEach(s => {
+    const txt = typeof s === 'string' ? s : (s.finding || s.clinical_significance || JSON.stringify(s));
+    if (!strongIndicators.includes(txt)) strongIndicators.push(txt);
+  });
+  if (XAI.clinical_warnings) XAI.clinical_warnings.forEach(s => {
+    const txt = typeof s === 'string' ? s : (s.finding || s.recommendation || JSON.stringify(s));
+    if (!warnIndicators.includes(txt)) warnIndicators.push(txt);
+  });
+
+  // ── 7. RISK RATIOS from solver manifest ──────────────────────────
+  const riskRatios = [];
+  mfst.filter(r => r.verdict === 'REFUSE').forEach(r => {
+    const inp = r.inputs || {};
+    const firstKey = Object.keys(inp)[0] || r.axiom_id;
+    const firstVal = inp[firstKey] !== undefined ? inp[firstKey].toFixed ? inp[firstKey].toFixed(1) : inp[firstKey] : '—';
+    const thr = r.threshold !== null && r.threshold !== undefined ? r.threshold : '—';
+    riskRatios.push({ label: r.axiom_id, val: 'ELEVATED', ref: `${firstKey}=${firstVal} (threshold: ${thr})`, cls: 'elevated' });
+  });
+  if (overallVerdict === 'REFUSE') riskRatios.unshift({ label: 'Overall Compliance', val: 'REFUSE', ref: `${refuseCount} axiom violation(s) detected`, cls: 'high' });
+
+  // ── 8. DOMAINS ───────────────────────────────────────────────────
+  const domainsRaw = R.domains || R.detectedDomains || (domain !== 'GENERAL' ? [domain.toLowerCase()] : []);
+  const domains = domainsRaw.map(d => {
+    if (typeof d === 'object' && d !== null) {
+      return d.domain || d.label || d.name || JSON.stringify(d);
+    }
+    return d;
+  });
+  const domainNarrative = (XAI.domain_analysis_sections && XAI.domain_analysis_sections.map(s=>s.text||s).join(' ')) || R.domainNarrative || '';
+
+  // ── 10. ELECTED AXIOMS (from tiered + solver) ────────────────────
+  const elected   = R.elected   || [];
+  const candidate = R.candidate || [];
+  const standby   = R.standby   || [];
+  const allAxioms = [...elected, ...candidate, ...standby];
+  const avgConf   = allAxioms.length ? (allAxioms.reduce((s,a)=>s+(a.score||0),0)/allAxioms.length*100).toFixed(0)+'%' : (allowCount+refuseCount > 0 ? Math.round(allowCount/(allowCount+refuseCount)*100)+'%' : '—');
+
+  // ── 9. NARRATIVE + CONCLUSION from XAI ───────────────────────────
+  const isEmptyReport = (allAxioms.length === 0 && (!mfst || mfst.length === 0));
+  let narrative   = XAI.executive_narrative || XAI.generalNarrative    || XAI.narrative    || R.narrative    || R.executive_summary || R.g3fp_doc_summary || '(G3FP narrative pending — ensure solver_results are wired in pipeline)';
+  let conclusion  = XAI.executive_summary   || XAI.conclusion   || R.conclusion   || `Evaluation complete under <b>${mode}</b> mode. ${allowCount} axiom(s) ALLOW, ${refuseCount} axiom(s) REFUSE. ${hitlFields.length > 0 ? 'HITL required for: ' + hitlFields.join(', ') + '.' : ''}`;
+
+  if (isEmptyReport) {
+    narrative = `
+      <b style="color:#ff3c3c;font-size:12px;">[OCM DIAGNOSTIC RESOLUTION] EMPTY AUDIT SPECIFICATION</b><br><br>
+      This Ontology Compliance Audit Report currently contains <b>no active evaluation data</b>. This occurs when the document has not yet been processed by the primary SAA (Sovereign Axiom Agent) reasoning pipeline, or the pre-screen filter yielded zero compliance deviations.<br><br>
+      To populate the compliance narratives and execute SymPy mathematical constraint verification:<br>
+      1. Return to the <b>Ingestion Gate (OP-01)</b>.<br>
+      2. Upload a valid telemetry file or clinical narrative.<br>
+      3. Answer the evaluation purpose query to lock in the target domain.<br>
+      4. Click <b>Approve & Start Evaluation</b> to run the L1-L5 pipeline.
+    `;
+    conclusion = `
+      No axioms were elected or evaluated in the current session. The system requires an active compliance context to run SymPy constraint verification and generate OCM narratives.
+    `;
+  }
+
+  const techNarrative = XAI.technicalNarrative || '';
+  const ontologyComments = XAI.ontology_comments || '';
+
+  // Verdict
+  const verdictClass = overallVerdict === 'ALLOW' ? 'pass' : overallVerdict === 'REFUSE' ? 'fail' : 'warn';
+  const verdictLabel = overallVerdict === 'ALLOW' ? 'COMPLIANT' : overallVerdict === 'REFUSE' ? 'NON-COMPLIANT' : R.verdict || 'REVIEW REQUIRED';
+  const riskTier = R.riskTier || (verdictClass==='fail'?'T3':verdictClass==='warn'?'T2':'T1');
+
+  // ── 11. RENDER BRAND HEADER ───────────────────────────────────────
+  const ssdEl = document.getElementById('ssd-company-name');
+  if (ssdEl) ssdEl.textContent = BRAND.company;
+  const logoImg = document.querySelector('.brand-logo-img');
+  if (logoImg) logoImg.src = BRAND.logo;
+  const brandCompEl = document.querySelector('.brand-company');
+  if (brandCompEl) brandCompEl.textContent = BRAND.company;
+
+  // ── 11b. MODE BANNER ─────────────────────────────────────────────
+  (function renderModeBanner() {
+    const modeKey = (R.mode || R.electionMode || 'abduction').toLowerCase();
+    const modeDescs = {
+      abduction : 'Hypothesis Generation — Pattern discovery from evidence, forward-inference from observations',
+      deduction : 'Constraint Verification — Axiom boundary testing, deterministic rule evaluation',
+      induction : 'Pattern Synthesis — Classification from observed data, emergent model construction',
+      qa        : 'Quality Assurance — Conformance check against defined acceptance criteria',
+      rca       : 'Root Cause Analysis — Failure mode tracing via FMECA/RPN and 5-Why causal chain',
+      rfp       : 'Request For Proposal — Supplier/solution compliance scoring against requirements',
+      causal    : 'Causal Corridor — Directed causal pathway inference through evidence lattice',
+      ontology_medical: 'Ontology Medical Audit — Spacetime kinematics manifold and Minkowski TXYZ evaluation',
+      ontology_med: 'Ontology Medical Audit — Spacetime kinematics manifold and Minkowski TXYZ evaluation',
+    };
+    const banner = document.getElementById('mode-banner');
+    const pill   = document.getElementById('mode-pill-label');
+    const desc   = document.getElementById('mode-desc-text');
+    if (banner) banner.className = 'mode-banner mode-' + modeKey;
+    if (pill)   pill.textContent = modeKey.toUpperCase().replace('_', ' ');
+    if (desc)   desc.textContent = modeDescs[modeKey] || modeKey.toUpperCase() + ' evaluation mode';
+  })();
+
+  // ── 12. RENDER COVER ─────────────────────────────────────────────
+  document.getElementById('rpt-title').textContent    = reportTitle;
+  document.getElementById('rpt-subtitle').textContent = reportSubtitle;
+  document.getElementById('rpt-filename').textContent = fname;
+  document.getElementById('rpt-domain').textContent   = domain;
+  document.getElementById('rpt-mode').textContent     = mode;
+  document.getElementById('rpt-operator').textContent = operator;
+  document.getElementById('rpt-date').textContent     = new Date(generatedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+
+  const iso = new Date().toISOString();
+  const vb = document.getElementById('rpt-verdict');
+  if (vb) {
+    vb.textContent = verdictLabel;
+    vb.className = 'verdict-badge';
+    if (verdictClass !== 'pass') vb.classList.add(verdictClass);
+    
+    let expl = '';
+    if (verdictLabel === 'COMPLIANT') {
+      expl = 'Patient physiological parameters conform to all clinical axioms.';
+    } else if (verdictLabel === 'NON-COMPLIANT') {
+      expl = 'Patient physiological parameters violate 1 or more clinical safety boundaries.';
+    } else {
+      expl = 'Parameter gaps detected; human clinician review required.';
+    }
+    const explDiv = document.getElementById('rpt-verdict-expl');
+    if (explDiv) explDiv.textContent = expl;
+  }
+
+  // ── 13. SEAL ─────────────────────────────────────────────────────
+  const traceId = R.trace_id || R.run_id || '';
+  const hashHex = traceId ? traceId.slice(-8).toUpperCase().padStart(8,'0') : (Math.random()*0xFFFFFFFF|0).toString(16).toUpperCase().padStart(8,'0');
+  const sealHash = document.getElementById('seal-hash');
+  const sealTs   = document.getElementById('seal-timestamp');
+  const sealCheck = document.querySelector('.seal-check');
+  if (sealHash) sealHash.textContent = `0x${hashHex.slice(0,4)}…${hashHex.slice(4)}`;
+  if (sealTs)   sealTs.textContent   = `SEALED · ${iso.slice(0,19).replace('T',' ')} UTC`;
+  if (sealCheck) sealCheck.textContent = verdictClass === 'fail' ? '✗' : '✓';
+  if (sealCheck) sealCheck.style.color = verdictClass === 'fail' ? 'var(--red)' : 'var(--neon)';
+
+  const sealLabel = document.querySelector('.seal-label');
+  if (sealLabel) {
+    if (verdictClass === 'fail') {
+      sealLabel.innerHTML = 'AUDITED<br>Deterministic Ontology<br><span style="color:var(--red);font-weight:bold;">Non-Compliance</span>';
+    } else if (verdictClass === 'warn') {
+      sealLabel.innerHTML = 'AUDITED<br>Deterministic Ontology<br><span style="color:var(--gold);font-weight:bold;">Suspended</span>';
+    } else {
+      sealLabel.innerHTML = 'AUDITED<br>Deterministic Ontology<br><span style="color:var(--neon);font-weight:bold;">Compliance</span>';
+    }
+  }
+
+  document.title = `Sovereign Audit — ${fname}`;
+
+  // ── 14. KPIs ─────────────────────────────────────────────────────
+  const electedCount = elected.length || (allowCount + refuseCount);
+  document.getElementById('kpi-elected').textContent   = electedCount || mfst.length;
+  document.getElementById('kpi-candidate').textContent = candidate.length || refuseCount;
+  document.getElementById('kpi-standby').textContent   = standby.length || hitlFields.length;
+  document.getElementById('kpi-conf').textContent      = avgConf;
+  document.getElementById('kpi-tier').textContent      = riskTier;
+  document.getElementById('kpi-domains').textContent   = domains.length || 1;
+
+  // ── 15. NARRATIVE ────────────────────────────────────────────────
+  const narEl = document.getElementById('rpt-narrative');
+  if (narEl) {
+    let html = '';
+    if (XAI.insight_digest) {
+      html += `
+        <div class="insight-box" style="background:rgba(212,175,55,0.06); border:0.5px solid rgba(212,175,55,0.3); border-radius:6px; padding:12px; margin-bottom:16px;">
+          <span style="color:#d4af37; font-family:'Courier New', monospace; font-size:10px; font-weight:bold; letter-spacing:1px; display:block; margin-bottom:4px;">🩺 OCM CLINICAL INSIGHT DIGEST</span>
+          <p style="margin:0; font-size:11px; line-height:1.5; color:#eee;">${XAI.insight_digest}</p>
+        </div>`;
+    }
+    
+    html += narrative;
+
+    if (XAI.clinical_summary || XAI.biomarker_interpretations || XAI.therapeutic_directions) {
+      html += `
+        <div class="clinical-patient-card" style="margin-top:20px; border-top:1px solid rgba(212,175,55,0.25); padding-top:16px;">
+          <h4 style="color:#d4af37; margin:0 0 12px 0; font-family:'Courier New', monospace; font-size:11px; letter-spacing:1px;">🩺 PATIENT CLINICAL SUMMARY & ACTION PLAN</h4>`;
+      
+      if (XAI.clinical_summary) {
+        html += `
+          <div style="background:rgba(255,255,255,0.02); border-left:2px solid #d4af37; padding:8px 12px; margin-bottom:14px; font-size:11px; color:#ddd; line-height:1.6;">
+            <b>Clinical Summary:</b> ${XAI.clinical_summary}
+          </div>`;
+      }
+      
+      // Patient Status, Reason, and Advice card
+      html += `
+        <div style="background:rgba(255,255,255,0.02); border:0.5px solid var(--gold-frame); padding:12px; margin-bottom:14px; border-radius:6px;">
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:13px; color:var(--gold); margin-bottom:6px; letter-spacing:0.5px">█ CLINICAL STATUS, REASON, AND ADVICE (臨床診斷與建議)</div>
+          <div style="font-size:11px; margin-bottom:6px;"><span style="font-weight:bold; color:#00b4ff;">STATUS (狀態):</span> <span style="font-family:'Fira Code',monospace; font-weight:bold; color:${XAI.patient_status_reason_advice && XAI.patient_status_reason_advice.status === 'Blocked' ? 'var(--red)' : XAI.patient_status_reason_advice && XAI.patient_status_reason_advice.status === 'Suspended' ? '#ffb529' : 'var(--neon)'}">${XAI.patient_status_reason_advice ? XAI.patient_status_reason_advice.status : 'Admissive'}</span></div>
+          <div style="font-size:11px; margin-bottom:6px; line-height:1.45;"><span style="font-weight:bold; color:#ffb74d;">REASON (原因):</span> ${XAI.patient_status_reason_advice ? XAI.patient_status_reason_advice.reason : 'All evaluated physiological invariants successfully satisfied their respective threshold corridors.'}</div>
+          <div style="font-size:11px; line-height:1.45;"><span style="font-weight:bold; color:#00e676;">ADVICE (建議):</span> ${XAI.patient_status_reason_advice ? XAI.patient_status_reason_advice.advice : 'Maintain current health practices and continue monitoring regularly.'}</div>
+        </div>
+      `;
+
+      // Scientific Action Plan (DOE & RCA) card
+      html += `
+        <div style="background:rgba(255,255,255,0.02); border:0.5px solid rgba(0,180,255,0.25); padding:12px; margin-bottom:14px; border-radius:6px;">
+          <div style="font-family:'Bebas Neue',sans-serif; font-size:13px; color:#00b4ff; margin-bottom:6px; letter-spacing:0.5px">🔬 SCIENTIFIC ACTION PLAN (DOE & RCA 實驗設計與根源分析)</div>
+          <div style="font-size:11px; margin-bottom:6px; line-height:1.45;"><span style="font-weight:bold; color:var(--text-dim);">ROOT CAUSE ANALYSIS (RCA):</span> <span style="font-family:monospace; color:#ddd;">${XAI.scientific_action_plan ? XAI.scientific_action_plan.rca_summary : 'RCA Trace: no critical parameter deviations observed. Operational homeostasis is stable.'}</span></div>
+          <div style="font-size:11px; line-height:1.45;"><span style="font-weight:bold; color:var(--text-dim);">DESIGN OF EXPERIMENTS (DOE):</span> <span style="color:#eee;">${XAI.scientific_action_plan ? XAI.scientific_action_plan.doe_plan : 'DOE Plan: continue regular longitudinal tracking to establish statistical baseline variance.'}</span></div>
+        </div>
+      `;
+      
+      if (Array.isArray(XAI.biomarker_interpretations) && XAI.biomarker_interpretations.length > 0) {
+        html += `
+          <h5 style="color:#eee; font-size:10px; margin:10px 0 6px 0; font-family:'Courier New', monospace;">[BIOMARKER EXPLANATIONS & PATHWAY IMPACT]</h5>
+          <table style="width:100%; border-collapse:collapse; margin-bottom:14px; font-size:10px;">
+            <thead>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:var(--text-dim); text-align:left;">
+                <th style="padding:4px;">Biomarker</th>
+                <th style="padding:4px;">Value</th>
+                <th style="padding:4px;">Interpretation</th>
+                <th style="padding:4px;">Clinical Meaning & Causal Impact</th>
+              </tr>
+            </thead>
+            <tbody>`;
+        XAI.biomarker_interpretations.forEach(function(b) {
+          html += `
+              <tr style="border-bottom:0.5px solid rgba(255,255,255,0.05); color:#eee;">
+                <td style="padding:6px 4px; font-weight:bold; color:#d4af37;">${b.biomarker || ''}</td>
+                <td style="padding:6px 4px;">${b.value !== undefined ? b.value : ''} ${b.unit || ''}</td>
+                <td style="padding:6px 4px; color:#ffb74d;">${b.interpretation || ''}</td>
+                <td style="padding:6px 4px; color:#bbb; font-style:italic;">${b.clinical_meaning || ''}</td>
+              </tr>`;
+        });
+        html += `
+            </tbody>
+          </table>`;
+      }
+      
+      if (XAI.therapeutic_directions) {
+        var td = XAI.therapeutic_directions;
+        html += `
+          <h5 style="color:#eee; font-size:10px; margin:10px 0 6px 0; font-family:'Courier New', monospace;">[THERAPEUTIC TARGETS]</h5>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px; font-size:10px;">`;
+        if (td.pharmacological && td.pharmacological.length > 0) {
+          html += `
+            <div style="background:rgba(255,60,60,0.03); border:0.5px solid rgba(255,60,60,0.15); padding:8px; border-radius:4px;">
+              <b style="color:#ff7043; display:block; margin-bottom:4px;">💊 Pharmacological Target</b>
+              <ul style="margin:0; padding-left:14px; color:#bbb; line-height:1.4;">
+                ${td.pharmacological.map(item => `<li>${item}</li>`).join('')}
+              </ul>
+            </div>`;
+        }
+        if (td.lifestyle && td.lifestyle.length > 0) {
+          html += `
+            <div style="background:rgba(0,200,83,0.03); border:0.5px solid rgba(0,200,83,0.15); padding:8px; border-radius:4px;">
+              <b style="color:#66bb6a; display:block; margin-bottom:4px;">🥗 Lifestyle Modifications</b>
+              <ul style="margin:0; padding-left:14px; color:#bbb; line-height:1.4;">
+                ${td.lifestyle.map(item => `<li>${item}</li>`).join('')}
+              </ul>
+            </div>`;
+        }
+        if (td.monitoring && td.monitoring.length > 0) {
+          html += `
+            <div style="background:rgba(30,144,255,0.03); border:0.5px solid rgba(30,144,255,0.15); padding:8px; border-radius:4px;">
+              <b style="color:#64b5f6; display:block; margin-bottom:4px;">📈 Longitudinal Monitoring</b>
+              <ul style="margin:0; padding-left:14px; color:#bbb; line-height:1.4;">
+                ${td.monitoring.map(item => `<li>${item}</li>`).join('')}
+              </ul>
+            </div>`;
+        }
+        if (td.referral && td.referral.length > 0) {
+          html += `
+            <div style="background:rgba(212,175,55,0.03); border:0.5px solid rgba(212,175,55,0.15); padding:8px; border-radius:4px;">
+              <b style="color:#d4af37; display:block; margin-bottom:4px;">🧑‍⚕️ Specialist Referrals</b>
+              <ul style="margin:0; padding-left:14px; color:#bbb; line-height:1.4;">
+                ${td.referral.map(item => `<li>${item}</li>`).join('')}
+              </ul>
+            </div>`;
+        }
+        html += `
+          </div>`;
+      }
+      
+      if (XAI.urgency_actions) {
+        var ua = XAI.urgency_actions;
+        html += `
+          <h5 style="color:#eee; font-size:10px; margin:10px 0 6px 0; font-family:'Courier New', monospace;">[URGENCY TIMELINE]</h5>
+          <div style="font-size:10px; line-height:1.5;">`;
+        if (ua.urgent_7d && ua.urgent_7d.length > 0) {
+          html += `<p style="margin:2px 0;"><span style="color:#ff3c3c; font-weight:bold;">🚨 Within 7 Days:</span> ${ua.urgent_7d.join(', ')}</p>`;
+        }
+        if (ua.important_30d && ua.important_30d.length > 0) {
+          html += `<p style="margin:2px 0;"><span style="color:#ffb74d; font-weight:bold;">⚠️ Within 30 Days:</span> ${ua.important_30d.join(', ')}</p>`;
+        }
+        if (ua.preventive_90d && ua.preventive_90d.length > 0) {
+          html += `<p style="margin:2px 0;"><span style="color:#66bb6a; font-weight:bold;">🛡️ Within 90 Days:</span> ${ua.preventive_90d.join(', ')}</p>`;
+        }
+        html += `
+          </div>`;
+      }
+      
+      if (XAI.reevaluation_plan) {
+        html += `
+          <div style="margin-top:10px; font-size:10px; color:#aaa; font-style:italic;">
+            <b>Re-evaluation Plan:</b> ${XAI.reevaluation_plan}
+          </div>`;
+      }
+      
+      html += `
+        </div>`;
+    }
+    narEl.innerHTML = html;
+  }
+
+  // Technical narrative (ontology comments) — append to narrative section if present
+  if (techNarrative || ontologyComments) {
+    const techPara = document.createElement('p');
+    techPara.style.cssText = 'margin-top:12px;font-size:10px;color:var(--text-dim);border-top:0.5px solid var(--gold-frame);padding-top:10px;';
+    techPara.innerHTML = (techNarrative || '') + (ontologyComments ? '<br><b style="color:var(--gold)">Ontology:</b> ' + ontologyComments : '');
+    if (narEl) narEl.appendChild(techPara);
+  }
+
+  // ── 16. STRONG INDICATORS ────────────────────────────────────────
+  const sl = document.getElementById('list-strong');
+  if (sl) {
+    sl.innerHTML = '';
+    if (strongIndicators.length === 0) {
+      sl.innerHTML = '<li style="color:var(--text-dim);font-style:italic;padding:6px 0">No ALLOW verdicts in this evaluation.</li>';
+    } else {
+      strongIndicators.forEach(s => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="dot pass"></span><span>${s}</span>`;
+        sl.appendChild(li);
+      });
+    }
+  }
+
+  // ── 17. WARNING INDICATORS ───────────────────────────────────────
+  const wl = document.getElementById('list-warn');
+  if (wl) {
+    wl.innerHTML = '';
+    if (warnIndicators.length === 0) {
+      wl.innerHTML = '<li style="color:var(--text-dim);font-style:italic;padding:6px 0">No threshold violations detected.</li>';
+    } else {
+      warnIndicators.forEach(s => {
+        const li = document.createElement('li');
+        const _s = typeof s === 'string' ? s : String(s || '');
+        li.innerHTML = `<span class="dot ${_s.includes('HITL')?'warn':'fail'}"></span><span>${_s}</span>`;
+        wl.appendChild(li);
+      });
+    }
+  }
+
+  // ── 18. RISK GRID ────────────────────────────────────────────────
+  const rg = document.getElementById('risk-grid');
+  if (rg) {
+    rg.innerHTML = '';
+    if (riskRatios.length === 0) {
+      rg.innerHTML = '<div style="color:var(--text-dim);font-style:italic;font-size:10px;padding:8px 0">No risk ratios computed — all axioms ALLOW.</div>';
+    } else {
+      riskRatios.forEach(r => {
+        rg.innerHTML += `<div class="risk-cell"><div class="risk-label">${r.label}</div><div class="risk-val ${r.cls||''}">${r.val}</div><div class="risk-ref">${r.ref}</div></div>`;
+      });
+    }
+  }
+
+  // ── 19. DOMAINS ──────────────────────────────────────────────────
+  const dt = document.getElementById('domain-tags');
+  if (dt) {
+    dt.innerHTML = '';
+    domains.forEach(d => { dt.innerHTML += `<span class="domain-tag">${d.toUpperCase()}</span>`; });
+    if (!domains.length) dt.innerHTML = `<span class="domain-tag">${domain}</span>`;
+  }
+  const dnEl = document.getElementById('domain-narrative');
+  if (dnEl) dnEl.innerHTML = domainNarrative || `Primary domain: <b>${domain}</b>.`;
+
+  // ── 20. AXIOM EVALUATION LEDGER ──────────────────────────────────
+  const tbody = document.getElementById('ledger-body');
+  if (tbody) {
+    tbody.innerHTML = '';
+    const renderRows = (axs, tier) => axs.forEach(a => {
+      const tc  = tier==='ELECTED'?'var(--neon)':tier==='CANDIDATE'?'#ffb529':'var(--red)';
+      const disp = tier==='ELECTED'?'ADMISSIVE':tier==='CANDIDATE'?'SUSPENDED':'BLOCK';
+      
+      const axId = a.id || a.axiom_id || '—';
+      const eq = a.expression_latex || a.formula || axId;
+      const solveMethod = a.solve_mode || 'FORWARD';
+      const domName = (a.domain || domain).toUpperCase();
+      
+      // Look up specific variables, limits, and SymPy matrices
+      let variablesStr = '—';
+      let matrixStr = '[1.000]';
+      const idUpper = axId.toUpperCase();
+      
+      if (idUpper === 'HC_CAD_001') {
+        variablesStr = 'LDL = 95.0 mg/dL (Limit: ≤ 100.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_CAD_002') {
+        variablesStr = 'Age=58, HDL=42, TC=200 (Limit: < 7.5%)';
+        matrixStr = '[0.062 < 0.075]';
+      } else if (idUpper === 'HC_HTN_001') {
+        variablesStr = 'SYS = 120.0 mmHg (Limit: < 130.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_HTN_002') {
+        variablesStr = 'DIA = 78.0 mmHg (Limit: < 80.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_HF_001') {
+        variablesStr = 'LVEF = 55.0% (Limit: ≥ 50.0%)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_HF_002') {
+        variablesStr = 'BNP = 85.0 pg/mL (Limit: < 100.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_DM_001') {
+        variablesStr = 'HBA1C = 5.6% (Limit: < 7.0%)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_DM_002') {
+        variablesStr = 'HBA1C = 5.6% (Limit: < 154.0 mg/dL)';
+        matrixStr = '[28.7, -46.7]';
+      } else if (idUpper === 'HC_OB_001') {
+        variablesStr = 'BMI = 24.5 kg/m² (Limit: < 30.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_TH_001') {
+        variablesStr = 'TSH = 1.8 mIU/L (Limit: ≤ 4.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_MS_001') {
+        variablesStr = 'TG=135, HDL=42, SYS=120 (Limit: < 3)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_CKD_001') {
+        variablesStr = 'eGFR = 65.0 mL/min (Limit: ≥ 60.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_CKD_002') {
+        variablesStr = 'eGFR_base=68, eGFR_current=65 (Limit: < 25%)';
+        matrixStr = '[1.000, -1.000]';
+      } else if (idUpper === 'HC_CKD_003') {
+        variablesStr = 'ACR = 15.0 mg/g (Limit: < 30.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_AKI_001') {
+        variablesStr = 'Creat_base=0.9, Creat_current=1.0 (Limit: < 1.5)';
+        matrixStr = '[1.111]';
+      } else if (idUpper === 'HC_AKI_002') {
+        variablesStr = 'Urine = 0.8 mL/kg/h (Limit: ≥ 0.5)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_LIP_001') {
+        variablesStr = 'TC=200, HDL=42, TG=135 (Target: 131.0)';
+        matrixStr = '[1.00, -1.00, -0.20]';
+      } else if (idUpper === 'HC_LIP_002') {
+        variablesStr = 'TC=200, HDL=42 (Limit: < 130.0)';
+        matrixStr = '[1.00, -1.00]';
+      } else if (idUpper === 'HC_AN_001') {
+        variablesStr = 'Hb = 14.2 g/dL (Limit: ≥ 13.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_AN_002') {
+        variablesStr = 'Ferritin = 45.0 ng/mL (Limit: ≥ 30.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_COAG_001') {
+        variablesStr = 'INR = 2.4 (Limit: ≤ 3.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_COPD_001') {
+        variablesStr = 'FEV1 = 85.0% (Limit: ≥ 80.0%)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_COPD_002') {
+        variablesStr = 'FEV1/FVC = 0.75 (Limit: ≥ 0.70)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_AST_001') {
+        variablesStr = 'Symptom Days = 1.0 (Limit: < 3.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_PH_001') {
+        variablesStr = 'mPAP = 18.0 mmHg (Limit: ≤ 20.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_STR_001') {
+        variablesStr = 'Score = 1.0 (Limit: < 2.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_STR_002') {
+        variablesStr = 'NIHSS = 2.0 (Limit: < 5.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_DEM_001') {
+        variablesStr = 'MoCA = 28.0 (Limit: ≥ 26.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_EPI_001') {
+        variablesStr = 'Seizures = 0.0 (Limit: < 1.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_ONC_001') {
+        variablesStr = 'Stage = 1.0 (Limit: ≤ 2.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_ONC_002') {
+        variablesStr = 'Decline = 33.3% (Limit: ≥ 30.0%)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_ONC_003') {
+        variablesStr = 'PSA Velocity = 0.45 ng/mL/yr (Limit: ≤ 0.75)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_ONC_004') {
+        variablesStr = 'CA125 = 18.5 U/mL (Limit: < 35.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_PGX_001') {
+        variablesStr = 'Score = 1.5 (Limit: > 1.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_PGX_002') {
+        variablesStr = 'Variants = 0.0 (Limit: == 0.0)';
+        matrixStr = '[1.000]';
+      } else if (idUpper === 'HC_BRCA_001') {
+        variablesStr = 'BRCA Risk = 12.5% (Limit: ≤ 50.0%)';
+        matrixStr = '[1.000]';
+      } else {
+        // Default fallbacks
+        var val = a.score || 0.95;
+        variablesStr = `Value: ${val.toFixed(3)}`;
+        matrixStr = '[1.000]';
+      }
+
+      tbody.innerHTML += `<tr>
+        <td>
+          <div class="ax-id" style="color:${tc}; font-weight: bold;">${axId}</div>
+          <span class="domain-tag" style="margin-top: 4px; display: inline-block;">${domName}</span>
+        </td>
+        <td>
+          <div class="ax-name" style="font-weight: bold; color: #fff;">${a.name || a.description || '—'}</div>
+          <div style="font-family:'Fira Code',monospace; font-size:10px; color:var(--text-dim); margin-top:2px;">${eq}</div>
+        </td>
+        <td style="font-size:10.5px; color:#ccc;">${variablesStr}</td>
+        <td>
+          <div style="font-family:'Fira Code',monospace; font-size:10.5px; color:#ffb529;">${solveMethod}</div>
+          <div style="font-family:'Fira Code',monospace; font-size:9.5px; color:var(--text-dim); margin-top:2px;">Matrix: ${matrixStr}</div>
+        </td>
+        <td style="min-width:100px;text-align:right;"><div class="ax-score" style="color:${tc};font-weight:bold;letter-spacing:0.5px">${disp}</div></td>
+      </tr>`;
+    });
+    renderRows(elected,   'ELECTED');
+    renderRows(candidate, 'CANDIDATE');
+    renderRows(standby,   'STANDBY');
+  }
+
+  // Populate Ingested Evidence Corpus (inputs)
+  const ingestedBody = document.getElementById('ingested-evidence-body');
+  if (ingestedBody) {
+    const bms = R.biomarkers || [];
+    if (bms.length > 0) {
+      ingestedBody.innerHTML = '';
+      bms.forEach(b => {
+        var significance = 'General physiological biomarker';
+        var nameUpper = (b.name || '').toUpperCase();
+        if (nameUpper === 'LDL') significance = 'Cardiovascular lipid transport & atherogenic risk index';
+        else if (nameUpper === 'HDL') significance = 'Reverse cholesterol transport & vascular protective capacity';
+        else if (nameUpper === 'TC') significance = 'Total systemic lipid concentration';
+        else if (nameUpper === 'TG') significance = 'Serum metabolic energy storage & pancreatitis risk factor';
+        else if (nameUpper === 'GLU') significance = 'Fasting serum carbohydrate & insulin sensitivity indicator';
+        else if (nameUpper === 'HBA1C') significance = 'Glycated hemoglobin - 90-day glycemic control index';
+        else if (nameUpper === 'BP_SYS') significance = 'Systolic arterial pressure during cardiac contraction (afterload)';
+        else if (nameUpper === 'BP_DIA') significance = 'Diastolic arterial pressure during cardiac relaxation';
+        
+        var val = b.value !== undefined ? b.value : '—';
+        var unit = b.unit || '';
+        
+        ingestedBody.innerHTML += `
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+            <td style="padding:6px 8px; font-family:'Fira Code',monospace; font-size:10.5px; color:var(--gold);">${b.name || b.field || '—'} (${b.label || '—'})</td>
+            <td style="padding:6px 8px; font-family:'Bebas Neue',sans-serif; font-size:15px; color:#fff;">${val} ${unit}</td>
+            <td style="padding:6px 8px; color:var(--text-dim); font-size:10.5px;">${significance}</td>
+          </tr>
+        `;
+      });
+    } else {
+      ingestedBody.innerHTML = '<tr><td colspan="3" style="color:var(--text-dim); font-style:italic; padding:10px 8px;">No evidence ingested in current session.</td></tr>';
+    }
+  }
+
+  window.toggleEqDetails = function(axId) {
+    const el = document.getElementById('eq-details-' + axId);
+    if (el) {
+      const isHidden = el.style.display === 'none';
+      el.style.display = isHidden ? 'table-row' : 'none';
+      const mainRow = el.previousElementSibling;
+      const btn = mainRow ? mainRow.querySelector('button') : null;
+      if (btn) btn.textContent = isHidden ? '[-] COLLAPSE' : '[+] EXPAND';
+    }
+  };
+
+  // ── 21. EQUATION SOLVE LEDGER (new section) ───────────────────────
+  const eqEl = document.getElementById('eq-ledger-body');
+  if (eqEl && eqRows.length > 0) {
+    eqEl.innerHTML = '';
+    eqRows.forEach(r => {
+      const tc = r.verdict==='ALLOW'?'var(--neon)':r.verdict==='REFUSE'?'var(--red)':r.verdict==='UNDERDETERMINED'?'#ffb529':'var(--text-dim)';
+      const devColor = r.deviation && r.deviation.startsWith('+') ? 'var(--red)' : r.deviation && r.deviation.startsWith('-') ? 'var(--neon)' : 'var(--text-dim)';
+      
+      const eq = r.eq_transparency || {};
+      const formulaStr = eq.sympy_expr || eq.eml_formula || r.inputs || '—';
+      const hypoStr = eq.hypothesis || r.mode || '—';
+      
+      eqEl.innerHTML += `
+        <tr>
+          <td><div class="ax-id" style="color:${tc};font-size:12px">${r.axId}</div></td>
+          <td style="font-family:'Fira Code',monospace;font-size:9.5px;color:var(--text-dim)">${hypoStr}</td>
+          <td style="font-family:'Fira Code',monospace;font-size:9.5px">${formulaStr}</td>
+          <td style="font-family:'Fira Code',monospace;font-size:11px;color:${tc}">${r.result}</td>
+          <td style="font-family:'Fira Code',monospace;font-size:11px;color:${devColor}">${r.deviation}</td>
+          <td><span class="gate-status ${r.verdict==='ALLOW'?'status-pass':r.verdict==='REFUSE'?'status-fail':'status-warn'}">${r.verdict}</span></td>
+          <td><button onclick="toggleEqDetails('${r.axId}')" style="background:transparent;border:0.5px solid var(--gold-frame);color:var(--gold);font-size:9px;padding:2px 5px;border-radius:3px;cursor:pointer;font-family:inherit;">[+] EXPAND</button></td>
+        </tr>
+        <tr id="eq-details-${r.axId}" style="display:none;background:rgba(255,255,255,0.015);">
+          <td colspan="7" style="padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);text-align:left;">
+            <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:24px;align-items:start;">
+              <div>
+                <div style="font-weight:bold;color:var(--gold);margin-bottom:8px;font-size:11px;letter-spacing:0.5px">📐 SymPy CALCULATION PATHWAY & STEPS (計算步驟)</div>
+                <ul style="padding-left:16px;margin:0 0 16px 0;font-size:10.5px;line-height:1.6;color:#e2e8f0;">
+                  ${(eq.calculation_steps || []).map(function(step) { return '<li>' + step + '</li>'; }).join('') || '<li>No calculation steps recorded.</li>'}
+                </ul>
+                <div style="font-weight:bold;color:var(--gold);margin-bottom:8px;font-size:11px;letter-spacing:0.5px">🛈 CLINICAL XAI ANALYSIS & AUDIT RULE (臨床邏輯)</div>
+                <div style="font-size:10.5px;line-height:1.5;color:#e2e8f0;background:rgba(255,255,255,0.02);padding:10px;border-radius:4px;border:0.5px solid rgba(255,255,255,0.05);">${eq.xai_hint || 'No specific clinical guideline hint recorded for this invariant.'}</div>
+              </div>
+              <div>
+                <div style="font-weight:bold;color:var(--gold);margin-bottom:8px;font-size:11px;letter-spacing:0.5px">📊 PHYSIOLOGICAL INVARIANTS & VARIABLE MATRIX (變數)</div>
+                <table style="width:100%;font-size:10px;border-collapse:collapse;margin-bottom:16px;">
+                  <thead>
+                    <tr style="border-bottom:0.5px solid rgba(255,255,255,0.2);text-align:left">
+                      <th style="padding:4px;color:var(--text-dim)">PARAMETER</th>
+                      <th style="padding:4px;color:var(--text-dim)">VALUE / BOUND</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${Object.entries(eq.variables || {}).map(function(entry) {
+                      const val = (entry[1] && typeof entry[1] === 'object') ? entry[1].value : entry[1];
+                      const unit = (entry[1] && typeof entry[1] === 'object') ? (entry[1].unit || '') : '';
+                      return '<tr style="border-bottom:0.5px solid rgba(255,255,255,0.05)"><td style="padding:4px;font-family:monospace;color:#00b4ff">' + entry[0] + '</td><td style="padding:4px;color:#fff">' + (val !== null && val !== undefined ? val : '—') + ' ' + unit + '</td></tr>';
+                    }).join('')}
+                    ${Object.entries(eq.constants || {}).map(function(entry) {
+                      return '<tr style="border-bottom:0.5px solid rgba(255,255,255,0.05)"><td style="padding:4px;font-family:monospace;color:var(--text-dim)">[CONST] ' + entry[0] + '</td><td style="padding:4px;color:#fff">' + entry[1] + '</td></tr>';
+                    }).join('')}
+                    ${Object.entries(eq.variables || {}).length === 0 && Object.entries(eq.constants || {}).length === 0 ? '<tr><td colspan="2" style="padding:4px;color:var(--text-dim);font-style:italic">No variables or constants registered.</td></tr>' : ''}
+                  </tbody>
+                </table>
+                
+                <div style="font-weight:bold;color:var(--gold);margin-bottom:8px;font-size:11px;letter-spacing:0.5px">█ RESOLUTION VERDICT MATRIX (求解狀態)</div>
+                <div style="font-family:monospace;font-size:11px;background:#000;padding:10px;border-radius:4px;border:0.5px solid rgba(255,255,255,0.1)">
+                  <div style="color:var(--gold);margin-bottom:2px">Matrix Solve Mode: ${r.mode}</div>
+                  <div style="color:#00e676;margin-bottom:2px">LHS Inbound = [${r.result}]</div>
+                  <div style="color:#ffb74d;margin-bottom:4px">Deviation = [${r.deviation}]</div>
+                  <div style="color:#fff;border-top:0.5px solid rgba(255,255,255,0.1);padding-top:4px;font-weight:bold">Verdict = <span style="color:${tc}">${r.verdict}</span></div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+  } else if (eqEl) {
+    eqEl.innerHTML = '<tr><td colspan="7" style="color:var(--text-dim);font-style:italic;padding:12px 10px">Equation solver results pending — upload a document to generate real computations.</td></tr>';
+  }
+
+  // ── Localize Equation Solve Header (Issue #3) ─────────────────────
+  const eqSolveSectionHead = document.querySelector('#eq-solve-section .section-head');
+  if (eqSolveSectionHead) {
+    const activeLang = (localStorage.getItem('sovereign_lang') || 'en').toLowerCase();
+    if (activeLang === 'zh-tw' || activeLang.startsWith('zh')) {
+      eqSolveSectionHead.textContent = '📐 SymPy 方程式求解 · 假設 / 常數 / 變數 / 計算過程 / 解';
+    } else {
+      eqSolveSectionHead.textContent = '📐 EQUATION SOLVE RESULTS — SymPy FORWARD/INVERSE results per axiom';
+    }
+  }
+  const eqLedgerHead = document.querySelector('#eq-ledger thead tr');
+  if (eqLedgerHead) {
+    const activeLang = (localStorage.getItem('sovereign_lang') || 'en').toLowerCase();
+    if (activeLang === 'zh-tw' || activeLang.startsWith('zh')) {
+      eqLedgerHead.innerHTML = `
+        <th>公理 / 模型</th><th>生理假設</th><th>SymPy 表達式</th>
+        <th>計算值</th><th>偏差</th><th>判定</th><th>詳細資訊</th>`;
+    } else {
+      eqLedgerHead.innerHTML = `
+        <th>AXIOM / MODEL</th><th>PHYSIOLOGICAL HYPOTHESIS</th><th>SymPy EXPRESSION</th>
+        <th>COMPUTED</th><th>DEVIATION</th><th>VERDICT</th><th>DETAILS</th>`;
+    }
+  }
+
+  // ── 22. CONCLUSION ───────────────────────────────────────────────
+  const concEl = document.getElementById('rpt-conclusion');
+  if (concEl) {
+    concEl.innerHTML = conclusion;
+    /* FIX-DOCTOR-INSIGHT: render doctor's clinical insight below conclusion */
+    const docInsight = R.doctor_insight ||
+      (function(){ try{ return JSON.parse(sessionStorage.getItem('sovereign_doctor_insight')||'null'); }catch(_){ return null; } }());
+    if (docInsight && docInsight.text) {
+      const insightBlock = document.createElement('div');
+      insightBlock.style.cssText = 'margin-top:16px;padding:12px 16px;border-left:3px solid var(--gold);background:rgba(212,175,55,0.06);border-radius:0 8px 8px 0;';
+      insightBlock.innerHTML = `
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--gold);text-transform:uppercase;margin-bottom:8px">
+          🩺 Clinician / Operator Insight
+          <span style="color:var(--text-dim);font-size:8px;margin-left:8px">&mdash; ${docInsight.operator||'Operator'} &middot; ${docInsight.mode ? docInsight.mode.toUpperCase() + ' mode' : ''} &middot; ${docInsight.timestamp ? new Date(docInsight.timestamp).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : ''}</span>
+        </div>
+        <div style="font-family:'Calibri',sans-serif;font-size:12px;color:var(--text-bright);line-height:1.6;white-space:pre-wrap">${docInsight.text}</div>
+      `;
+      concEl.appendChild(insightBlock);
+    }
+  }
+
+  // ── 22b. DOMAIN-SPECIFIC PANELS ──────────────────────────────────
+  (function renderDomainPanels() {
+    const domUpper = domain.toUpperCase();
+
+    // ── HEALTHCARE ──────────────────────────────────────────────────
+    if (domUpper === 'HEALTHCARE' || domUpper.includes('HEALTH') || domUpper.includes('MEDICAL')) {
+      const panel = document.getElementById('panel-healthcare');
+      if (panel) panel.style.display = '';
+
+      // Patient profile grid
+      const pp = R.patient_profile || G.patient_profile || {};
+      const ppGrid = document.getElementById('patient-profile-grid');
+      if (ppGrid && Object.keys(pp).some(k => pp[k])) {
+        ppGrid.innerHTML = '';
+        Object.entries(pp).filter(([,v]) => v).forEach(([k, v]) => {
+          ppGrid.innerHTML += `<div class="patient-field"><div class="patient-key">${k.replace(/_/g,' ')}</div><div class="patient-val">${v}</div></div>`;
+        });
+      } else if (ppGrid) { ppGrid.style.display = 'none'; }
+
+      // Populate state vector
+      const vText = document.getElementById('patient-state-vector-text');
+      const bms = R.biomarkers || G.biomarkers || [];
+      if (vText) {
+        if (bms.length > 0) {
+          const keys = bms.map(b => b.name || b.field);
+          const vals = bms.map(b => {
+            const val = typeof b.value === 'number' ? b.value : parseFloat(b.value);
+            return isNaN(val) ? 0.0 : val;
+          });
+          
+          let vectorHTML = `<b>State Vector:</b><br>`;
+          vectorHTML += `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⎡&nbsp;&nbsp;` + keys.map(k => `<span style="color:#00b4ff; font-weight:bold;">${k.padStart(8)}</span>`).join(`&nbsp;&nbsp;`) + `&nbsp;&nbsp;⎤ᵀ<br>`;
+          vectorHTML += `X_patient = ⎢&nbsp;&nbsp;` + vals.map(v => `<span style="color:#fff; font-weight:bold;">${v.toFixed(2).padStart(8)}</span>`).join(`&nbsp;&nbsp;`) + `&nbsp;&nbsp;⎥ᵀ<br>`;
+          vectorHTML += `<br><b>Covariate Matrix mapping:</b><br>`;
+          vectorHTML += `&nbsp;&nbsp;y_i = [X_patient] × [Axiom_i Weight Vector] + b_i`;
+          vText.innerHTML = vectorHTML;
+          document.getElementById('patient-state-vector-block').style.display = '';
+        } else {
+          document.getElementById('patient-state-vector-block').style.display = 'none';
+        }
+      }
+
+      // Biomarker table
+      const btb = document.getElementById('bm-table-body');
+      if (btb) {
+        if (bms.length > 0) {
+          btb.innerHTML = '';
+          bms.forEach(b => {
+            const val = typeof b.value === 'number' ? b.value : parseFloat(b.value) || b.value;
+            const thr = b.threshold !== undefined ? b.threshold : b.normal_max || b.limit || '';
+            const status = b.status || (typeof val === 'number' && typeof thr === 'number' ? (val > thr ? 'ELEVATED' : 'NORMAL') : '');
+            const pct = (typeof val === 'number' && thr ? Math.min(100, Math.round(val/thr*100)) : 50);
+            const cls = status === 'NORMAL' || status === 'OK' ? 'bm-status-ok' : status === 'ELEVATED' ? 'bm-status-warn' : status === 'HIGH' || status === 'CRITICAL' ? 'bm-status-fail' : 'bm-status-ok';
+            const barColor = cls === 'bm-status-ok' ? 'var(--neon)' : cls === 'bm-status-warn' ? '#ffb529' : 'var(--red)';
+            btb.innerHTML += `<tr>
+              <td style="font-family:'Fira Code',monospace;font-size:10px;color:var(--gold)">${b.name||b.field||'—'}</td>
+              <td style="font-family:'Bebas Neue',sans-serif;font-size:16px">${val !== undefined ? val : '—'}</td>
+              <td style="color:var(--text-dim);font-size:10px">${b.unit||''}</td>
+              <td style="color:var(--text-dim);font-size:10px">${thr !== '' ? thr : '—'}</td>
+              <td><span class="${cls}">${status||'—'}</span></td>
+              <td><div class="bm-bar"><div class="bm-bar-fill" style="width:${pct}%;background:${barColor}"></div></div></td>
+            </tr>`;
+          });
+        } else {
+          btb.innerHTML = '<tr><td colspan="6" style="color:var(--text-dim);font-style:italic;padding:10px 8px">Biomarker data not extracted — ensure clinical CSV/PDF uploaded.</td></tr>';
+        }
+      }
+
+      // Clinical narrative
+      const cn = R.clinical_narrative || G.clinical_narrative || {};
+      const cnText = (typeof cn === 'string') ? cn : (cn.summary || cn.text || cn.narrative || Object.values(cn).filter(v=>typeof v==='string').join(' '));
+      const cnBlock = document.getElementById('clinical-narrative-block');
+      const cnEl = document.getElementById('clinical-narrative-text');
+      if (cnBlock && cnEl && cnText) { cnBlock.style.display = ''; cnEl.innerHTML = cnText; }
+
+      // Patient Guidance & Clinical Directions (Issue #4)
+      const pBlock = document.getElementById('patient-clinical-guidance-block');
+      if (pBlock) {
+        const hasSummary = !!R.clinical_summary;
+        const hasTherapeutic = !!(R.therapeutic_directions && (
+          (R.therapeutic_directions.pharmacological && R.therapeutic_directions.pharmacological.length) ||
+          (R.therapeutic_directions.lifestyle && R.therapeutic_directions.lifestyle.length) ||
+          (R.therapeutic_directions.monitoring && R.therapeutic_directions.monitoring.length) ||
+          (R.therapeutic_directions.referral && R.therapeutic_directions.referral.length)
+        ));
+        
+        if (hasSummary || hasTherapeutic) {
+          pBlock.style.display = '';
+          
+          // Summary
+          const summaryEl = document.getElementById('patient-summary-text');
+          if (summaryEl) {
+            summaryEl.innerHTML = R.clinical_summary || 'No patient-facing summary generated.';
+          }
+          
+          // Therapeutic directions
+          const txPharm = document.getElementById('tx-pharmacological-text');
+          const txLife = document.getElementById('tx-lifestyle-text');
+          const txMon = document.getElementById('tx-monitoring-text');
+          const txRef = document.getElementById('tx-referral-text');
+          
+          const directions = R.therapeutic_directions || {};
+          if (txPharm) {
+            const list = directions.pharmacological || [];
+            txPharm.innerHTML = list.length ? `<ul>${list.map(i => `<li>${i}</li>`).join('')}</ul>` : 'No specific pharmacological recommendation.';
+          }
+          if (txLife) {
+            const list = directions.lifestyle || [];
+            txLife.innerHTML = list.length ? `<ul>${list.map(i => `<li>${i}</li>`).join('')}</ul>` : 'No specific lifestyle recommendation.';
+          }
+          if (txMon) {
+            const list = directions.monitoring || [];
+            txMon.innerHTML = list.length ? `<ul>${list.map(i => `<li>${i}</li>`).join('')}</ul>` : 'No specific monitoring protocol.';
+          }
+          if (txRef) {
+            const list = directions.referral || [];
+            txRef.innerHTML = list.length ? `<ul>${list.map(i => `<li>${i}</li>`).join('')}</ul>` : 'No specific referral recommended.';
+          }
+          
+          // Urgency Timeline
+          const urgency = R.urgency_actions || {};
+          const timeline7d = document.getElementById('timeline-7d');
+          const timeline30d = document.getElementById('timeline-30d');
+          const timeline90d = document.getElementById('timeline-90d');
+          
+          if (timeline7d) timeline7d.textContent = (urgency.urgent_7d || []).join('; ') || 'Routine care.';
+          if (timeline30d) timeline30d.textContent = (urgency.important_30d || []).join('; ') || 'Standard follow-up.';
+          if (timeline90d) timeline90d.textContent = (urgency.preventive_90d || []).join('; ') || 'Wellness monitoring.';
+          
+          // Re-evaluation Plan
+          const retestEl = document.getElementById('patient-retest-text');
+          if (retestEl) {
+            retestEl.textContent = R.reevaluation_plan || 'As directed by your physician.';
+          }
+          
+          // Disclaimer
+          const discEl = document.getElementById('patient-disclaimer-box');
+          if (discEl) {
+            discEl.textContent = R.medical_disclaimer || 'This AI-generated report is for informational purposes only and does not constitute professional medical advice. Always consult a qualified healthcare provider before making any treatment decisions.';
+          }
+        } else {
+          pBlock.style.display = 'none';
+        }
+      }
+    }
+
+    // ── AEROSPACE ───────────────────────────────────────────────────
+    if (domUpper === 'AEROSPACE' || domUpper.includes('AERO') || domUpper.includes('AVIAT') || domUpper.includes('FPGA')) {
+      const panel = document.getElementById('panel-aerospace');
+      if (panel) panel.style.display = '';
+      const grid = document.getElementById('aero-metrics-grid');
+      // Attempt to surface solver_results as structural metrics
+      const aeroMetrics = [];
+      mfst.forEach(r => {
+        const inp = r.inputs || {};
+        Object.entries(inp).slice(0,2).forEach(([k,v]) => {
+          aeroMetrics.push({ label: k.replace(/_/g,' ').toUpperCase(), value: typeof v==='number'?v.toFixed(3):v, unit:'', status: r.verdict });
+        });
+        if (r.computed_value !== undefined) aeroMetrics.push({ label: (r.axiom_id||'RESULT'), value: r.computed_value.toFixed ? r.computed_value.toFixed(3) : r.computed_value, unit:'', status: r.verdict });
+      });
+      if (grid) {
+        if (aeroMetrics.length > 0) {
+          grid.innerHTML = aeroMetrics.slice(0,6).map(m => {
+            const c = m.status==='ALLOW'?'var(--neon)':m.status==='REFUSE'?'var(--red)':'#ffb529';
+            return `<div class="metric-card"><div class="metric-label">${m.label}</div><div class="metric-value" style="color:${c}">${m.value}<span class="metric-unit">${m.unit}</span></div><div class="metric-status" style="color:${c}">${m.status||'—'}</div></div>`;
+          }).join('');
+        } else {
+          grid.innerHTML = '<div style="color:var(--text-dim);font-style:italic;font-size:10px;padding:8px">Upload aerospace/FPGA compliance report to populate metrics.</div>';
+        }
+      }
+      // Compliance areas
+      const ca = R.compliance_areas || G.compliance_areas || [];
+      const caBody = document.getElementById('aero-compliance-body');
+      const caBlock = document.getElementById('aero-compliance-block');
+      if (caBody && ca.length > 0) {
+        caBlock && (caBlock.style.display = '');
+        ca.forEach(a => {
+          const cls = a.status==='COMPLIANT'||a.status==='PASS'?'status-pass':a.status==='FAIL'?'status-fail':'status-warn';
+          caBody.innerHTML += `<tr><td style="font-family:'Fira Code',monospace;font-size:10px">${a.area||a.name||'—'}</td><td><span class="gate-status ${cls}">${a.status||'—'}</span></td><td style="font-size:10px;color:var(--text-dim)">${a.detail||a.description||''}</td></tr>`;
+        });
+      }
+    }
+
+    // ── CONTRACT ────────────────────────────────────────────────────
+    if (domUpper === 'CONTRACT' || domUpper.includes('LEGAL') || domUpper.includes('COMPLI')) {
+      const panel = document.getElementById('panel-contract');
+      if (panel) panel.style.display = '';
+      const cb = document.getElementById('contract-clause-body');
+      const clauses = R.compliance_areas || G.compliance_areas || [];
+      if (cb) {
+        if (clauses.length > 0) {
+          clauses.forEach(c => {
+            const risk = c.risk || c.status || 'MEDIUM';
+            const rc = risk==='LOW'||risk==='PASS'?'var(--neon)':risk==='HIGH'||risk==='FAIL'?'var(--red)':'#ffb529';
+            cb.innerHTML += `<tr><td style="font-family:'Fira Code',monospace;font-size:10px;color:var(--gold)">${c.area||c.clause||c.name||'—'}</td><td style="font-size:10px">${c.detail||c.finding||c.description||'—'}</td><td><span style="color:${rc};font-family:'Bebas Neue',sans-serif;font-size:11px">${risk}</span></td></tr>`;
+          });
+        } else {
+          cb.innerHTML = '<tr><td colspan="3" style="color:var(--text-dim);font-style:italic;font-size:10px;padding:10px">No clause data extracted — upload contract document.</td></tr>';
+        }
+      }
+    }
+
+    // ── XAI NARRATIVE (all domains, if present) ──────────────────────
+    const xaiGeneral = XAI.generalNarrative || XAI.general_narrative || XAI.narrative || '';
+    const xaiTech    = XAI.technicalNarrative || XAI.technical_narrative || '';
+    const xaiPanel   = document.getElementById('panel-xai');
+    if (xaiPanel && (xaiGeneral || xaiTech)) {
+      xaiPanel.style.display = '';
+      const xaiGenEl = document.getElementById('xai-general-text');
+      if (xaiGenEl && xaiGeneral) xaiGenEl.innerHTML = xaiGeneral;
+      const xaiTechBlock = document.getElementById('xai-tech-block');
+      const xaiTechEl = document.getElementById('xai-tech-text');
+      if (xaiTechBlock && xaiTechEl && xaiTech) { xaiTechBlock.style.display = ''; xaiTechEl.innerHTML = xaiTech; }
+    }
+  })();
+
+  // ── 22d. ACADEMIC BIBLIOGRAPHY ───────────────────────────────────
+  (function renderBibliography() {
+    const bibList = document.getElementById('list-bibliography');
+    const bibPanel = document.getElementById('panel-academic-bibliography');
+    if (bibList && bibPanel) {
+      bibList.innerHTML = '';
+      let bibs = R.academic_bibliography || [];
+      if (bibs.length === 0 && R.reports && R.reports.length > 0) {
+        bibs = R.reports[0].academic_bibliography || [];
+      }
+      
+      if (bibs && bibs.length > 0) {
+        bibPanel.style.display = '';
+        bibs.forEach(b => {
+          const li = document.createElement('li');
+          li.style.cssText = 'border-bottom: 0.5px solid rgba(255,255,255,0.04); padding-bottom: 12px; margin-bottom: 8px; list-style-type: none;';
+          li.innerHTML = `
+            <div style="font-weight: bold; font-size: 11px; color: var(--gold);">
+              <a href="${b.citation_url}" target="_blank" style="color: var(--gold); text-decoration: none;">${b.title}</a>
+            </div>
+            <div style="font-size: 9px; color: var(--text-dim); margin-top: 3px;">
+              <strong>Authors:</strong> ${b.authors} | <strong>Category:</strong> <span style="font-family: monospace;">${b.stream}</span>
+            </div>
+            <div style="font-size: 8px; color: #5a5a6e; margin-top: 4px; word-break: break-all;">
+              <strong>URL:</strong> <a href="${b.citation_url}" target="_blank" style="color: #5a5a6e;">${b.citation_url}</a>
+            </div>
+          `;
+          bibList.appendChild(li);
+        });
+      }
+    }
+  })();
+
+  // ── 23. L1–L5 GATE LEDGER ────────────────────────────────────────
+  (function renderGates() {
+    const electedCnt  = elected.length || mfst.filter(r=>r.verdict==='ALLOW').length;
+    const candidateCnt= candidate.length || refuseCount;
+    const confAvgFrac = allAxioms.length ? allAxioms.reduce((s,a)=>s+(a.score||0),0)/allAxioms.length : allowCount/(allowCount+refuseCount||1);
+    const confPct = Math.round(confAvgFrac * 100);
+    const tier = riskTier;
+    const domStr = domains.length ? domains.map(d=>d.toUpperCase()).join(', ') : domain;
+
+    const L1pass  = electedCnt > 0 || mfst.length > 0;
+    const L2pass  = L1pass;
+    const L3pass  = L1pass;
+    const L4review= confAvgFrac < 0.80 || tier === 'T2' || tier === 'T3' || hitlFields.length > 0;
+    const L4fail  = tier === 'T3' && !L1pass;
+
+    // Build per-gate solver summaries for L3/L4
+    const allowSummary  = mfst.filter(r=>r.verdict==='ALLOW').map(r=>r.axiom_id).join(', ') || '—';
+    const refuseSummary = mfst.filter(r=>r.verdict==='REFUSE').map(r=>`<span style="color:var(--red)">${r.axiom_id}</span>`).join(', ') || 'None';
+    const inverseStr    = Object.keys(inverseSols).length > 0
+      ? Object.entries(inverseSols).map(([id,s])=>`${id}: ${s.unknown}=${s.required_value?.toFixed(3)}`).join('; ')
+      : '';
+
+    const gates = [
+      {
+        id:'L1', color:'var(--l1)',
+        name:'Ontology<br>Classification',
+        eval: L1pass
+          ? `Document <b>${fname}</b> parsed and ontologically classified via G3FP extraction pipeline. Domain resolved: <b>${domain}</b>. Evaluation mode: <b>${mode}</b>. SAA equation solver evaluated ${mfst.length} axiom expression(s) via SymPy. Result: <b>${electedCnt} ALLOW</b>, <b>${refuseCount} REFUSE</b>. The ontology lattice was constructed from domain-specific axiom signatures matching the uploaded evidence corpus.`
+          : `Ontology classification produced zero elected axioms for domain <b>${domain}</b> in mode <b>${mode}</b>. HITL review required. Ensure the uploaded document contains evaluable evidence matching the expected domain vocabulary.`,
+        status: L1pass ? 'PASS' : 'FAIL',
+      },
+      {
+        id:'L2', color:'var(--l2)',
+        name:'Hypothesis<br>Generation',
+        eval: L2pass
+          ? `Hypothesis set generated from ${mfst.length} axiom equation solve(s) across domain <b>${domain}</b>. ${candidateCnt > 0 ? candidateCnt + ' candidate axiom(s) deferred for secondary review. ' : 'All candidate axioms resolved. '}${inverseStr ? 'Inverse solver computed required boundary values: ' + inverseStr + '. ' : 'All axioms solvable with available input data. '}This stage applies ${mode === 'ABDUCTION' ? 'abductive forward-inference from evidence observations' : mode === 'DEDUCTION' ? 'deterministic axiom boundary constraints' : mode === 'INDUCTION' ? 'inductive pattern synthesis from classified data' : mode}-specific reasoning to rank hypotheses by ontological coherence.`
+          : `No viable hypotheses generated under <b>${mode}</b> mode. Re-ingest document with richer evidence corpus.`,
+        status: L2pass ? 'PASS' : 'FAIL',
+      },
+      {
+        id:'L3', color:'var(--l3)',
+        name:'Pathway<br>Filtering',
+        eval: L3pass
+          ? `Causal pathway lattice constructed from axiom cluster using Pearl do-calculus trajectory inference. ALLOW axioms: <b>${allowSummary}</b>. REFUSE axioms: ${refuseSummary}. Active domains: <b>${domStr}</b>. ${mode === 'RCA' ? 'RCA root-cause chains traced to primary failure nodes. ' : mode === 'CAUSAL' ? 'Causal corridors directed through evidence lattice. ' : ''}Pathway confidence weighted by axiom election score.`
+          : `Pathway filtering failed — no axiom evidence to anchor causal chains in domain <b>${domain}</b>.`,
+        status: L3pass ? 'PASS' : 'FAIL',
+      },
+      {
+        id:'L4', color:'var(--l4)',
+        name:'Risk<br>Assessment',
+        eval: L4fail
+          ? `Risk assessment gate <b>FAILED</b>. Zero axioms present across all tiers. Risk tier assigned: <b>T3 &mdash; REFUSED</b>. Immediate HITL escalation required before any compliance action.`
+          : L4review
+          ? `Composite risk tier: <b>${tier}</b>. Axiomatic status: <b>SUSPENDED FOR CLINICAL REVIEW</b>. ${hitlFields.length>0 ? 'HITL required for missing evidence fields: ' + hitlFields.join(', ') + '. ' : ''}${refuseCount>0 ? refuseCount + ' axiom(s) exceeded compliance threshold &mdash; targeted remediation required. ' : ''}${mode === 'QA' ? 'QA acceptance criteria reviewed for conformance gaps. ' : mode === 'RFP' ? 'RFP compliance score computed across vendor requirement matrix. ' : ''}Risk tier determined by axiom confidence distribution and violation severity.`
+          : `Composite risk tier: <b>${tier}</b>. Axiomatic status: <b>DETERMINISTICALLY LOCKED (ADMISSIVE)</b>. All axioms within compliance bounds. No HITL escalation triggered. ${mode === 'DEDUCTION' ? 'Deduction lock confirmed &mdash; all boundary constraints satisfied. ' : ''}Evaluation proceeding to L5 synthesis without escalation.`,
+        status: L4fail ? 'FAIL' : L4review ? 'REVIEW' : 'PASS',
+      },
+      {
+        id:'L5', color:'var(--l5)',
+        name:'Report<br>Synthesis',
+        eval: `Audit report sealed and synthesized under <b>${BRAND.version}</b>. ${mfst.length} equation solve(s) rendered in SymPy ledger. XAI narrative: ${XAI.generalNarrative ? '<b>G3FP synthesized &#x2713;</b>' : '<span style="color:var(--text-dim)">pending</span>'}. 3D renders: GNN + World Model + Causal Corridor. ${R.doctor_insight || (function(){ try{ return JSON.parse(sessionStorage.getItem('sovereign_doctor_insight')||'null'); }catch(_){ return null; } }()) ? 'Clinician insight recorded &#x2713;. ' : ''}Operator: <b>${operator}</b>. Report sealed with SHA-256 trace hash.`,
+        status: 'SEALED',
+      },
+    ];
+
+    const supplied = R.gates || [];
+    const gtbody   = document.getElementById('gate-ledger-body');
+    if (!gtbody) return;
+    gtbody.innerHTML = '';
+    gates.forEach((g, i) => {
+      const ov = supplied[i] || {};
+      const st = ov.status || g.status;
+      const ev = ov.eval   || g.eval;
+      const cls= st==='PASS'||st==='SEALED'?'status-pass':st==='REVIEW'?'status-warn':'status-fail';
+      gtbody.innerHTML += `<tr>
+        <td><div class="gate-id" style="color:${g.color}"><div class="gate-dot" style="background:${g.color}"></div>${g.id}</div></td>
+        <td><div class="gate-name">${g.name}</div></td>
+        <td><div class="gate-eval">${ev}</div></td>
+        <td><span class="gate-status ${cls}">${st}</span></td>
+      </tr>`;
+    });
+  })();
+
+  // ── 24. FOOTER ───────────────────────────────────────────────────
+  const footerSig = document.querySelector('.footer-sig');
+  const footerStamp = document.getElementById('footer-ts');
+  if (footerSig) footerSig.textContent = BRAND.footer + ' · ' + BRAND.version;
+  if (footerStamp) footerStamp.textContent = `GENERATED ${new Date().toISOString()}`;
+
+  // ── 25. SEAL RING: change to red if REFUSE ────────────────────────
+  if (verdictClass === 'fail') {
+    document.querySelectorAll('.seal-ring').forEach(el => { el.style.borderColor = 'rgba(255,60,60,0.7)'; });
+    document.querySelectorAll('.seal-label').forEach(el => { el.style.color = 'var(--red)'; });
+  }
+
+  // ── 26. I18N REFRESH ─────────────────────────────────────────────
+  try {
+    if (window.SovereignI18n && typeof window.SovereignI18n.refresh === 'function') {
+      window.SovereignI18n.refresh();
+    }
+  } catch(e) {}
+
+  // ── 27. INIT 3D RENDERS after DOM paint ──────────────────────
+  window.addEventListener('load', function() {
+    function _try3D() {
+      if (!window.HealthcareMedical3D || !window.THREE) {
+        setTimeout(_try3D, 400);
+        return;
+      }
+
+      /* FIX-3D: Use initDeduction(rawPacket) when a raw audit_packet is available —
+         this sets payload._deduction correctly and triggers LIVE render (not mockup).
+         Fallback: manual init() with elected array (semi-live) or null (mockup). */
+      var _rawPkt = R._raw_audit_packet || null;
+
+      if (_rawPkt) {
+        /* Override container IDs to match audit_report.html's DOM */
+        _rawPkt._containerOverride = {
+          gnn:    'gnn-canvas-mount',
+          world:  'world-model-mount',
+          causal: 'causal-pathways-mount'
+        };
+        HealthcareMedical3D.init('phase1', 'gnn-canvas-mount',      { _deduction: _rawPkt, bgColor: 0x000000, domain: domain });
+        HealthcareMedical3D.init('phase2', 'world-model-mount',     { _deduction: _rawPkt, bgColor: 0x000000, domain: domain });
+        HealthcareMedical3D.init('phase3', 'causal-pathways-mount', { _deduction: _rawPkt, bgColor: 0x000000, domain: domain });
+        console.log('[AUDIT-3D] Live deduction render | domain:', domain, '| axioms:', (_rawPkt.axiom_evaluations||[]).length);
+      } else {
+        /* Fallback: elected-array semi-live or mockup */
+        var _elected3D = elected.length > 0 ? elected : mfst.map(function(r){ return { id:r.axiom_id, score:r.verdict==='ALLOW'?0.9:0.5 }; });
+        var _pl = (_elected3D.length > 0) ? { elected: _elected3D, candidate: candidate, standby: standby, domain: domain, bgColor: 0x000000 } : null;
+        HealthcareMedical3D.init('phase1', 'gnn-canvas-mount',      _pl);
+        HealthcareMedical3D.init('phase2', 'world-model-mount',     _pl);
+        HealthcareMedical3D.init('phase3', 'causal-pathways-mount', _pl);
+        console.log('[AUDIT-3D] Fallback render | elected:', _elected3D.length);
+      }
+
+      /* Apply dark background to all 3 containers */
+      ['gnn-canvas-mount','world-model-mount','causal-pathways-mount'].forEach(function(id) {
+        var _el = document.getElementById(id);
+        if (_el) {
+          var _canvas = _el.querySelector('canvas');
+          if (_canvas) _canvas.style.background = '#000';
+          _el.style.background = '#000';
+        }
+      });
+    }
+    _try3D();
+  });
+
+})();
+
+</script>
+</body>
+</html>

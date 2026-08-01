@@ -1,0 +1,1945 @@
+[
+  {
+    "axiom_id": "HC_005",
+    "domain": "HEALTHCARE",
+    "subdomain": "anthropometric",
+    "name": "Body Mass Index Clinical Classification",
+    "description": "BMI = weight(kg)/height(m)² classified per WHO: 18.5-24.9 normal, 25-29.9 overweight, ≥30 obese. Obesity multiplies metabolic, cardiovascular, and renal risk axioms.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.8,
+    "spatial_tension": "MEDIUM",
+    "semantic_fingerprint": "BMI body mass index obesity weight height anthropometric WHO classification",
+    "required_fields": [
+      {
+        "field": "BMI",
+        "unit": "kg/m²",
+        "bounds": [
+          10.0,
+          80.0
+        ],
+        "alert_min": 18.5,
+        "alert_max": 24.9
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "weight",
+        "unit": "kg"
+      },
+      {
+        "field": "height",
+        "unit": "cm"
+      }
+    ],
+    "entity_keywords": [
+      "bmi",
+      "body mass index",
+      "obesity",
+      "overweight",
+      "underweight",
+      "weight",
+      "height",
+      "adiposity",
+      "waist circumference",
+      "who classification",
+      "bariatric"
+    ],
+    "eml_formula": "z = (bmi - 22.5) / 5",
+    "expression_latex": "\\text{BMI} = \\frac{w[\\text{kg}]}{h[\\text{m}]^2} \\in [18.5, 24.9]",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [
+        "BMI"
+      ],
+      "optional": [
+        "weight",
+        "height"
+      ]
+    },
+    "match_conditions": [
+      {
+        "field": "BMI",
+        "present": true
+      }
+    ],
+    "derivation_formula": {
+      "name": "BMI_WHO",
+      "description": "BMI = weight(kg) / height(m)^2",
+      "inputs": {
+        "weight": {
+          "unit": "kg",
+          "field": "weight"
+        },
+        "height": {
+          "unit": "cm",
+          "field": "height"
+        }
+      },
+      "output": {
+        "field": "BMI_computed",
+        "unit": "kg/m²"
+      },
+      "compute": "BMI = weight / (height/100)**2",
+      "cross_check": {
+        "field": "BMI",
+        "tolerance_pct": 2.0
+      },
+      "tamper_threshold_sigma": 3.0,
+      "sympy_expr": "BMI - 25",
+      "variables": [
+        "BMI"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "range",
+      "trigger_field": "BMI",
+      "lower": 18.5,
+      "upper": 30.0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CLINICAL_BOUNDARY",
+      "semantic_label": "BMI Clinical Classification",
+      "reasoning_chain": [
+        "Compute BMI",
+        "Flag if outside 18.5–30 normal range"
+      ]
+    },
+    "variables": {
+      "BMI": "kg/m2"
+    }
+  },
+  {
+    "axiom_id": "HC_010",
+    "domain": "HEALTHCARE",
+    "subdomain": "oncological",
+    "name": "PSA Prostate Screening Boundary",
+    "description": "PSA must be <4.0 ng/mL for age-adjusted screening. PSA velocity and free/total ratio provide additional diagnostic resolution.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.8,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "PSA prostate cancer oncological screening tumor marker",
+    "required_fields": [
+      {
+        "field": "PSA",
+        "unit": "ng/mL",
+        "bounds": [
+          0.0,
+          200.0
+        ],
+        "alert_min": null,
+        "alert_max": 4.0
+      }
+    ],
+    "optional_fields": [],
+    "entity_keywords": [
+      "psa",
+      "prostate specific antigen",
+      "prostate",
+      "prostate cancer",
+      "biopsy",
+      "tumor marker",
+      "oncological",
+      "screening",
+      "gleason",
+      "free psa",
+      "total psa"
+    ],
+    "eml_formula": "z = (psa - 4.0) / 2.0",
+    "expression_latex": "\\text{PSA} < 4.0\\,\\text{ng/mL}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [
+        "PSA"
+      ],
+      "optional": []
+    },
+    "match_conditions": [
+      {
+        "field": "PSA",
+        "present": true
+      }
+    ],
+    "derivation_formula": {
+      "sympy_expr": "PSA - 4.0",
+      "variables": [
+        "PSA"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "PSA",
+      "threshold_op": "gt",
+      "threshold_val": 4.0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CLINICAL_BOUNDARY",
+      "semantic_label": "PSA Prostate Screening",
+      "reasoning_chain": [
+        "Extract PSA value",
+        "Flag if >4.0 ng/mL (biopsy threshold)"
+      ]
+    },
+    "variables": {
+      "PSA": "ng/mL"
+    }
+  },
+  {
+    "axiom_id": "HC_014",
+    "domain": "HEALTHCARE",
+    "subdomain": "diagnostic",
+    "name": "Diagnostic Sensitivity and Specificity Floor",
+    "description": "Diagnostic tests must meet minimum sensitivity/specificity thresholds. Sensitivity ≥90% for screening; specificity ≥95% for confirmatory tests.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.8,
+    "spatial_tension": "MEDIUM",
+    "semantic_fingerprint": "sensitivity specificity diagnostic accuracy ROC AUC PPV NPV",
+    "required_fields": [],
+    "optional_fields": [],
+    "entity_keywords": [
+      "sensitivity",
+      "specificity",
+      "ppv",
+      "npv",
+      "roc",
+      "auc",
+      "diagnostic accuracy",
+      "test performance",
+      "false positive",
+      "false negative",
+      "likelihood ratio",
+      "clinical validation"
+    ],
+    "eml_formula": "",
+    "expression_latex": "\\text{Sensitivity} \\geq 90\\%,\\;\\text{Specificity} \\geq 95\\%",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [],
+      "optional": []
+    },
+    "match_conditions": [],
+    "derivation_formula": {
+      "sympy_expr": "Min(sensitivity, specificity) - 0.80",
+      "variables": [
+        "sensitivity",
+        "specificity"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "dual_threshold",
+      "trigger_field": "sensitivity",
+      "secondary_field": "specificity",
+      "threshold_op": "gt",
+      "threshold_val": 0.8,
+      "secondary_threshold_val": 0.8,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "DIAGNOSTIC_PERFORMANCE",
+      "semantic_label": "Sensitivity/Specificity Floor",
+      "reasoning_chain": [
+        "Extract sensitivity and specificity",
+        "Flag if either <0.80 (80% diagnostic floor)"
+      ]
+    },
+    "variables": {
+      "sensitivity": "ratio",
+      "specificity": "ratio"
+    }
+  },
+  {
+    "axiom_id": "HC_018",
+    "domain": "HEALTHCARE",
+    "subdomain": "pharmacological",
+    "name": "Medication Dosage Therapeutic Window",
+    "description": "Drug concentrations must remain within therapeutic index. Narrow therapeutic index drugs require TDM.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "medication dosage therapeutic window drug concentration TDM pharmacology",
+    "required_fields": [],
+    "optional_fields": [],
+    "entity_keywords": [
+      "medication",
+      "drug dose",
+      "dosage",
+      "therapeutic window",
+      "prescription",
+      "pharmacology",
+      "therapeutic drug monitoring",
+      "tdm",
+      "narrow therapeutic index",
+      "toxicity",
+      "overdose",
+      "underdose"
+    ],
+    "eml_formula": "",
+    "expression_latex": "C_{\\min} \\leq C_{\\text{drug}} \\leq C_{\\max}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [],
+      "optional": []
+    },
+    "match_conditions": [],
+    "derivation_formula": {
+      "sympy_expr": "drug_dose - dose_min",
+      "variables": [
+        "drug_dose",
+        "dose_min",
+        "dose_max"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "range",
+      "trigger_field": "drug_dose",
+      "lower_field": "dose_min",
+      "upper_field": "dose_max",
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "PHARMACOLOGY",
+      "semantic_label": "Medication Therapeutic Window",
+      "reasoning_chain": [
+        "Extract prescribed dose",
+        "Verify within drug-specific therapeutic window",
+        "Flag if sub-therapeutic or toxic"
+      ]
+    },
+    "variables": {
+      "drug_dose": "mg",
+      "dose_min": "mg",
+      "dose_max": "mg"
+    }
+  },
+  {
+    "axiom_id": "HC_019",
+    "domain": "HEALTHCARE",
+    "subdomain": "pharmacovigilance",
+    "name": "Adverse Event Traceability (Pharmacovigilance)",
+    "description": "All serious adverse events (SAEs) must be traceable to intervention, timeline, and severity per ICH E2A/E2B.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.8,
+    "spatial_tension": "MEDIUM",
+    "semantic_fingerprint": "adverse event SAE pharmacovigilance MedWatch ICH traceability",
+    "required_fields": [],
+    "optional_fields": [],
+    "entity_keywords": [
+      "adverse event",
+      "ae",
+      "sae",
+      "serious adverse event",
+      "pharmacovigilance",
+      "medwatch",
+      "ich e2a",
+      "e2b",
+      "causality assessment",
+      "drug reaction",
+      "signal detection",
+      "safety reporting"
+    ],
+    "eml_formula": "",
+    "expression_latex": "\\text{SAE} \\Rightarrow \\text{Traceable(Intervention, Timeline, Severity)}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [],
+      "optional": []
+    },
+    "match_conditions": [],
+    "derivation_formula": {
+      "sympy_expr": "Piecewise((0, ae_traceable), (1, True))",
+      "variables": [
+        "ae_traceable"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "boolean",
+      "trigger_field": "ae_traceable",
+      "threshold_op": "eq",
+      "threshold_val": true,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "PHARMACOVIGILANCE",
+      "semantic_label": "Adverse Event Traceability",
+      "reasoning_chain": [
+        "Verify AE linked to batch/lot",
+        "Check MedDRA coding present",
+        "Flag VIOLATION if traceability broken"
+      ]
+    },
+    "variables": {
+      "ae_traceable": "boolean"
+    }
+  },
+  {
+    "axiom_id": "CAUSAL_002",
+    "domain": "CAUSALITY",
+    "subdomain": "causal_inference",
+    "name": "Dose-Response Gradient",
+    "description": "Validates the presence of a monotonic dose-response relationship between an exposure magnitude and an observed clinical outcome. A consistent gradient (higher dose → stronger effect) strengthens causal inference and reduces the likelihood of spurious association.",
+    "status": "active",
+    "confidence_floor": 0.65,
+    "spatial_tension": 0.3,
+    "semantic_fingerprint": "dose response gradient monotonic exposure magnitude effect strength biological gradient",
+    "required_fields": [
+      "HbA1c",
+      "eGFR",
+      "BMI"
+    ],
+    "optional_fields": [
+      "dose_unit",
+      "response_unit",
+      "gradient_coefficient",
+      "p_value"
+    ],
+    "entity_keywords": [
+      "dose response",
+      "biological gradient",
+      "dose-dependent",
+      "effect size",
+      "Bradford Hill",
+      "dose escalation",
+      "exposure magnitude",
+      "glycaemia progression",
+      "HbA1c gradient",
+      "eGFR decline",
+      "dose-response curve",
+      "concentration effect",
+      "severity gradient"
+    ],
+    "eml_formula": "gradient_coefficient > 0 AND p_value < 0.05",
+    "expression_latex": "\\beta_{dose} > 0,\\; p < 0.05",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "dose": "numeric administered dose",
+      "response_magnitude": "numeric observed effect",
+      "gradient_coefficient": "regression slope of dose vs response",
+      "p_value": "statistical significance of gradient"
+    },
+    "match_conditions": [
+      {
+        "field": "HbA1c",
+        "operator": "exists"
+      },
+      {
+        "field": "eGFR",
+        "operator": "exists"
+      },
+      {
+        "field": "BMI",
+        "operator": "exists"
+      }
+    ],
+    "derivation_formula": {
+      "sympy_expr": "gradient_coefficient",
+      "variables": [
+        "gradient_coefficient",
+        "p_value"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "gradient_coefficient",
+      "threshold_op": "gt",
+      "threshold_val": 0,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "CAUSAL_INFERENCE",
+      "semantic_label": "Dose-Response Gradient",
+      "reasoning_chain": [
+        "Fit dose-response regression",
+        "Check β>0 and p<0.05",
+        "Flag VIOLATION if gradient absent"
+      ]
+    },
+    "variables": {
+      "gradient_coefficient": "float",
+      "p_value": "float"
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_SCO_002",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "HEALTHCARE",
+    "subdomain": "stem_cell_analysis",
+    "name": "Stem Cell Viability Gate (Trypan Blue / Flow)",
+    "description": "Post-separation stem cell viability must be ≥90% (Trypan Blue exclusion or Annexin-V/7-AAD flow). Below threshold indicates apoptosis or necrosis from processing stress.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.93,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "stem cell viability trypan blue flow cytometry annexin 7-AAD apoptosis necrosis CD34 hematopoietic",
+    "entity_keywords": [
+      "viability",
+      "幹細胞",
+      "stem cell",
+      "trypan blue",
+      "annexin V",
+      "7-AAD",
+      "apoptosis",
+      "CD34",
+      "hematopoietic",
+      "live dead"
+    ],
+    "required_fields": [
+      {
+        "field": "viability_pct",
+        "unit": "%",
+        "bounds": [
+          0,
+          100
+        ],
+        "alert_min": 90,
+        "alert_max": null
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "cd34_positive_pct",
+        "unit": "%"
+      },
+      {
+        "field": "annexin_v_pct",
+        "unit": "%"
+      },
+      {
+        "field": "method",
+        "unit": "string"
+      }
+    ],
+    "expression_latex": "\\text{Viability} = \\frac{N_{live}}{N_{live}+N_{dead}} \\times 100 \\geq 90\\%",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "viability_pct - 90",
+      "variables": {
+        "viability_pct": {
+          "maps_to_field": "viability_pct",
+          "unit": "%",
+          "bounds": [
+            0,
+            100
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 90
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 90
+        },
+        "UNDERDETERMINED": {
+          "condition": "viability_pct is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "TRYPAN_VIABILITY",
+      "sympy_expr": "(live_cells / (live_cells + dead_cells)) * 100",
+      "variables": {
+        "live_cells": {
+          "maps_to_field": "live_cell_count",
+          "unit": "cells"
+        },
+        "dead_cells": {
+          "maps_to_field": "dead_cell_count",
+          "unit": "cells"
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 90
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 90
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "viability_compliance_gate",
+      "ABD_RCA": "apoptosis_root_cause",
+      "ABD_QA": "viability_hypothesis_test"
+    },
+    "xai_narrator_hint": "Stem cell viability below 90% indicates separation damage or sample aging — process parameters must be re-evaluated.",
+    "contradiction_axioms": [],
+    "cascade_to": [
+      "HC_SCO_003"
+    ]
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_SCO_003",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "HEALTHCARE",
+    "subdomain": "stem_cell_analysis",
+    "name": "CD34+ Hematopoietic Stem Cell Enrichment Gate",
+    "description": "CD34+ cell fraction in processed product must be ≥0.5% of total mononuclear cells for hematopoietic stem cell therapy eligibility.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.9,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "CD34 hematopoietic stem cell HSC enrichment bone marrow transplant mobilization FACS flow cytometry",
+    "entity_keywords": [
+      "CD34",
+      "HSC",
+      "hematopoietic",
+      "stem cell enrichment",
+      "FACS",
+      "flow cytometry",
+      "mobilization",
+      "bone marrow",
+      "apheresis"
+    ],
+    "required_fields": [
+      {
+        "field": "cd34_pct",
+        "unit": "%",
+        "bounds": [
+          0,
+          100
+        ],
+        "alert_min": 0.5,
+        "alert_max": null
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "cd34_absolute",
+        "unit": "cells/kg"
+      },
+      {
+        "field": "cd38_negative_pct",
+        "unit": "%"
+      },
+      {
+        "field": "lin_negative_pct",
+        "unit": "%"
+      }
+    ],
+    "expression_latex": "\\text{CD34}^+ \\geq 0.5\\%\\;\\text{of MNC}",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "cd34_pct - 0.5",
+      "variables": {
+        "cd34_pct": {
+          "maps_to_field": "cd34_pct",
+          "unit": "%",
+          "bounds": [
+            0,
+            100
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0.5
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0.5
+        },
+        "UNDERDETERMINED": {
+          "condition": "cd34_pct is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "CD34_ENRICHMENT",
+      "sympy_expr": "(cd34_positive_count / total_mnc_count) * 100",
+      "variables": {
+        "cd34_positive_count": {
+          "maps_to_field": "cd34_positive_count",
+          "unit": "cells"
+        },
+        "total_mnc_count": {
+          "maps_to_field": "mnc_total",
+          "unit": "cells"
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0.5
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0.5
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "cd34_eligibility_gate",
+      "ABD_RCA": "low_cd34_root_cause",
+      "ABD_QA": "engraftment_hypothesis"
+    },
+    "xai_narrator_hint": "CD34+ percentage below 0.5% renders the product ineligible for hematopoietic transplant — consider G-CSF mobilization re-evaluation.",
+    "contradiction_axioms": [],
+    "cascade_to": [
+      "HC_SCO_004"
+    ]
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_SCO_004",
+    "version": "1.0.0",
+    "mode": "abduction",
+    "paradigm": "ABD_RCA",
+    "domain": "HEALTHCARE",
+    "subdomain": "stem_cell_analysis",
+    "name": "Colony Forming Unit (CFU) Potency Assay Gate",
+    "description": "Stem cell product potency measured by CFU-GM assay must yield ≥10 colonies per 1×10⁴ cells plated. Sub-threshold potency indicates senescent or damaged progenitors.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.88,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "CFU colony forming unit potency progenitor stem cell GM erythroid burst BFU methylcellulose assay",
+    "entity_keywords": [
+      "CFU",
+      "colony forming unit",
+      "CFU-GM",
+      "BFU-E",
+      "potency",
+      "progenitor",
+      "methylcellulose",
+      "clonogenic",
+      "stem cell function"
+    ],
+    "required_fields": [
+      {
+        "field": "cfu_count_per_10k",
+        "unit": "colonies/10⁴ cells",
+        "bounds": [
+          0,
+          500
+        ],
+        "alert_min": 10,
+        "alert_max": null
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "bfu_e_count",
+        "unit": "colonies/10⁴ cells"
+      },
+      {
+        "field": "incubation_days",
+        "unit": "days"
+      }
+    ],
+    "expression_latex": "\\text{CFU-GM} \\geq 10\\;\\text{colonies}/10^4\\;\\text{cells}",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "cfu_count_per_10k - 10",
+      "variables": {
+        "cfu_count_per_10k": {
+          "maps_to_field": "cfu_count_per_10k",
+          "unit": "colonies/10⁴ cells",
+          "bounds": [
+            0,
+            500
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 10
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 10
+        },
+        "UNDERDETERMINED": {
+          "condition": "cfu_count_per_10k is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "CFU_POTENCY",
+      "sympy_expr": "total_colonies / (cells_plated / 10000)",
+      "variables": {
+        "total_colonies": {
+          "maps_to_field": "cfu_total_count",
+          "unit": "colonies"
+        },
+        "cells_plated": {
+          "maps_to_field": "cells_plated_count",
+          "unit": "cells"
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 10
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 10
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "cfu_potency_compliance",
+      "ABD_RCA": "progenitor_dysfunction_rca",
+      "ABD_QA": "potency_hypothesis_validation"
+    },
+    "xai_narrator_hint": "CFU-GM below 10 colonies/10⁴ cells indicates compromised progenitor potency — likely due to extended processing time or cryopreservation damage.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_IMM_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "HEALTHCARE",
+    "subdomain": "immunotherapy",
+    "name": "Objective Response Rate Gate (ORR - Immunotherapy)",
+    "description": "Immunotherapy treatment must achieve ORR ≥ 20% (RECIST 1.1 partial + complete response) to be classified as clinically effective. Below threshold triggers treatment re-evaluation.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.91,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "immunotherapy ORR objective response rate RECIST PD-1 PD-L1 checkpoint inhibitor cancer treatment efficacy",
+    "entity_keywords": [
+      "ORR",
+      "objective response",
+      "RECIST",
+      "immunotherapy",
+      "免疫療法",
+      "PD-1",
+      "PD-L1",
+      "checkpoint inhibitor",
+      "pembrolizumab",
+      "nivolumab",
+      "atezolizumab",
+      "response rate"
+    ],
+    "required_fields": [
+      {
+        "field": "orr_pct",
+        "unit": "%",
+        "bounds": [
+          0,
+          100
+        ],
+        "alert_min": 20,
+        "alert_max": null
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "cr_pct",
+        "unit": "%"
+      },
+      {
+        "field": "pr_pct",
+        "unit": "%"
+      },
+      {
+        "field": "sd_pct",
+        "unit": "%"
+      },
+      {
+        "field": "pd_pct",
+        "unit": "%"
+      },
+      {
+        "field": "dor_months",
+        "unit": "months"
+      }
+    ],
+    "expression_latex": "\\text{ORR} = \\frac{CR + PR}{N_{total}} \\times 100 \\geq 20\\%",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "orr_pct - 20",
+      "variables": {
+        "orr_pct": {
+          "maps_to_field": "orr_pct",
+          "unit": "%",
+          "bounds": [
+            0,
+            100
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 20
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 20
+        },
+        "UNDERDETERMINED": {
+          "condition": "orr_pct is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "RECIST_ORR",
+      "sympy_expr": "((cr_count + pr_count) / total_patients) * 100",
+      "variables": {
+        "cr_count": {
+          "maps_to_field": "complete_response_n",
+          "unit": "patients"
+        },
+        "pr_count": {
+          "maps_to_field": "partial_response_n",
+          "unit": "patients"
+        },
+        "total_patients": {
+          "maps_to_field": "total_evaluable_n",
+          "unit": "patients"
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 20
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 20
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "orr_efficacy_gate",
+      "ABD_QA": "response_hypothesis_validation",
+      "ABD_RCA": "non_response_root_cause",
+      "INDUCTION": "biomarker_response_pattern"
+    },
+    "xai_narrator_hint": "Immunotherapy ORR below 20% requires evaluating PD-L1 expression and Tumor Mutational Burden (TMB) as predictive efficacy biomarkers.",
+    "contradiction_axioms": [],
+    "cascade_to": [
+      "HC_IMM_002",
+      "HC_IMM_003"
+    ]
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_IMM_002",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "HEALTHCARE",
+    "subdomain": "immunotherapy",
+    "name": "Immune-Related Adverse Event Safety Gate (irAE — Grade ≥3)",
+    "description": "Grade ≥3 immune-related adverse events (irAE) per CTCAE v5.0 require mandatory immunotherapy hold. Incidence >15% triggers treatment protocol review.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "irAE immune related adverse event CTCAE toxicity grade checkpoint immunotherapy colitis pneumonitis hepatitis endocrinopathy",
+    "entity_keywords": [
+      "irAE",
+      "immune-related adverse event",
+      "CTCAE",
+      "toxicity grade",
+      "colitis",
+      "pneumonitis",
+      "hepatitis",
+      "hypophysitis",
+      "thyroiditis",
+      "immunotherapy toxicity",
+      "grade 3",
+      "grade 4"
+    ],
+    "required_fields": [
+      {
+        "field": "irae_grade",
+        "unit": "CTCAE grade",
+        "bounds": [
+          0,
+          5
+        ],
+        "alert_min": null,
+        "alert_max": 2
+      },
+      {
+        "field": "irae_type",
+        "unit": "string"
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "irae_incidence_pct",
+        "unit": "%"
+      },
+      {
+        "field": "corticosteroid_required",
+        "unit": "boolean"
+      },
+      {
+        "field": "treatment_held",
+        "unit": "boolean"
+      }
+    ],
+    "expression_latex": "\\text{irAE Grade} \\leq 2\\;\\text{(safe)};\\;\\text{Grade} \\geq 3 \\Rightarrow \\text{HOLD}",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "INVERSE",
+      "sympy_expr": "irae_grade - 3",
+      "variables": {
+        "irae_grade": {
+          "maps_to_field": "irae_grade",
+          "unit": "CTCAE grade",
+          "bounds": [
+            0,
+            5
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<",
+          "value": 3,
+          "source_expr": "irae_grade"
+        },
+        "REFUSE": {
+          "operator": ">=",
+          "value": 3,
+          "source_expr": "irae_grade"
+        },
+        "UNDERDETERMINED": {
+          "condition": "irae_grade is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "CTCAE_IRAE_GATE",
+      "sympy_expr": "irae_grade - 3",
+      "variables": {
+        "irae_grade": {
+          "maps_to_field": "irae_grade",
+          "unit": "CTCAE grade",
+          "bounds": [
+            0,
+            5
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<",
+          "value": 3
+        },
+        "REFUSE": {
+          "operator": ">=",
+          "value": 3
+        },
+        "UNDERDETERMINED": {
+          "condition": "irae_grade is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "irae_safety_gate",
+      "ABD_RCA": "toxicity_root_cause",
+      "ABD_QA": "toxicity_management_hypothesis"
+    },
+    "xai_narrator_hint": "Grade≥3 irAE requires immediate immunotherapy hold and high-dose corticosteroid — document organ system affected and CTCAE version.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_IMM_003",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "HEALTHCARE",
+    "subdomain": "immunotherapy",
+    "name": "PD-L1 Expression Threshold Gate (TPS/CPS)",
+    "description": "PD-L1 Tumour Proportion Score (TPS) ≥1% or Combined Positive Score (CPS) ≥10 is required for PD-1/PD-L1 inhibitor eligibility per FDA guidance.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.89,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "PD-L1 TPS CPS tumour proportion score combined positive score checkpoint inhibitor biomarker IHC 22C3 28-8",
+    "entity_keywords": [
+      "PD-L1",
+      "TPS",
+      "CPS",
+      "tumour proportion score",
+      "combined positive score",
+      "IHC",
+      "22C3",
+      "28-8",
+      "SP142",
+      "biomarker",
+      "checkpoint"
+    ],
+    "required_fields": [
+      {
+        "field": "pdl1_tps_pct",
+        "unit": "%",
+        "bounds": [
+          0,
+          100
+        ],
+        "alert_min": 1,
+        "alert_max": null
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "pdl1_cps",
+        "unit": "score",
+        "bounds": [
+          0,
+          100
+        ]
+      },
+      {
+        "field": "pdl1_antibody_clone",
+        "unit": "string"
+      },
+      {
+        "field": "tmb_mut_per_mb",
+        "unit": "mut/Mb"
+      }
+    ],
+    "expression_latex": "\\text{TPS} \\geq 1\\%\\;\\text{OR}\\;\\text{CPS} \\geq 10",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "Max(pdl1_tps_pct - 1, pdl1_cps - 10)",
+      "variables": {
+        "pdl1_tps_pct": {
+          "maps_to_field": "pdl1_tps_pct",
+          "unit": "%",
+          "bounds": [
+            0,
+            100
+          ]
+        },
+        "pdl1_cps": {
+          "maps_to_field": "pdl1_cps",
+          "unit": "score",
+          "bounds": [
+            0,
+            100
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "condition": "pdl1_tps_pct >= 1 OR pdl1_cps >= 10"
+        },
+        "REFUSE": {
+          "condition": "pdl1_tps_pct < 1 AND pdl1_cps < 10"
+        },
+        "UNDERDETERMINED": {
+          "condition": "both fields are null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "PDL1_ELIGIBILITY",
+      "sympy_expr": "Max(pdl1_tps_pct - 1, pdl1_cps - 10)",
+      "variables": {
+        "pdl1_tps_pct": {
+          "maps_to_field": "pdl1_tps_pct",
+          "unit": "%"
+        },
+        "pdl1_cps": {
+          "maps_to_field": "pdl1_cps",
+          "unit": "score"
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "condition": "tps >= 1 OR cps >= 10"
+        },
+        "REFUSE": {
+          "condition": "tps < 1 AND cps < 10"
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "pdl1_eligibility_gate",
+      "ABD_QA": "biomarker_selection_hypothesis",
+      "INDUCTION": "pdl1_expression_pattern"
+    },
+    "xai_narrator_hint": "PD-L1 TPS<1% and CPS<10 indicates patient is unlikely to benefit from PD-1/PD-L1 monotherapy — consider TMB or MSI-H as alternative biomarkers.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_IMM_004",
+    "version": "1.0.0",
+    "mode": "abduction",
+    "paradigm": "ABD_RCA",
+    "domain": "HEALTHCARE",
+    "subdomain": "immunotherapy",
+    "name": "Cytokine Release Syndrome Severity Gate (CRS — CAR-T)",
+    "description": "CRS grading per ASTCT 2019 consensus: Grade ≥3 (requiring vasopressors or ICU) mandates tocilizumab intervention. Applies to CAR-T and bispecific antibody therapies.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "CRS cytokine release syndrome CAR-T cell therapy tocilizumab ASTCT grading fever hypotension hypoxia IL-6",
+    "entity_keywords": [
+      "CRS",
+      "cytokine release syndrome",
+      "CAR-T",
+      "tocilizumab",
+      "IL-6",
+      "ASTCT",
+      "fever",
+      "hypotension",
+      "hypoxia",
+      "bispecific",
+      "blinatumomab",
+      "grade"
+    ],
+    "required_fields": [
+      {
+        "field": "crs_grade",
+        "unit": "ASTCT grade",
+        "bounds": [
+          0,
+          4
+        ],
+        "alert_min": null,
+        "alert_max": 2
+      },
+      {
+        "field": "temperature_peak_c",
+        "unit": "°C",
+        "bounds": [
+          36,
+          43
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "il6_pg_ml",
+        "unit": "pg/mL"
+      },
+      {
+        "field": "ferritin_ng_ml",
+        "unit": "ng/mL"
+      },
+      {
+        "field": "crp_mg_l",
+        "unit": "mg/L"
+      },
+      {
+        "field": "vasopressor_required",
+        "unit": "boolean"
+      }
+    ],
+    "expression_latex": "\\text{CRS Grade} \\leq 2\\;\\text{(manageable)};\\;\\text{Grade} \\geq 3 \\Rightarrow \\text{Tocilizumab}",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "INVERSE",
+      "sympy_expr": "crs_grade - 3",
+      "variables": {
+        "crs_grade": {
+          "maps_to_field": "crs_grade",
+          "unit": "ASTCT grade",
+          "bounds": [
+            0,
+            4
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<",
+          "value": 3
+        },
+        "REFUSE": {
+          "operator": ">=",
+          "value": 3
+        },
+        "UNDERDETERMINED": {
+          "condition": "crs_grade is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "ASTCT_CRS_GRADE",
+      "sympy_expr": "crs_grade - 3",
+      "variables": {
+        "crs_grade": {
+          "maps_to_field": "crs_grade",
+          "unit": "ASTCT grade",
+          "bounds": [
+            0,
+            4
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<",
+          "value": 3
+        },
+        "REFUSE": {
+          "operator": ">=",
+          "value": 3
+        },
+        "UNDERDETERMINED": {
+          "condition": "crs_grade is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "crs_safety_gate",
+      "ABD_RCA": "crs_escalation_root_cause",
+      "ABD_QA": "cytokine_storm_hypothesis"
+    },
+    "xai_narrator_hint": "CRS Grade≥3 in CAR-T therapy requires immediate tocilizumab 8mg/kg IV — check IL-6, ferritin, and CRP trend for cytokine storm trajectory.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_DNA_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "HEALTHCARE",
+    "subdomain": "genomics",
+    "name": "Tumour Mutational Burden Gate (TMB)",
+    "description": "TMB ≥10 mut/Mb (Foundation Medicine / MSK-IMPACT threshold) classifies tumour as TMB-High, conferring immunotherapy eligibility per FDA pan-tumour approval.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.92,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "TMB tumour mutational burden mutations per megabase somatic mutation WES NGS MSK Foundation immunotherapy biomarker",
+    "entity_keywords": [
+      "TMB",
+      "tumour mutational burden",
+      "mut/Mb",
+      "WES",
+      "NGS",
+      "somatic mutation",
+      "Foundation Medicine",
+      "MSK-IMPACT",
+      "pan-tumour",
+      "MSI"
+    ],
+    "required_fields": [
+      {
+        "field": "tmb_mut_per_mb",
+        "unit": "mut/Mb",
+        "bounds": [
+          0,
+          1000
+        ],
+        "alert_min": 10,
+        "alert_max": null
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "msi_status",
+        "unit": "string"
+      },
+      {
+        "field": "panel_coverage_mb",
+        "unit": "Mb"
+      },
+      {
+        "field": "sequencing_depth_x",
+        "unit": "x"
+      }
+    ],
+    "expression_latex": "\\text{TMB} = \\frac{N_{somatic\\_mutations}}{L_{panel\\_Mb}} \\geq 10\\;\\text{mut/Mb}",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "tmb_mut_per_mb - 10",
+      "variables": {
+        "tmb_mut_per_mb": {
+          "maps_to_field": "tmb_mut_per_mb",
+          "unit": "mut/Mb",
+          "bounds": [
+            0,
+            1000
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 10
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 10
+        },
+        "UNDERDETERMINED": {
+          "condition": "tmb_mut_per_mb is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "TMB_CALC",
+      "sympy_expr": "somatic_snv_count / panel_coverage_mb",
+      "variables": {
+        "somatic_snv_count": {
+          "maps_to_field": "somatic_mutation_count",
+          "unit": "mutations"
+        },
+        "panel_coverage_mb": {
+          "maps_to_field": "panel_coverage_mb",
+          "unit": "Mb"
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 10
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 10
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "tmb_eligibility_gate",
+      "ABD_RCA": "hypermutation_root_cause",
+      "ABD_QA": "tmb_io_response_hypothesis",
+      "INDUCTION": "mutation_signature_pattern"
+    },
+    "xai_narrator_hint": "TMB≥10 mut/Mb qualifies patient for pembrolizumab under FDA pan-tumour indication — confirm with MSI-H/dMMR co-testing.",
+    "contradiction_axioms": [],
+    "cascade_to": [
+      "HC_DNA_002"
+    ]
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_DNA_002",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "HEALTHCARE",
+    "subdomain": "genomics",
+    "name": "DNA Double-Strand Break Index (γH2AX Gate)",
+    "description": "γH2AX foci count per cell ≥5 indicates significant DNA double-strand break (DSB) load from radiation, chemotherapy, or oxidative stress. Used in stem cell quality control and treatment genotoxicity monitoring.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.88,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "gamma H2AX DNA double strand break DSB genotoxicity radiation damage comet assay foci repair checkpoint ATM ATR",
+    "entity_keywords": [
+      "γH2AX",
+      "H2AX",
+      "DNA damage",
+      "double strand break",
+      "DSB",
+      "comet assay",
+      "genotoxicity",
+      "ATM",
+      "ATR",
+      "foci",
+      "radiation damage",
+      "oxidative stress"
+    ],
+    "required_fields": [
+      {
+        "field": "gh2ax_foci_per_cell",
+        "unit": "foci/cell",
+        "bounds": [
+          0,
+          200
+        ],
+        "alert_min": null,
+        "alert_max": 5
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "comet_tail_moment",
+        "unit": "arbitrary units"
+      },
+      {
+        "field": "dna_repair_time_h",
+        "unit": "hours"
+      },
+      {
+        "field": "atm_activity_fold",
+        "unit": "fold change"
+      }
+    ],
+    "expression_latex": "\\gamma\\text{H2AX foci/cell} \\leq 5\\;\\text{(acceptable DSB load)}",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "INVERSE",
+      "sympy_expr": "gh2ax_foci_per_cell - 5",
+      "variables": {
+        "gh2ax_foci_per_cell": {
+          "maps_to_field": "gh2ax_foci_per_cell",
+          "unit": "foci/cell",
+          "bounds": [
+            0,
+            200
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value": 5
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value": 5
+        },
+        "UNDERDETERMINED": {
+          "condition": "gh2ax_foci_per_cell is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "GH2AX_DSB_INDEX",
+      "sympy_expr": "mean_foci_per_cell - 5",
+      "variables": {
+        "mean_foci_per_cell": {
+          "maps_to_field": "gh2ax_foci_per_cell",
+          "unit": "foci/cell"
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<=",
+          "value": 5
+        },
+        "REFUSE": {
+          "operator": ">",
+          "value": 5
+        },
+        "UNDERDETERMINED": {
+          "condition": "field is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "dna_integrity_gate",
+      "ABD_RCA": "dna_damage_root_cause",
+      "ABD_QA": "genotoxicity_hypothesis",
+      "ABD_CAUSAL": "radiation_damage_causal_chain"
+    },
+    "xai_narrator_hint": "γH2AX>5 foci/cell indicates significant genotoxic stress — assess radiation dose, ROS levels, and ATM/ATR checkpoint activation status.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_DNA_003",
+    "version": "1.0.0",
+    "mode": "abduction",
+    "paradigm": "ABD_QA",
+    "domain": "HEALTHCARE",
+    "subdomain": "genomics",
+    "name": "DNA Methylation Aberration Gate (Global Hypomethylation)",
+    "description": "Global DNA methylation level (LINE-1 surrogate) below 60% indicates genome-wide hypomethylation, associated with genomic instability, transposon activation, and cancer epigenetic reprogramming.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "hallucination_lock": true,
+    "spatial_tension": "MEDIUM",
+    "semantic_fingerprint": "DNA methylation LINE-1 hypomethylation epigenetics CpG island methylator CIMP cancer epigenome bisulfite pyrosequencing",
+    "entity_keywords": [
+      "methylation",
+      "LINE-1",
+      "hypomethylation",
+      "CpG",
+      "CIMP",
+      "epigenetics",
+      "bisulfite",
+      "pyrosequencing",
+      "5-methylcytosine",
+      "DNMT",
+      "epigenome"
+    ],
+    "required_fields": [
+      {
+        "field": "line1_methylation_pct",
+        "unit": "%",
+        "bounds": [
+          0,
+          100
+        ],
+        "alert_min": 60,
+        "alert_max": null
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "cimp_status",
+        "unit": "string"
+      },
+      {
+        "field": "dnmt3a_expression",
+        "unit": "RPKM"
+      },
+      {
+        "field": "tet2_mutation",
+        "unit": "boolean"
+      }
+    ],
+    "expression_latex": "\\text{LINE-1 methylation} \\geq 60\\%\\;\\text{(genomic stability)}",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "line1_methylation_pct - 60",
+      "variables": {
+        "line1_methylation_pct": {
+          "maps_to_field": "line1_methylation_pct",
+          "unit": "%",
+          "bounds": [
+            0,
+            100
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 60
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 60
+        },
+        "UNDERDETERMINED": {
+          "condition": "line1_methylation_pct is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "LINE1_METHYLATION",
+      "sympy_expr": "methylated_cytosine_pct",
+      "variables": {
+        "methylated_cytosine_pct": {
+          "maps_to_field": "line1_methylation_pct",
+          "unit": "%"
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 60
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 60
+        },
+        "UNDERDETERMINED": {
+          "condition": "field is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "methylation_stability_gate",
+      "ABD_QA": "epigenetic_reprogramming_hypothesis",
+      "ABD_RCA": "hypomethylation_root_cause",
+      "INDUCTION": "methylation_cancer_pattern"
+    },
+    "xai_narrator_hint": "LINE-1 methylation below 60% signals global epigenetic destabilisation — correlate with DNMT3A/TET2 mutation status and CIMP phenotype.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_DNA_004",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "HEALTHCARE",
+    "subdomain": "genomics",
+    "name": "Chromosomal Instability Index (CIN — Copy Number Variation)",
+    "description": "Chromosomal instability measured by fraction of genome altered (FGA) ≥20% indicates high CIN tumour, associated with poor prognosis and potential benefit from PARP inhibitors or immune checkpoint therapy.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.87,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "chromosomal instability CIN copy number variation CNV FGA aneuploidy TP53 BRCA PARP inhibitor LOH",
+    "entity_keywords": [
+      "CIN",
+      "chromosomal instability",
+      "CNV",
+      "copy number",
+      "FGA",
+      "aneuploidy",
+      "LOH",
+      "TP53",
+      "BRCA",
+      "PARP inhibitor",
+      "HRD",
+      "homologous recombination"
+    ],
+    "required_fields": [
+      {
+        "field": "fga_pct",
+        "unit": "%",
+        "bounds": [
+          0,
+          100
+        ],
+        "alert_min": 20,
+        "alert_max": null
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "hrd_score",
+        "unit": "score"
+      },
+      {
+        "field": "loh_pct",
+        "unit": "%"
+      },
+      {
+        "field": "brca1_status",
+        "unit": "string"
+      },
+      {
+        "field": "brca2_status",
+        "unit": "string"
+      }
+    ],
+    "expression_latex": "\\text{FGA} = \\frac{L_{altered}}{L_{genome}} \\times 100",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "fga_pct - 20",
+      "variables": {
+        "fga_pct": {
+          "maps_to_field": "fga_pct",
+          "unit": "%",
+          "bounds": [
+            0,
+            100
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<",
+          "value": 20
+        },
+        "REFUSE": {
+          "operator": ">=",
+          "value": 20
+        },
+        "UNDERDETERMINED": {
+          "condition": "fga_pct is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "FGA_CIN_INDEX",
+      "sympy_expr": "(altered_genome_length / total_genome_length) * 100",
+      "variables": {
+        "altered_genome_length": {
+          "maps_to_field": "cnv_altered_mb",
+          "unit": "Mb"
+        },
+        "total_genome_length": {
+          "maps_to_field": "genome_size_mb",
+          "unit": "Mb"
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": "<",
+          "value": 20
+        },
+        "REFUSE": {
+          "operator": ">=",
+          "value": 20
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "cin_prognosis_gate",
+      "ABD_RCA": "chromosomal_instability_rca",
+      "ABD_QA": "hrd_parp_hypothesis",
+      "INDUCTION": "cin_cancer_type_pattern"
+    },
+    "xai_narrator_hint": "FGA≥20% indicates CIN-High tumour — test HRD score and LOH for PARP inhibitor eligibility; TP53 co-mutation frequently drives CIN escalation.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "MATH_GEN_010",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "MATH_FOUNDATION",
+    "subdomain": "genomic_editing",
+    "name": "CRISPR On-Target Efficiency Score (Doench Rule Gate)",
+    "description": "On-target score S ≥ 0.6 (Doench 2016 Rule Set 2) and off-target specificity ratio ≥ 10:1 are mandatory before clinical CRISPR gene editing. Below threshold requires redesign.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.95,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "Doench score<0.6 or specificity<10:1 mandates guide RNA redesign — use Cas-OFFinder to enumerate off-target sites before IND filing.",
+    "entity_keywords": [
+      "crispr",
+      "on-target",
+      "efficiency",
+      "score",
+      "(doench",
+      "rule",
+      "gate)",
+      "genomic",
+      "editing"
+    ],
+    "required_fields": [
+      {
+        "field": "crispr_doench_score",
+        "unit": "score",
+        "bounds": [
+          0,
+          1
+        ],
+        "alert_min": 0.6
+      },
+      {
+        "field": "crispr_off_target_ratio",
+        "unit": "ratio",
+        "bounds": [
+          0,
+          1000
+        ],
+        "alert_min": 10
+      }
+    ],
+    "optional_fields": [],
+    "expression_latex": "S_{on} \\geq 0.6;\\quad \\frac{S_{on}}{S_{off}} \\geq 10",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "crispr_on_target_score - 0.6",
+      "variables": {
+        "crispr_on_target_score": {
+          "maps_to_field": "crispr_doench_score",
+          "unit": "score",
+          "bounds": [
+            0,
+            1
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0.6
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0.6
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "MATH_GEN_010_FORMULA",
+      "sympy_expr": "crispr_on_target_score - 0.6",
+      "variables": {
+        "crispr_on_target_score": {
+          "maps_to_field": "crispr_doench_score",
+          "unit": "score",
+          "bounds": [
+            0,
+            1
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 0.6
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 0.6
+        },
+        "UNDERDETERMINED": {
+          "condition": "variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "crispr_guide_qc_gate",
+      "ABD_RCA": "off_target_editing_rca",
+      "ABD_QA": "guide_design_hypothesis",
+      "INDUCTION": "guide_efficiency_pattern"
+    },
+    "xai_narrator_hint": "Doench score<0.6 or specificity<10:1 mandates guide RNA redesign — use Cas-OFFinder to enumerate off-target sites before IND filing.",
+    "contradiction_axioms": [],
+    "cascade_to": []
+  }
+]

@@ -1,0 +1,1 @@
+{"id":"RES_002","name":"No Use After Free","type":"D","level":"L3","statement":"Memory must not be accessed after deallocation","severity":"CRITICAL"}

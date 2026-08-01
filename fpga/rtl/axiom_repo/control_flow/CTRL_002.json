@@ -1,0 +1,1 @@
+{"id":"CTRL_002","name":"No Dead Code","type":"D","level":"L3","statement":"All code must be reachable","severity":"LOW"}

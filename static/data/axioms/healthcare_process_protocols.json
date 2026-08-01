@@ -1,0 +1,479 @@
+[
+  {
+    "axiom_id": "HC_011",
+    "domain": "HEALTHCARE",
+    "subdomain": "compliance",
+    "name": "Protected Health Information Integrity (HIPAA)",
+    "description": "PHI must be de-identified or access-controlled per HIPAA Safe Harbor.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.85,
+    "spatial_tension": "MEDIUM",
+    "semantic_fingerprint": "HIPAA PHI patient data privacy de-identification medical record",
+    "required_fields": [],
+    "optional_fields": [
+      {
+        "field": "patient_id",
+        "unit": ""
+      },
+      {
+        "field": "name",
+        "unit": ""
+      }
+    ],
+    "entity_keywords": [
+      "hipaa",
+      "protected health information",
+      "phi",
+      "ephi",
+      "patient data",
+      "medical record",
+      "de-identification",
+      "privacy",
+      "access control",
+      "data governance",
+      "patient privacy"
+    ],
+    "eml_formula": "",
+    "expression_latex": "\\text{PHI} \\Rightarrow \\text{De-identified or Access-Controlled}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [],
+      "optional": [
+        "patient_id",
+        "name"
+      ]
+    },
+    "match_conditions": [],
+    "derivation_formula": {
+      "sympy_expr": "Piecewise((0, phi_compliant), (1, True))",
+      "variables": [
+        "phi_compliant"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "boolean",
+      "trigger_field": "phi_compliant",
+      "threshold_op": "eq",
+      "threshold_val": true,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "REGULATORY_COMPLIANCE",
+      "semantic_label": "HIPAA PHI Integrity",
+      "reasoning_chain": [
+        "Check phi_compliant flag",
+        "Flag VIOLATION if de-identification not confirmed"
+      ]
+    },
+    "variables": {
+      "phi_compliant": "boolean"
+    }
+  },
+  {
+    "axiom_id": "HC_012",
+    "domain": "HEALTHCARE",
+    "subdomain": "interoperability",
+    "name": "HL7 FHIR Message Schema Conformance",
+    "description": "Clinical data exchange must conform to HL7 FHIR R4 resource schemas for interoperability.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.8,
+    "spatial_tension": "LOW",
+    "semantic_fingerprint": "HL7 FHIR interoperability clinical data exchange resource schema",
+    "required_fields": [],
+    "optional_fields": [],
+    "entity_keywords": [
+      "hl7",
+      "fhir",
+      "fast healthcare interoperability",
+      "fhir r4",
+      "resource",
+      "patient resource",
+      "observation resource",
+      "clinical document",
+      "cda",
+      "c-cda",
+      "interoperability"
+    ],
+    "eml_formula": "",
+    "expression_latex": "\\text{Message} \\models \\text{FHIR R4 Schema}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [],
+      "optional": []
+    },
+    "match_conditions": [],
+    "derivation_formula": {
+      "sympy_expr": "Piecewise((0, fhir_valid), (1, True))",
+      "variables": [
+        "fhir_valid"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "boolean",
+      "trigger_field": "fhir_valid",
+      "threshold_op": "eq",
+      "threshold_val": true,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "REGULATORY_COMPLIANCE",
+      "semantic_label": "HL7 FHIR Schema Conformance",
+      "reasoning_chain": [
+        "Validate FHIR message schema",
+        "Flag VIOLATION if non-conformant"
+      ]
+    },
+    "variables": {
+      "fhir_valid": "boolean"
+    }
+  },
+  {
+    "axiom_id": "HC_013",
+    "domain": "HEALTHCARE",
+    "subdomain": "safety",
+    "name": "Medical Device Software Safety Class (IEC 62304)",
+    "description": "Software controlling medical device analysis must be classified under IEC 62304 safety class A, B, or C based on severity of harm potential.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.8,
+    "spatial_tension": "MEDIUM",
+    "semantic_fingerprint": "IEC 62304 medical device software safety SaMD classification",
+    "required_fields": [],
+    "optional_fields": [],
+    "entity_keywords": [
+      "medical device",
+      "iec 62304",
+      "software safety class",
+      "samd",
+      "software as medical device",
+      "clinical decision support",
+      "risk management",
+      "iso 14971",
+      "fda",
+      "ce marking"
+    ],
+    "eml_formula": "",
+    "expression_latex": "\\text{Software} \\in \\{\\text{Class A, B, C}\\}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [],
+      "optional": []
+    },
+    "match_conditions": [],
+    "derivation_formula": {
+      "sympy_expr": "1",
+      "variables": [
+        "software_safety_class"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "categorical",
+      "trigger_field": "software_safety_class",
+      "allowed_values": [
+        "A",
+        "B",
+        "C"
+      ],
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "REGULATORY_COMPLIANCE",
+      "semantic_label": "IEC 62304 Safety Class",
+      "reasoning_chain": [
+        "Extract software safety class",
+        "Verify is A, B, or C per IEC 62304"
+      ]
+    },
+    "variables": {
+      "software_safety_class": "string"
+    }
+  },
+  {
+    "axiom_id": "HC_017",
+    "domain": "HEALTHCARE",
+    "subdomain": "compliance",
+    "name": "Clinical Record Completeness Invariant",
+    "description": "Clinical records must contain complete patient identification, date, specimen type, reference ranges, and interpretation per ISO 15189 and CLIA standards.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.8,
+    "spatial_tension": "MEDIUM",
+    "semantic_fingerprint": "clinical record completeness EHR EMR ICD documentation",
+    "required_fields": [],
+    "optional_fields": [],
+    "entity_keywords": [
+      "clinical record",
+      "patient record",
+      "medical record",
+      "ehr",
+      "emr",
+      "icd-10",
+      "icd-11",
+      "clinical documentation",
+      "completeness",
+      "iso 15189",
+      "clia",
+      "laboratory report",
+      "accreditation"
+    ],
+    "eml_formula": "",
+    "expression_latex": "\\text{Record} \\supseteq \\{\\text{PatientID, Date, Ref-Range, Interpretation}\\}",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [],
+      "optional": []
+    },
+    "match_conditions": [],
+    "derivation_formula": {
+      "sympy_expr": "Piecewise((0, record_complete), (1, True))",
+      "variables": [
+        "record_complete"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "boolean",
+      "trigger_field": "record_complete",
+      "threshold_op": "eq",
+      "threshold_val": true,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "DATA_INTEGRITY",
+      "semantic_label": "Clinical Record Completeness",
+      "reasoning_chain": [
+        "Check mandatory fields present",
+        "Flag VIOLATION if any required field missing"
+      ]
+    },
+    "variables": {
+      "record_complete": "boolean"
+    }
+  },
+  {
+    "axiom_id": "HC_020",
+    "domain": "HEALTHCARE",
+    "subdomain": "imaging",
+    "name": "Imaging Biomarker Measurement Validity (ADC/LVEF/PSV)",
+    "description": "LVEF ≥55% for normal systolic function. ADC values and PSV (peak systolic velocity) must be within modality-specific reference ranges.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.8,
+    "spatial_tension": "MEDIUM",
+    "semantic_fingerprint": "LVEF echocardiography ADC imaging biomarker cardiac function",
+    "required_fields": [
+      {
+        "field": "LVEF",
+        "unit": "%",
+        "bounds": [
+          0.0,
+          100.0
+        ],
+        "alert_min": 55.0,
+        "alert_max": null
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "ADC",
+        "unit": "×10⁻³mm²/s"
+      },
+      {
+        "field": "PSV",
+        "unit": "cm/s"
+      }
+    ],
+    "entity_keywords": [
+      "lvef",
+      "left ventricular ejection fraction",
+      "echocardiography",
+      "adc",
+      "apparent diffusion",
+      "mri",
+      "cardiac mri",
+      "systolic function",
+      "diastolic function",
+      "psv",
+      "peak systolic velocity",
+      "carotid",
+      "ultrasound",
+      "imaging biomarker"
+    ],
+    "eml_formula": "z = (55 - lvef) / 5",
+    "expression_latex": "\\text{LVEF} \\geq 55\\%",
+    "contradiction_axioms": [],
+    "evidence_schema": {
+      "required": [
+        "LVEF"
+      ],
+      "optional": [
+        "ADC",
+        "PSV"
+      ]
+    },
+    "match_conditions": [
+      {
+        "field": "LVEF",
+        "present": true
+      }
+    ],
+    "derivation_formula": {
+      "sympy_expr": "0.55 - LVEF",
+      "variables": [
+        "LVEF"
+      ]
+    },
+    "saa_hook": {
+      "eval_mode": "threshold",
+      "trigger_field": "LVEF",
+      "threshold_op": "lt",
+      "threshold_val": 0.55,
+      "verdict_pass": "COMPLIANT",
+      "verdict_fail": "VIOLATION"
+    },
+    "g3fp_intent_map": {
+      "category": "IMAGING_BIOMARKER",
+      "semantic_label": "Imaging Biomarker Validity (LVEF/ADC)",
+      "reasoning_chain": [
+        "Extract LVEF from echocardiography",
+        "Flag if <55% (reduced ejection fraction threshold)"
+      ]
+    },
+    "variables": {
+      "LVEF": "fraction",
+      "ADC": "mm2/s"
+    }
+  },
+  {
+    "@context": "https://sovereign-matrix.org/axiom-repo/v4.1",
+    "@type": "SovereignAxiom",
+    "axiom_id": "HC_SCO_001",
+    "version": "1.0.0",
+    "mode": "deduction",
+    "paradigm": "deduction",
+    "domain": "HEALTHCARE",
+    "subdomain": "stem_cell_processing",
+    "name": "Centrifuge Separation Yield Gate (Centrifuge Separation Process)",
+    "description": "Blood centrifuge separation must achieve ≥85% mononuclear cell (MNC) recovery. Low yield indicates protocol failure or sample degradation.",
+    "status": "CANONICAL",
+    "confidence_floor": 0.92,
+    "hallucination_lock": true,
+    "spatial_tension": "HIGH",
+    "semantic_fingerprint": "centrifuge separation mononuclear MNC yield PBMC density gradient buffy coat blood processing",
+    "entity_keywords": [
+      "centrifuge",
+      "離心",
+      "MNC",
+      "PBMC",
+      "buffy coat",
+      "density gradient",
+      "ficoll",
+      "separation yield",
+      "cell recovery",
+      "blood processing"
+    ],
+    "required_fields": [
+      {
+        "field": "mnc_yield_pct",
+        "unit": "%",
+        "bounds": [
+          0,
+          100
+        ],
+        "alert_min": 85,
+        "alert_max": null
+      },
+      {
+        "field": "total_cells_input",
+        "unit": "cells/mL",
+        "bounds": [
+          100000.0,
+          100000000.0
+        ]
+      }
+    ],
+    "optional_fields": [
+      {
+        "field": "viability_post_spin",
+        "unit": "%"
+      },
+      {
+        "field": "spin_speed_rpm",
+        "unit": "rpm"
+      },
+      {
+        "field": "spin_duration_min",
+        "unit": "min"
+      }
+    ],
+    "expression_latex": "\\text{Yield} = \\frac{N_{MNC\\_recovered}}{N_{total\\_input}} \\times 100 \\geq 85\\%",
+    "saa_hook": {
+      "enabled": true,
+      "solver_direction": "FORWARD",
+      "sympy_expr": "mnc_yield_pct - 85",
+      "variables": {
+        "mnc_yield_pct": {
+          "maps_to_field": "mnc_yield_pct",
+          "unit": "%",
+          "bounds": [
+            0,
+            100
+          ]
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 85,
+          "source_expr": "mnc_yield_pct"
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 85,
+          "source_expr": "mnc_yield_pct"
+        },
+        "UNDERDETERMINED": {
+          "condition": "mnc_yield_pct is null"
+        }
+      }
+    },
+    "derivation_formula": {
+      "name": "MNC_YIELD",
+      "sympy_expr": "(mnc_recovered / total_input) * 100",
+      "variables": {
+        "mnc_recovered": {
+          "maps_to_field": "mnc_recovered_cells",
+          "unit": "cells"
+        },
+        "total_input": {
+          "maps_to_field": "total_cells_input",
+          "unit": "cells"
+        }
+      },
+      "verdict_threshold": {
+        "ALLOW": {
+          "operator": ">=",
+          "value": 85
+        },
+        "REFUSE": {
+          "operator": "<",
+          "value": 85
+        },
+        "UNDERDETERMINED": {
+          "condition": "any variable is null"
+        }
+      }
+    },
+    "g3fp_intent_map": {
+      "DEDUCTION": "centrifuge_yield_compliance",
+      "ABD_RCA": "low_yield_root_cause",
+      "ABD_QA": "protocol_hypothesis_validation",
+      "INDUCTION": "yield_pattern_generalization"
+    },
+    "xai_narrator_hint": "Centrifuge yield below 85% indicates failed Centrifuge Separation Process — check Ficoll density, spin parameters, and sample age.",
+    "contradiction_axioms": [],
+    "cascade_to": [
+      "HC_SCO_002"
+    ]
+  }
+]

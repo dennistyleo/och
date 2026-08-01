@@ -1,0 +1,1 @@
+{"id":"ELEC_006","name":"Fanout Integrity","type":"D","level":"L8","statement":"Logic output fanout must not exceed drive strength; high-fanout nets must use buffers","severity":"HIGH"}

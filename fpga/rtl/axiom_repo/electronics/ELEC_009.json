@@ -1,0 +1,1 @@
+{"id":"ELEC_009","name":"Signal Integrity — Impedance Matching","type":"D","level":"L8","statement":"All high-speed traces must be impedance-matched (50 Ω single-ended, 100 Ω differential) to prevent reflections","severity":"HIGH"}

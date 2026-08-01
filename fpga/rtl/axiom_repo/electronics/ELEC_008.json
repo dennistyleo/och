@@ -1,0 +1,1 @@
+{"id":"ELEC_008","name":"Decoupling Capacitor Proximity","type":"D","level":"L8","statement":"Bypass capacitors must be placed within 1 mm of each VCC power pin to suppress high-frequency noise","severity":"MEDIUM"}

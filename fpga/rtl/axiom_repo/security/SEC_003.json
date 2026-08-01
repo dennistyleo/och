@@ -1,0 +1,1 @@
+{"id":"SEC_003","name":"Least Privilege","type":"D","level":"L3","statement":"Code must run with minimum permissions","severity":"HIGH"}

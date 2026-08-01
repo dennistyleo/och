@@ -1,0 +1,1 @@
+{"id":"CS_004","name":"No Infinite Retries","type":"D","level":"L9","statement":"Retry loops must have backoff and max attempts","severity":"HIGH"}

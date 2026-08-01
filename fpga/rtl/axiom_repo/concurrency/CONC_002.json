@@ -1,0 +1,1 @@
+{"id":"CONC_002","name":"No Deadlock","type":"D","level":"L3","statement":"Lock acquisition must be deadlock-free","severity":"CRITICAL"}

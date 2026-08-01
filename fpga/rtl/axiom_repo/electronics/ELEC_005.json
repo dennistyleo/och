@@ -1,0 +1,1 @@
+{"id":"ELEC_005","name":"Setup and Hold Time","type":"D","level":"L8","statement":"All synchronous data paths must satisfy setup time and hold time constraints at worst-case PVT corners","severity":"CRITICAL"}
