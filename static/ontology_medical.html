@@ -12,13 +12,19 @@
 <link rel="stylesheet" href="css/sovereign-header-fixes.css?v=4">
 <style>
   /* ==========================================================================
-     OCH · 3D MEDICAL OPERATION CENTER — Mirrored OP-01 Canonical Header
+     OCH · 3D MEDICAL OPERATION CENTER
+     - Background        : Pure White (#FFFFFF) everywhere EXCEPT Header
+     - Metallic Gold     : #D4AF37 / #B8860B
+     - Metallic Silver   : #CBD5E1 / #64748B
+     - Neon Green        : #00C853
+     - Tiffany Blue      : #0abab5
+     - Hermès Orange     : #FF7900
      ========================================================================== */
   :root {
     --bg-main:         #FFFFFF;
     --bg-subtle:       #F8FAFC;
     --bg-card:         #FFFFFF;
-    --bg-panel:        #F8FAFC;
+    --bg-panel:        #FFFFFF;
     
     --white:           #FFFFFF;
     --metallic-gold:   #D4AF37;
@@ -42,13 +48,12 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { width: 1920px; background: var(--bg-main); overflow-y: auto; }
-  body { width: 1920px; min-height: 1080px; background: var(--bg-main); color: var(--text-dark); font-family: var(--font-ui); overflow-x: hidden; }
+  html, body { width: 100%; min-height: 100vh; background: #FFFFFF !important; color: var(--text-dark); font-family: var(--font-ui); overflow-x: hidden; }
 
-  /* ── MIRRORED OP-01 HEADER SHAPE ARCHITECTURE ── */
-  .sm-header {
+  /* ── OP-01 MIRRORED HEADER (HEIGHT: 284px) ── */
+  header.sm-header {
     position: relative; width: 100%; height: 284px; background: #000000;
-    flex-shrink: 0; overflow: visible;
+    flex-shrink: 0; overflow: visible; z-index: 50;
   }
   .hdr-wing { position: absolute; top: 0; width: 220px; height: 212px; overflow: hidden; z-index: 2; }
   .hdr-wing.left  { left: 0; }
@@ -60,20 +65,23 @@
     z-index: 10; pointer-events: none;
   }
 
-  /* ── MAIN LAYOUT GRID ── */
+  /* ── MAIN LAYOUT GRID (STARTS BELOW HEADER — 0 COLLISION) ── */
   .layout {
     display: grid; grid-template-columns: 1fr 440px;
-    height: calc(1080px - 284px); background: var(--bg-main); margin-top: 0;
+    min-height: calc(100vh - 284px); background: #FFFFFF !important;
+    position: relative; z-index: 1;
   }
-  .viz-pane { position: relative; overflow: hidden; background: #030712; }
+  .viz-pane {
+    position: relative; overflow: hidden; background: #FFFFFF !important;
+    border-right: 1px solid var(--border-silver);
+  }
   .info-pane {
-    display: flex; flex-direction: column; background: var(--bg-panel);
-    border-left: 1.5px solid var(--border-silver); overflow-y: auto;
-    box-shadow: -4px 0 20px rgba(0,0,0,0.04);
+    display: flex; flex-direction: column; background: #FFFFFF !important;
+    border-left: 1px solid var(--border-silver); overflow-y: auto;
   }
 
   /* ── THREE.JS CANVAS ── */
-  #ontology-canvas { width: 100%; height: 100%; display: block; }
+  #ontology-canvas { width: 100%; height: 100%; display: block; background: #FFFFFF !important; }
 
   /* ── MANIFOLD PHASE SELECTORS ── */
   .manifold-tabs {
@@ -81,20 +89,20 @@
   }
   .tab-btn {
     font-family: var(--font-mono); font-size: 10px; font-weight: 700; padding: 8px 16px;
-    border-radius: 4px; background: rgba(15, 23, 42, 0.88); color: var(--metallic-silver);
+    border-radius: 4px; background: #F1F5F9; color: var(--text-dark);
     border: 1px solid var(--border-silver); cursor: pointer; transition: all 0.2s;
   }
   .tab-btn.active { color: var(--white); background: var(--tiffany-blue); border-color: var(--tiffany-blue); }
 
-  /* ── HUD OVERLAY ── */
+  /* ── HUD OVERLAY (WHITE BG READABLE) ── */
   .viz-hud {
     position: absolute; top: 16px; left: 16px; z-index: 80;
-    font-family: var(--font-mono); font-size: 11px; color: rgba(255,255,255,0.7); pointer-events: none;
+    font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); pointer-events: none;
   }
   .viz-hud-title { font-family: var(--font-title); font-size: 14px; font-weight: 900; color: var(--tiffany-blue); margin-bottom: 4px; letter-spacing: 1px; }
 
-  /* ── SIDEBAR PANELS ── */
-  .panel-section { padding: 18px 22px; border-bottom: 1px solid var(--border-silver); background: var(--bg-card); }
+  /* ── SIDEBAR PANELS (PURE WHITE BG) ── */
+  .panel-section { padding: 20px 24px; border-bottom: 1px solid var(--border-silver); background: #FFFFFF; }
   .panel-label { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--tiffany-blue); margin-bottom: 6px; }
   .panel-title { font-family: var(--font-title); font-size: 16px; font-weight: 900; color: var(--text-dark); letter-spacing: 1px; }
 
@@ -134,7 +142,7 @@
   .repo-card-id { color: var(--gold-dark); font-weight: bold; }
 
   /* CTA BUTTONS */
-  .cta-bar { padding: 16px 22px; margin-top: auto; display: flex; flex-direction: column; gap: 8px; background: var(--bg-card); border-top: 1px solid var(--border-silver); }
+  .cta-bar { padding: 16px 22px; margin-top: auto; display: flex; flex-direction: column; gap: 8px; background: #FFFFFF; border-top: 1px solid var(--border-silver); }
   .btn-cta {
     display: block; width: 100%; padding: 11px 0; text-align: center; border-radius: 6px;
     font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
@@ -203,7 +211,7 @@
 
 <div class="layout">
 
-  <!-- LEFT: 3D THREE.JS VIEWPORT -->
+  <!-- LEFT: 3D THREE.JS VIEWPORT (PURE WHITE BG) -->
   <div class="viz-pane">
     <div class="viz-hud">
       <div class="viz-hud-title">GNN BIOMARKERS &amp; MANIFOLDS</div>
@@ -219,7 +227,7 @@
     <canvas id="ontology-canvas"></canvas>
   </div>
 
-  <!-- RIGHT: SIDEBAR AUDIT & INGESTION PANEL -->
+  <!-- RIGHT: SIDEBAR AUDIT & INGESTION PANEL (PURE WHITE BG) -->
   <div class="info-pane">
     
     <!-- 1. FILE INGESTION FUNCTION BLOCK (OP-01 Style) -->
