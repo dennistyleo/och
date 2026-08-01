@@ -2,16 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=1920">
 <title>Sovereign OCH · 3D Medical Evaluation &amp; Biomarker Audit</title>
 <meta name="description" content="Hierarchical OCH 3D Medical Explorer — GNN Biomarkers, World Models, Causal Pathways, and G3FP+SAA Evidence Ingestion.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700;800&family=Orbitron:wght@700;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700;800&family=Orbitron:wght@700;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/sovereign_scrollbar.css?v=20260603_05">
 <link rel="stylesheet" href="css/sovereign-header.css?v=20260501">
+<link rel="stylesheet" href="css/sovereign-header-fixes.css?v=4">
 <style>
   /* ==========================================================================
-     SOVEREIGN OCH · 3D MEDICAL EVALUATION — Style Compatible with OP-01 ~ OP-03
+     SOVEREIGN OCH · 3D MEDICAL OPERATION CENTER — Style Compatible with OP-01 ~ OP-03
      ========================================================================== */
   :root {
     --gold:          #D4AF37;
@@ -32,37 +33,13 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { width: 100%; height: 100%; background: #000000; color: #eee; font-family: var(--font-ui); overflow: hidden; }
-
-  /* ── NAV HEADER (OP-01 ~ OP-03 Style) ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    height: 60px; display: flex; align-items: center; padding: 0 32px;
-    background: rgba(5, 5, 7, 0.95); backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border-gold);
-  }
-  .nav-logo {
-    font-family: var(--font-title); font-size: 16px; font-weight: 900;
-    letter-spacing: 3px; text-decoration: none;
-    background: linear-gradient(135deg, #FFF0C2 0%, var(--gold) 50%, #AA8B2B 100%);
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .nav-links { display: flex; gap: 12px; margin-left: 40px; }
-  .nav-link {
-    font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
-    color: #aaa; text-decoration: none; padding: 6px 14px; border-radius: 4px; transition: all 0.2s;
-  }
-  .nav-link:hover, .nav-link.active { color: var(--gold); background: rgba(212, 175, 55, 0.1); }
-  .nav-tag {
-    margin-left: auto; font-family: var(--font-mono); font-size: 10px; font-weight: 700;
-    color: var(--tiffany-blue); border: 1.5px solid var(--tiffany-blue);
-    padding: 4px 12px; border-radius: 3px; letter-spacing: 1.5px;
-  }
+  html { width: 1920px; background: #000000; overflow-y: auto; }
+  body { width: 1920px; min-height: 1080px; background: #000000; color: #eee; font-family: var(--font-ui); overflow-x: hidden; }
 
   /* ── MAIN LAYOUT GRID ── */
   .layout {
-    display: grid; grid-template-columns: 1fr 420px;
-    height: 100vh; padding-top: 60px; background: #000000;
+    display: grid; grid-template-columns: 1fr 440px;
+    height: calc(100vh - 212px); margin-top: 0; background: #000000;
   }
   .viz-pane { position: relative; overflow: hidden; background: #000000; }
   .info-pane {
@@ -92,14 +69,14 @@
   .viz-hud-title { font-family: var(--font-title); font-size: 14px; font-weight: 900; color: var(--gold); margin-bottom: 4px; letter-spacing: 1px; }
 
   /* ── SIDEBAR PANELS (OP-01 ~ OP-03 Style) ── */
-  .panel-section { padding: 20px 24px; border-bottom: 1px solid var(--border-gold); }
+  .panel-section { padding: 18px 24px; border-bottom: 1px solid var(--border-gold); }
   .panel-label { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--tiffany-blue); margin-bottom: 6px; }
-  .panel-title { font-family: var(--font-title); font-size: 18px; font-weight: 900; color: var(--gold); letter-spacing: 1px; }
+  .panel-title { font-family: var(--font-title); font-size: 17px; font-weight: 900; color: var(--gold); letter-spacing: 1px; }
 
   /* INGESTION DROP ZONE BLOCK */
   .ingest-block {
     background: rgba(0, 0, 0, 0.6); border: 2px dashed var(--tiffany-blue); border-radius: 8px;
-    padding: 20px; text-align: center; margin-top: 12px; cursor: pointer; transition: all 0.2s;
+    padding: 18px; text-align: center; margin-top: 10px; cursor: pointer; transition: all 0.2s;
   }
   .ingest-block:hover { border-color: var(--orange); background: rgba(255, 121, 0, 0.05); }
   .ingest-title { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 4px; }
@@ -118,23 +95,11 @@
   .stat-val { font-family: var(--font-mono); font-size: 18px; font-weight: 800; color: var(--gold); }
   .stat-lbl { font-family: var(--font-mono); font-size: 9px; color: #888; letter-spacing: 1px; margin-top: 2px; }
 
-  /* BIOMARKER TABLE */
-  .biomarker-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-family: var(--font-mono); font-size: 11px; }
-  .biomarker-table th { text-align: left; padding: 6px 0; border-bottom: 1px solid var(--border-gold); color: var(--gold); }
-  .biomarker-table td { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; }
+  /* AXIOM SELECTION CHECKBOX TABLE */
+  .axiom-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-family: var(--font-mono); font-size: 11px; }
+  .axiom-table th { text-align: left; padding: 6px 0; border-bottom: 1px solid var(--border-gold); color: var(--gold); }
+  .axiom-table td { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; }
   .empty-msg { font-style: italic; color: #777; font-size: 11px; padding: 12px 0; }
-
-  /* AXIOM BADGES */
-  .axiom-card {
-    background: rgba(0,0,0,0.5); border: 1px solid var(--border-gold); border-radius: 6px;
-    padding: 10px; margin-top: 8px; font-family: var(--font-mono); font-size: 11px;
-  }
-  .axiom-id { color: var(--gold); font-weight: 700; }
-  .badge-status {
-    display: inline-block; padding: 2px 8px; border-radius: 2px; font-size: 9px; font-weight: 700; margin-top: 4px;
-  }
-  .badge-allow { background: rgba(0, 200, 83, 0.15); color: var(--green); border: 1px solid var(--green); }
-  .badge-awaiting { background: rgba(212, 175, 55, 0.15); color: var(--gold); border: 1px solid var(--gold); }
 
   /* CTA BUTTONS */
   .cta-bar { padding: 20px 24px; margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
@@ -151,17 +116,28 @@
 </head>
 <body>
 
-<!-- NAV HEADER (OP-01 ~ OP-03 Canonical Style) -->
-<nav>
-  <a class="nav-logo" href="index.html">⬡ SOVEREIGN OCH</a>
-  <div class="nav-links">
-    <a class="nav-link" href="index.html">HOME / OVERVIEW</a>
-    <a class="nav-link active" href="ontology_medical.html">ONTOLOGY MEDICAL 3D</a>
-    <a class="nav-link" href="index.html#ingestion">INGEST EVIDENCE</a>
-    <a class="nav-link" href="index.html#report">AUDIT REPORT</a>
+<!-- CANONICAL SOVEREIGN HEADER ARCHITECTURE (OP-01 ~ OP-03) -->
+<header class="sm-header">
+  <div class="hdr-wing left">
+    <video autoplay loop muted playsinline src="P01Header_L.mp4"></video>
   </div>
-  <div class="nav-tag">🧬 ONTOLOGY COMPLIANCE HEALTHCARE</div>
-</nav>
+  <div class="hdr-wing right">
+    <video autoplay loop muted playsinline src="P01header_R.mp4"></video>
+  </div>
+
+  <div class="hdr-engines">
+    <div class="hdr-bottom">
+      <div class="hdr-brand">
+        <img class="hdr-logo" src="aichip-logo-home.png" alt="AIChip Logo">
+        <span class="hdr-brand-text">SOVEREIGN OCH</span>
+      </div>
+      <div class="hdr-nav">
+        <a class="hdr-btn" href="index.html">HOME / OVERVIEW</a>
+        <a class="hdr-btn" href="ontology_medical.html" style="background:rgba(0,200,83,0.15);color:#00C853;border-color:#00C853;">OCH OPERATION CENTER (3D)</a>
+      </div>
+    </div>
+  </div>
+</header>
 
 <div class="layout">
 
@@ -184,7 +160,7 @@
   <!-- RIGHT: SIDEBAR AUDIT & INGESTION PANEL -->
   <div class="info-pane">
     
-    <!-- FILE INGESTION FUNCTION BLOCK (OP-01 Style) -->
+    <!-- 1. FILE INGESTION FUNCTION BLOCK (OP-01 Style) -->
     <div class="panel-section">
       <div class="panel-label">📄 01. INGEST CLINICAL EVIDENCE FILE</div>
       <div class="ingest-block" onclick="document.getElementById('side-file-input').click()">
@@ -195,9 +171,9 @@
       </div>
     </div>
 
-    <!-- BRANCH & STATS SECTION -->
+    <!-- 2. BRANCH & PIPELINE STATS -->
     <div class="panel-section">
-      <div class="panel-label">SELECTED BRANCH</div>
+      <div class="panel-label">SELECTED BRANCH &amp; PIPELINE STATUS</div>
       <div class="panel-title">HEALTHCARE EVALUATION</div>
       <div style="font-family: var(--font-mono); font-size: 11px; color: #888; margin-top: 4px;">Live Graded Audit &middot; LOINC Biomarkers</div>
 
@@ -217,26 +193,26 @@
       </div>
     </div>
 
-    <!-- EXTRACTED EVIDENCE BIOMARKERS (DYNAMIC) -->
+    <!-- 3. AXIOMS ELECTION & SELECTION PANEL -->
     <div class="panel-section">
-      <div class="panel-label">EXTRACTED EVIDENCE BIOMARKERS</div>
-      <div id="biomarker-container">
-        <div class="empty-msg">No evidence file uploaded yet. Ingest a patient lab record above to extract biomarkers.</div>
+      <div class="panel-label">📋 02. ELECTED AXIOMS &amp; SELECTION PANEL</div>
+      <div id="axiom-selection-container">
+        <div class="empty-msg">No axioms elected. Ingest a patient lab record above to execute G3FP &amp; SAA solver.</div>
       </div>
     </div>
 
-    <!-- REGISTERED AXIOMS & SYMPY PROOFS (DYNAMIC) -->
+    <!-- 4. EXTRACTED EVIDENCE BIOMARKERS TABLE -->
     <div class="panel-section">
-      <div class="panel-label">REGISTERED AXIOMS &amp; SYMPY PROOFS</div>
-      <div id="axiom-container">
-        <div class="empty-msg">Awaiting document ingestion &amp; G3FP ontology extraction.</div>
+      <div class="panel-label">📊 03. EXTRACTED EVIDENCE BIOMARKERS</div>
+      <div id="biomarker-container">
+        <div class="empty-msg">No evidence file uploaded yet. Ingest a lab record to extract biomarkers.</div>
       </div>
     </div>
 
     <!-- CTA BUTTONS -->
     <div class="cta-bar">
-      <a class="btn-cta btn-primary" href="index.html#report">GENERATE AUDIT REPORT</a>
-      <a class="btn-cta btn-secondary" href="index.html">BACK TO DASHBOARD</a>
+      <button class="btn-cta btn-primary" onclick="openHITLModalBridge()">LAUNCH HITL G3FP+SAA MODAL</button>
+      <button class="btn-cta btn-secondary" onclick="viewAuditReportModal()">VIEW OAR AUDIT REPORT</button>
     </div>
 
   </div>
@@ -250,6 +226,26 @@
 <script src="hitl_modal_bridge.js?v=10010"></script>
 
 <script>
+function openHITLModalBridge(sampleFile = 'patient_lab_record.pdf') {
+    if (typeof HITLModal !== 'undefined' && HITLModal.show) {
+        HITLModal.show({
+            fileName: sampleFile,
+            domain: 'HEALTHCARE',
+            mode: 'deduction',
+            trace_id: 'OCH_' + Date.now(),
+            onConfirm: function(corrections) {
+                console.log("[OCH HITL] User confirmed corrections:", corrections);
+            }
+        });
+    } else {
+        alert("HITL G3FP+SAA Modal initialized for OCH Healthcare dialogue.");
+    }
+}
+
+function viewAuditReportModal() {
+    window.location.href = 'audit_report.html';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('side-file-input');
     const ingestBlock = document.querySelector('.ingest-block');
@@ -285,15 +281,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleFileUpload(file) {
         if (headline) headline.textContent = `Processing file: ${file.name}...`;
 
-        // Open HITL Modal Bridge for G3FP+SAA interactive dialogue
-        if (typeof HITLModal !== 'undefined' && HITLModal.show) {
-            HITLModal.show({
-                fileName: file.name,
-                domain: 'HEALTHCARE',
-                mode: 'deduction',
-                trace_id: 'OCH_' + Date.now()
-            });
-        }
+        // 1. OPEN HITL G3FP + SAA MODAL DIALOGUE WINDOW
+        openHITLModalBridge(file.name);
 
         let field_values = {
             "glucose": 95.0,
@@ -312,45 +301,67 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (parsed.field_values) field_values = parsed.field_values;
             }
         } catch (err) {
-            console.warn("Using clinical default values:", err);
+            console.warn("Using baseline clinical values:", err);
         }
 
-        populateExtractedBiomarkers(field_values, file.name);
+        // 2. POPULATE AXIOMS SELECTION & BIOMARKERS
+        populateExtractedBiomarkersAndAxioms(field_values, file.name);
     }
 
-    function populateExtractedBiomarkers(fieldValues, filename) {
+    function populateExtractedBiomarkersAndAxioms(fieldValues, filename) {
         if (headline) headline.innerHTML = `✅ <span style="color:#0abab5">${filename}</span>`;
 
         // Update stats
         document.getElementById('stat-domains').textContent = '1';
-        document.getElementById('stat-axioms').textContent = Object.keys(fieldValues).length.toString();
+        document.getElementById('stat-axioms').textContent = '5';
         const statStatus = document.getElementById('stat-status');
         statStatus.textContent = 'COMPLIANT';
         statStatus.style.color = '#00C853';
 
+        // Update Axioms Selection Table (Interactive Checkboxes)
+        const axiomContainer = document.getElementById('axiom-selection-container');
+        axiomContainer.innerHTML = `
+            <table class="axiom-table">
+                <thead>
+                    <tr><th>SELECT</th><th>AXIOM ID</th><th>FORMULA / THRESHOLD</th><th>STATUS</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox" checked></td>
+                        <td style="color:#D4AF37;font-weight:bold;">HC_AIP_001</td>
+                        <td>AIP = log10(TG / HDL)</td>
+                        <td><span style="color:#00C853;font-weight:bold;">ALLOW</span></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" checked></td>
+                        <td style="color:#D4AF37;font-weight:bold;">HC_GLU_001</td>
+                        <td>Glucose &le; 140 mg/dL</td>
+                        <td><span style="color:#00C853;font-weight:bold;">ALLOW</span></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" checked></td>
+                        <td style="color:#D4AF37;font-weight:bold;">HC_CRE_001</td>
+                        <td>Creatinine &le; 1.5 mg/dL</td>
+                        <td><span style="color:#00C853;font-weight:bold;">ALLOW</span></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" checked></td>
+                        <td style="color:#D4AF37;font-weight:bold;">HC_BP_001</td>
+                        <td>BP Systolic &le; 130 mmHg</td>
+                        <td><span style="color:#00C853;font-weight:bold;">ALLOW</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
+
         // Update Extracted Evidence Biomarkers Table
         const bmContainer = document.getElementById('biomarker-container');
-        let html = '<table class="biomarker-table"><thead><tr><th>BIOMARKER</th><th>VALUE</th></tr></thead><tbody>';
+        let html = '<table class="axiom-table"><thead><tr><th>BIOMARKER</th><th>VALUE</th><th>REF RANGE</th></tr></thead><tbody>';
         Object.entries(fieldValues).forEach(([k, v]) => {
-            html += `<tr><td>${k.toUpperCase()}</td><td style="color:#0abab5;font-weight:bold;">${v}</td></tr>`;
+            html += `<tr><td style="color:#aaa;">${k.toUpperCase()}</td><td style="color:#0abab5;font-weight:bold;">${v}</td><td>Normal</td></tr>`;
         });
         html += '</tbody></table>';
         bmContainer.innerHTML = html;
-
-        // Update Registered Axioms & SymPy Proofs
-        const axiomContainer = document.getElementById('axiom-container');
-        axiomContainer.innerHTML = `
-            <div class="axiom-card">
-                <div class="axiom-id">HC_AIP_001</div>
-                <div style="color:#aaa;font-size:10px;margin-top:4px;">\\text{AIP} = \\log_{10}\\left(\\frac{\\text{TG}}{\\text{HDL}}\\right)</div>
-                <span class="badge-status badge-allow">ALLOW</span>
-            </div>
-            <div class="axiom-card">
-                <div class="axiom-id">HC_GLU_001</div>
-                <div style="color:#aaa;font-size:10px;margin-top:4px;">Glucose \\le 140 \\text{ mg/dL}</div>
-                <span class="badge-status badge-allow">ALLOW</span>
-            </div>
-        `;
 
         document.getElementById('hud-status').textContent = `Phase 1 — GNN Correlation Network: ${filename} (Graded Compliant)`;
     }
