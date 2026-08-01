@@ -2,17 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=1920">
 <title>OCH · Ontology Compliance Healthcare</title>
 <meta name="description" content="Dedicated single-purposed OCH (Ontology Compliance Healthcare) service — deterministic clinical biomarker verification, LOINC standards, and hardware-accelerated FPGA risk evaluation.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/sovereign_scrollbar.css?v=20260603_05">
-<link rel="stylesheet" href="css/sovereign-header.css?v=20260501">
 <style>
   /* ==========================================================================
-     OCH LANDING PAGE — Pure White Background + Luxury Palette
-     Branding: OCH (Ontology Compliance Healthcare)
+     OCH LANDING PAGE — Pure White Clinical Background (NO HEADER)
      ========================================================================== */
   :root {
     --bg-main:         #FFFFFF;
@@ -42,54 +40,43 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { width: 100%; min-height: 100%; background: var(--bg-main); color: var(--text-dark); font-family: var(--font-ui); overflow-x: hidden; }
+  html { width: 1920px; background: var(--bg-main); overflow-y: auto; }
+  body { width: 1920px; min-height: 1080px; background: var(--bg-main); color: var(--text-dark); font-family: var(--font-ui); overflow-x: hidden; }
 
-  /* ── CANONICAL HEADER SHAPE BOUNDS ── */
-  header.sm-header {
-    position: relative; width: 100%; height: 212px; background: #000000;
-    overflow: hidden; flex-shrink: 0; border-bottom: 2px solid var(--border-gold);
-  }
-  .hdr-wing { position: absolute; top: 0; width: 220px; height: 212px; overflow: hidden; z-index: 2; }
-  .hdr-wing.left  { left: 0; }
-  .hdr-wing.right { right: 0; }
-  .hdr-wing video { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .hdr-engines { position: absolute; top: 0; left: 220px; right: 220px; height: 212px; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 16px; z-index: 5; }
-  .hdr-bottom { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
-  .hdr-brand { display: flex; align-items: center; gap: 12px; }
-  .hdr-logo { height: 36px; width: auto; }
-  .hdr-brand-text { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 3px; background: linear-gradient(45deg, #3b2222, #654328, #D4AF37, #ffeaaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .hdr-nav { display: flex; gap: 10px; }
-  .hdr-btn { padding: 8px 16px; border-radius: 4px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: #aaa; text-decoration: none; border: 1px solid rgba(212,175,55,0.3); transition: all 0.2s; }
-  .hdr-btn:hover { color: var(--neon-green); background: rgba(0,200,83,0.1); border-color: var(--neon-green); }
+  /* ── MAIN CONTAINER (TOP PADDING WITHOUT HEADER) ── */
+  .och-landing-container { max-width: 1400px; margin: 0 auto; padding: 60px 32px 80px; }
 
-  /* ── MAIN CONTAINER ── */
-  .och-landing-container { max-width: 1400px; margin: 0 auto; padding: 40px 32px 60px; }
+  /* ── TOP BRAND BAR (MINIMAL) ── */
+  .top-brand-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+  .brand-logo-box { display: flex; align-items: center; gap: 14px; }
+  .brand-logo-img { height: 42px; width: auto; }
+  .brand-logo-text { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 3px; background: linear-gradient(45deg, #0F172A, #B8860B, #0abab5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
   /* ── HERO SECTION ── */
   .hero-box { text-align: center; margin-bottom: 48px; }
   .hero-title {
-    font-family: var(--font-title); font-size: clamp(2rem, 4vw, 3.4rem); font-weight: 900;
-    letter-spacing: 4px; text-transform: uppercase; margin-bottom: 12px;
-    background: linear-gradient(135deg, #0F172A 0%, var(--tiffany-blue) 40%, var(--metallic-gold) 100%);
+    font-family: var(--font-title); font-size: clamp(2.2rem, 4.5vw, 3.6rem); font-weight: 900;
+    letter-spacing: 4px; text-transform: uppercase; margin-bottom: 14px;
+    background: linear-gradient(135deg, #0F172A 0%, var(--tiffany-blue) 40%, var(--gold-dark) 100%);
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 2px 8px rgba(10, 186, 181, 0.15));
   }
   .hero-subtitle {
-    font-size: 1.2rem; color: var(--hermes-orange); font-weight: 800; letter-spacing: 1.5px;
-    margin-bottom: 8px; text-transform: uppercase;
+    font-size: 1.25rem; color: var(--hermes-orange); font-weight: 800; letter-spacing: 1.5px;
+    margin-bottom: 10px; text-transform: uppercase;
   }
-  .hero-desc { font-size: 1rem; color: var(--text-muted); font-style: italic; }
+  .hero-desc { font-size: 1.05rem; color: var(--text-muted); font-style: italic; }
 
   .divider-line {
     width: 100%; height: 1.5px;
     background: linear-gradient(90deg, transparent 0%, var(--tiffany-blue) 30%, var(--neon-green) 50%, var(--metallic-gold) 70%, transparent 100%);
-    margin: 28px 0 44px; opacity: 0.8;
+    margin: 32px 0 48px; opacity: 0.8;
   }
 
   /* ── THREE CLINICAL PILLAR CARDS ── */
-  .pillars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px; margin-bottom: 56px; }
+  .pillars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; margin-bottom: 56px; }
   .pillar-card {
-    background: var(--bg-card); border-radius: 14px; padding: 32px 28px;
+    background: var(--bg-card); border-radius: 14px; padding: 36px 30px;
     border: 1px solid var(--border-silver); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     transition: all 0.25s ease; position: relative; overflow: hidden;
   }
@@ -101,24 +88,24 @@
   .pillar-card:hover {
     transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); border-color: var(--tiffany-blue);
   }
-  .pillar-icon { font-size: 36px; margin-bottom: 14px; }
+  .pillar-icon { font-size: 38px; margin-bottom: 16px; }
   .pillar-card.tiffany .pillar-title { color: var(--tiffany-blue); }
   .pillar-card.hermes  .pillar-title { color: var(--hermes-orange); }
   .pillar-card.green   .pillar-title { color: var(--neon-green); }
   
-  .pillar-title { font-family: var(--font-title); font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
+  .pillar-title { font-family: var(--font-title); font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
   .pillar-sub { font-family: var(--font-mono); font-size: 11px; color: var(--text-light); margin-bottom: 12px; font-weight: 700; }
-  .pillar-text { font-size: 0.9rem; color: var(--text-muted); line-height: 1.65; }
+  .pillar-text { font-size: 0.92rem; color: var(--text-muted); line-height: 1.65; }
 
   /* ── ENTER OPERATION CENTER CTA ── */
   .operation-cta-box {
     background: var(--bg-subtle); border: 2px solid var(--tiffany-blue); border-radius: 16px;
-    padding: 48px; text-align: center; margin-bottom: 48px; box-shadow: 0 8px 30px rgba(10, 186, 181, 0.08);
+    padding: 52px; text-align: center; margin-bottom: 48px; box-shadow: 0 8px 30px rgba(10, 186, 181, 0.08);
   }
-  .cta-title { font-family: var(--font-title); font-size: 1.6rem; font-weight: 900; color: var(--text-dark); margin-bottom: 12px; }
-  .cta-desc { font-size: 0.95rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 28px; line-height: 1.6; }
+  .cta-title { font-family: var(--font-title); font-size: 1.7rem; font-weight: 900; color: var(--text-dark); margin-bottom: 12px; }
+  .cta-desc { font-size: 0.98rem; color: var(--text-muted); max-width: 840px; margin: 0 auto 30px; line-height: 1.6; }
   .btn-launch-operation {
-    display: inline-block; padding: 16px 40px; border-radius: 8px;
+    display: inline-block; padding: 18px 44px; border-radius: 8px;
     font-family: var(--font-mono); font-size: 13px; font-weight: 800; letter-spacing: 2px;
     background: var(--hermes-orange); color: var(--white); text-decoration: none; transition: all 0.25s;
     box-shadow: 0 6px 20px rgba(255, 121, 0, 0.3);
@@ -129,37 +116,23 @@
   .hw-bar {
     display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
     background: var(--bg-subtle); border: 1px solid var(--border-silver); border-radius: 12px;
-    padding: 18px 28px; font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
+    padding: 20px 32px; font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
   }
   .hw-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); margin-right: 8px; }
 </style>
 </head>
 <body>
 
-<!-- CANONICAL OCH HEADER ARCHITECTURE -->
-<header class="sm-header">
-  <div class="hdr-wing left">
-    <video autoplay loop muted playsinline src="P01Header_L.mp4"></video>
-  </div>
-  <div class="hdr-wing right">
-    <video autoplay loop muted playsinline src="P01header_R.mp4"></video>
-  </div>
-
-  <div class="hdr-engines">
-    <div class="hdr-bottom">
-      <div class="hdr-brand">
-        <img class="hdr-logo" src="aichip-logo-home.png" alt="AIChip Logo">
-        <span class="hdr-brand-text">OCH</span>
-      </div>
-      <div class="hdr-nav">
-        <a class="hdr-btn" href="index.html" style="background:rgba(0,200,83,0.15);color:#00C853;border-color:#00C853;">HOME / OVERVIEW</a>
-        <a class="hdr-btn" href="ontology_medical.html">OCH OPERATION CENTER (3D)</a>
-      </div>
-    </div>
-  </div>
-</header>
-
 <div class="och-landing-container">
+
+  <!-- TOP MINIMAL BRAND BAR -->
+  <div class="top-brand-bar">
+    <div class="brand-logo-box">
+      <img class="brand-logo-img" src="aichip-logo-home.png" alt="AIChip Logo">
+      <span class="brand-logo-text">OCH</span>
+    </div>
+    <a href="ontology_medical.html" style="padding: 10px 22px; border-radius: 6px; font-family: var(--font-mono); font-size: 11px; font-weight: 800; background: var(--neon-green); color: #000; text-decoration: none; letter-spacing: 1px;">LAUNCH OPERATION CENTER (3D) &rarr;</a>
+  </div>
 
   <!-- HERO SECTION -->
   <section class="hero-box">

@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=1920">
 <title>OCH · 3D Medical Evaluation &amp; Biomarker Audit</title>
 <meta name="description" content="Hierarchical OCH 3D Medical Explorer — GNN Biomarkers, World Models, Causal Pathways, LOINC Axiom Repository, and G3FP+SAA Evidence Ingestion.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700;800&family=Orbitron:wght@700;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/sovereign_scrollbar.css?v=20260603_05">
 <link rel="stylesheet" href="css/sovereign-header.css?v=20260501">
+<link rel="stylesheet" href="css/sovereign-header-fixes.css?v=4">
 <style>
   /* ==========================================================================
-     OCH · 3D MEDICAL OPERATION CENTER — Canonical Header & Axiom Repository
-     Branding: OCH (Ontology Compliance Healthcare)
+     OCH · 3D MEDICAL OPERATION CENTER — Mirrored OP-01 Canonical Header
      ========================================================================== */
   :root {
     --bg-main:         #FFFFFF;
@@ -42,30 +42,28 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { width: 100%; height: 100%; background: var(--bg-main); color: var(--text-dark); font-family: var(--font-ui); overflow: hidden; }
+  html { width: 1920px; background: var(--bg-main); overflow-y: auto; }
+  body { width: 1920px; min-height: 1080px; background: var(--bg-main); color: var(--text-dark); font-family: var(--font-ui); overflow-x: hidden; }
 
-  /* ── CANONICAL OCH HEADER SHAPE (EXACT OP-01 ~ OP-03) ── */
-  header.sm-header {
-    position: relative; width: 100%; height: 212px; background: #000000;
-    overflow: hidden; flex-shrink: 0; border-bottom: 2px solid var(--border-gold);
+  /* ── MIRRORED OP-01 HEADER SHAPE ARCHITECTURE ── */
+  .sm-header {
+    position: relative; width: 100%; height: 284px; background: #000000;
+    flex-shrink: 0; overflow: visible;
   }
   .hdr-wing { position: absolute; top: 0; width: 220px; height: 212px; overflow: hidden; z-index: 2; }
   .hdr-wing.left  { left: 0; }
   .hdr-wing.right { right: 0; }
   .hdr-wing video { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .hdr-engines { position: absolute; top: 0; left: 220px; right: 220px; height: 212px; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 16px; z-index: 5; }
-  .hdr-bottom { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
-  .hdr-brand { display: flex; align-items: center; gap: 12px; }
-  .hdr-logo { height: 36px; width: auto; }
-  .hdr-brand-text { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 3px; background: linear-gradient(45deg, #3b2222, #654328, #D4AF37, #ffeaaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .hdr-nav { display: flex; gap: 10px; }
-  .hdr-btn { padding: 8px 16px; border-radius: 4px; font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: #aaa; text-decoration: none; border: 1px solid rgba(212,175,55,0.3); transition: all 0.2s; }
-  .hdr-btn:hover { color: var(--neon-green); background: rgba(0,200,83,0.1); border-color: var(--neon-green); }
+  
+  .hdr-tongue-overlay {
+    position: absolute; bottom: 0; left: 0; width: 1920px; height: 72px;
+    z-index: 10; pointer-events: none;
+  }
 
   /* ── MAIN LAYOUT GRID ── */
   .layout {
     display: grid; grid-template-columns: 1fr 440px;
-    height: calc(100vh - 212px); background: var(--bg-main);
+    height: calc(1080px - 284px); background: var(--bg-main); margin-top: 0;
   }
   .viz-pane { position: relative; overflow: hidden; background: #030712; }
   .info-pane {
@@ -152,7 +150,7 @@
     display: none; justify-content: center; align-items: center; padding: 40px;
   }
   .repo-modal-box {
-    background: #FFFFFF; width: 900px; max-width: 95vw; max-height: 85vh; border-radius: 14px;
+    background: #FFFFFF; width: 920px; max-width: 95vw; max-height: 85vh; border-radius: 14px;
     border: 2px solid var(--metallic-gold); box-shadow: 0 20px 50px rgba(0,0,0,0.3);
     display: flex; flex-direction: column; overflow: hidden;
   }
@@ -167,7 +165,7 @@
 </head>
 <body>
 
-<!-- CANONICAL OCH HEADER SHAPE (EXACT OP-01 ~ OP-03) -->
+<!-- CANONICAL OP-01 MIRRORED HEADER -->
 <header class="sm-header">
   <div class="hdr-wing left">
     <video autoplay loop muted playsinline src="P01Header_L.mp4"></video>
@@ -177,6 +175,14 @@
   </div>
 
   <div class="hdr-engines">
+    <div class="eng-bars">
+      <div class="eng-bar-col"><div class="eng-tube-header"><span style="color:#aaa;font-size:9px;">L1 BIOMARKER INGEST</span><span style="color:var(--neon-green);font-size:9px;">100%</span></div></div>
+      <div class="eng-bar-col"><div class="eng-tube-header"><span style="color:#aaa;font-size:9px;">L2 G3FP PARSING</span><span style="color:var(--neon-green);font-size:9px;">100%</span></div></div>
+      <div class="eng-bar-col"><div class="eng-tube-header"><span style="color:#aaa;font-size:9px;">L3 SAA SYMPY PROOF</span><span style="color:var(--neon-green);font-size:9px;">100%</span></div></div>
+      <div class="eng-bar-col"><div class="eng-tube-header"><span style="color:#aaa;font-size:9px;">L4 FPGA RISK GATE</span><span style="color:var(--neon-green);font-size:9px;">100%</span></div></div>
+      <div class="eng-bar-col"><div class="eng-tube-header"><span style="color:#aaa;font-size:9px;">L5 OAR AUDIT REPORT</span><span style="color:var(--neon-green);font-size:9px;">100%</span></div></div>
+    </div>
+
     <div class="hdr-bottom">
       <div class="hdr-brand">
         <img class="hdr-logo" src="aichip-logo-home.png" alt="AIChip Logo">
@@ -184,10 +190,15 @@
       </div>
       <div class="hdr-nav">
         <a class="hdr-btn" href="index.html">HOME / OVERVIEW</a>
-        <a class="hdr-btn" href="ontology_medical.html" style="background:rgba(0,200,83,0.15);color:#00C853;border-color:#00C853;">OCH OPERATION CENTER (3D)</a>
+        <a class="hdr-btn active" href="ontology_medical.html">OCH OPERATION CENTER (3D)</a>
       </div>
     </div>
   </div>
+
+  <!-- EXACT OP-01 WHITE CUTOUT TONGUE OVERLAY SVG -->
+  <svg class="hdr-tongue-overlay" viewBox="0 0 1920 72" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 0 0 L 220 0 C 265 0 286 66 302 72 L 1618 72 C 1634 66 1655 0 1700 0 L 1920 0 L 1920 72 L 0 72 Z" fill="#ffffff" />
+  </svg>
 </header>
 
 <div class="layout">
@@ -269,7 +280,7 @@
           <span style="background:var(--tiffany-blue); color:#FFF; padding:2px 6px; border-radius:3px; font-size:9px; font-weight:bold;">16 AXIOMS</span>
         </div>
         <div style="color:var(--text-muted); font-size:10px; margin-top:4px;">16-Channel Q16.16 SymPy reference rules for Glucose, Creatinine, Hemoglobin, Troponin, and Blood Pressure.</div>
-        <button onclick="toggleAxiomRepoModal()" style="margin-top:10px; width:100%; padding:6px 0; background:var(--gold-dark); color:#FFF; border:none; border-radius:4px; font-family:var(--font-mono); font-size:10px; font-weight:bold; cursor:pointer;">
+        <button onclick="toggleAxiomRepoModal()" style="margin-top:10px; width:100%; padding:7px 0; background:var(--gold-dark); color:#FFF; border:none; border-radius:4px; font-family:var(--font-mono); font-size:10px; font-weight:bold; cursor:pointer;">
           OPEN LOINC AXIOM REPOSITORY &rarr;
         </button>
       </div>
