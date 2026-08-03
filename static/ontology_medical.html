@@ -12,13 +12,10 @@
 <link rel="stylesheet" href="css/sovereign-header-fixes.css?v=4">
 <style>
   /* ==========================================================================
-     OCH · 3D MEDICAL OPERATION CENTER
+     OCH · 3D MEDICAL OPERATION CENTER — Mirrored OP-01 Header & Pure White BG
      - Background        : Pure White (#FFFFFF) everywhere EXCEPT Header
-     - Metallic Gold     : #D4AF37 / #B8860B
-     - Metallic Silver   : #CBD5E1 / #64748B
-     - Neon Green        : #00C853
-     - Tiffany Blue      : #0abab5
-     - Hermès Orange     : #FF7900
+     - Header Height     : 284px (Bounded Wings, Zero Bleed, Zero Collision)
+     - Palette           : White, Metallic Gold, Metallic Silver, Neon Green, Tiffany Blue, Hermes Orange
      ========================================================================== */
   :root {
     --bg-main:         #FFFFFF;
@@ -50,26 +47,26 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { width: 100%; min-height: 100vh; background: #FFFFFF !important; color: var(--text-dark); font-family: var(--font-ui); overflow-x: hidden; }
 
-  /* ── OP-01 MIRRORED HEADER (HEIGHT: 284px) ── */
+  /* ── MIRRORED OP-01 HEADER ARCHITECTURE (HEIGHT: 284px) ── */
   header.sm-header {
     position: relative; width: 100%; height: 284px; background: #000000;
-    flex-shrink: 0; overflow: visible; z-index: 50;
+    flex-shrink: 0; overflow: hidden !important; z-index: 50;
   }
-  .hdr-wing { position: absolute; top: 0; width: 220px; height: 212px; overflow: hidden; z-index: 2; }
+  .hdr-wing { position: absolute; top: 0; width: 220px; height: 212px; overflow: hidden !important; z-index: 2; pointer-events: none; }
   .hdr-wing.left  { left: 0; }
   .hdr-wing.right { right: 0; }
-  .hdr-wing video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hdr-wing video { width: 220px; height: 212px; object-fit: cover; overflow: hidden; display: block; }
   
   .hdr-tongue-overlay {
-    position: absolute; bottom: 0; left: 0; width: 1920px; height: 72px;
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 72px;
     z-index: 10; pointer-events: none;
   }
 
-  /* ── MAIN LAYOUT GRID (STARTS BELOW HEADER — 0 COLLISION) ── */
+  /* ── MAIN LAYOUT GRID (STARTS BELOW HEADER — ZERO COLLISION) ── */
   .layout {
     display: grid; grid-template-columns: 1fr 440px;
     min-height: calc(100vh - 284px); background: #FFFFFF !important;
-    position: relative; z-index: 1;
+    position: relative; z-index: 1; margin-top: 0;
   }
   .viz-pane {
     position: relative; overflow: hidden; background: #FFFFFF !important;
@@ -102,7 +99,7 @@
   .viz-hud-title { font-family: var(--font-title); font-size: 14px; font-weight: 900; color: var(--tiffany-blue); margin-bottom: 4px; letter-spacing: 1px; }
 
   /* ── SIDEBAR PANELS (PURE WHITE BG) ── */
-  .panel-section { padding: 20px 24px; border-bottom: 1px solid var(--border-silver); background: #FFFFFF; }
+  .panel-section { padding: 20px 24px; border-bottom: 1px solid var(--border-silver); background: #FFFFFF !important; }
   .panel-label { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--tiffany-blue); margin-bottom: 6px; }
   .panel-title { font-family: var(--font-title); font-size: 16px; font-weight: 900; color: var(--text-dark); letter-spacing: 1px; }
 
@@ -142,7 +139,7 @@
   .repo-card-id { color: var(--gold-dark); font-weight: bold; }
 
   /* CTA BUTTONS */
-  .cta-bar { padding: 16px 22px; margin-top: auto; display: flex; flex-direction: column; gap: 8px; background: #FFFFFF; border-top: 1px solid var(--border-silver); }
+  .cta-bar { padding: 16px 22px; margin-top: auto; display: flex; flex-direction: column; gap: 8px; background: #FFFFFF !important; border-top: 1px solid var(--border-silver); }
   .btn-cta {
     display: block; width: 100%; padding: 11px 0; text-align: center; border-radius: 6px;
     font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
@@ -173,7 +170,7 @@
 </head>
 <body>
 
-<!-- CANONICAL OP-01 MIRRORED HEADER -->
+<!-- CANONICAL OP-01 MIRRORED HEADER (BOUNDED WINGS — ZERO BLEED) -->
 <header class="sm-header">
   <div class="hdr-wing left">
     <video autoplay loop muted playsinline src="P01Header_L.mp4"></video>

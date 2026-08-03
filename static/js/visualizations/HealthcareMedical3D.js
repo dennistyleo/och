@@ -1807,7 +1807,7 @@
     destroyEngine(cid);
     var w = el.clientWidth  || 320, h = Math.max(el.clientHeight, 220);
     var _isThumbnail = el.id && el.id.indexOf('ded-modal') === -1;
-    var _bgColor = (payload && payload.bgColor != null) ? payload.bgColor : (window.location.pathname.includes('ontology_medical') ? 0x000000 : 0xFFFFFF);
+    var _bgColor = (payload && payload.bgColor != null) ? payload.bgColor : 0xFFFFFF;
     var renderer = makeRenderer(el, w, h, _bgColor), scene = new THREE.Scene(), camera = makeCamera(w, h, _isThumbnail);
     scene.background = new THREE.Color(_bgColor);
     var _darkBg = _bgColor === 0x000000 || _bgColor < 0x333333;
@@ -2076,7 +2076,7 @@ function initPhase2(cid, payload) {
     destroyEngine(cid);
     var w = el.clientWidth  || 320, h = Math.max(el.clientHeight, 220);
     var _isThumbnail = el.id && el.id.indexOf('ded-modal') === -1;
-    var _bgColor2 = (payload && payload.bgColor != null) ? payload.bgColor : (window.location.pathname.includes('ontology_medical') ? 0x000000 : 0xFFFFFF);
+    var _bgColor2 = (payload && payload.bgColor != null) ? payload.bgColor : 0xFFFFFF;
     var renderer = makeRenderer(el, w, h, _bgColor2), scene = new THREE.Scene(), camera = makeCamera(w, h, _isThumbnail);
     scene.background = new THREE.Color(_bgColor2);
     var _darkBg2 = _bgColor2 === 0x000000 || _bgColor2 < 0x333333;
@@ -2283,7 +2283,7 @@ function initPhase2(cid, payload) {
     destroyEngine(cid);
     var w = el.clientWidth  || 320, h = Math.max(el.clientHeight, 220);
     var _isThumbnail = el.id && el.id.indexOf('ded-modal') === -1;
-    var _bgColor3 = (payload && payload.bgColor != null) ? payload.bgColor : (window.location.pathname.includes('ontology_medical') ? 0x000000 : 0xFFFFFF);
+    var _bgColor3 = (payload && payload.bgColor != null) ? payload.bgColor : 0xFFFFFF;
     var renderer = makeRenderer(el, w, h, _bgColor3), scene = new THREE.Scene(), camera = makeCamera(w, h, _isThumbnail);
     scene.background = new THREE.Color(_bgColor3);
     var _darkBg3 = _bgColor3 === 0x000000 || _bgColor3 < 0x333333;
