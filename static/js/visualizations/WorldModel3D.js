@@ -39,7 +39,7 @@ export class WorldModel3D {
         const h = target.clientHeight || 200;
 
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x050505);
+        this.scene.background = new THREE.Color(0xFFFFFF);
 
         this.camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
         this.camera.position.set(15, 12, 15);
